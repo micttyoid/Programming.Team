@@ -12,8 +12,22 @@
     <PackageReference Include="Invio.Extensions.Authentication.JwtBearer" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.10" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.10" />
     <PackageReference Include="Microsoft.Identity.Web" Version="3.2.2" />
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="3.2.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="ReactiveUI.Blazor" Version="20.1.63" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Programming.Team.AI.Core\Programming.Team.AI.Core.csproj" />
+    <ProjectReference Include="..\Programming.Team.AI\Programming.Team.AI.csproj" />
+    <ProjectReference Include="..\Programming.Team.Business.Core\Programming.Team.Business.Core.csproj" />
+    <ProjectReference Include="..\Programming.Team.Business\Programming.Team.Business.csproj" />
+    <ProjectReference Include="..\Programming.Team.Core\Programming.Team.Core.csproj" />
+    <ProjectReference Include="..\Programming.Team.Data.Core\Programming.Team.Data.Core.csproj" />
+    <ProjectReference Include="..\Programming.Team.Data\Programming.Team.Data.csproj" />
+    <ProjectReference Include="..\Programming.Team.ViewModels\Programming.Team.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

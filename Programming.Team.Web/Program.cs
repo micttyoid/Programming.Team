@@ -9,6 +9,13 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Programming.Team.Web.Data;
 using Invio.Extensions.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
+using Programming.Team.Data.Core;
+using Programming.Team.Data;
+using Programming.Team.Core;
+using Programming.Team.Business.Core;
+using Programming.Team.Business;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,11 +35,22 @@ builder.Services.AddAuthorization(options =>
     // By default, all incoming requests will be authorized according to the default policy
     options.FallbackPolicy = options.DefaultPolicy;
 });
-
+builder.Services.AddAuthorization();
+builder.Services.AddTokenAcquisition();
+builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor()
     .AddMicrosoftIdentityConsentHandler();
+var connectionString = builder.Configuration.GetConnectionString("Resumes");
+builder.Services.AddDbContext<ResumesContext>(options =>
+    options.UseSqlServer(connectionString), ServiceLifetime.Singleton);
 builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddSingleton<IContextFactory, ContextFactory>();
+builder.Services.AddSingleton<IRepository<Role, Guid>, Repository<Role, Guid>>();
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<IBusinessRepositoryFacade<Role, Guid>, BusinessRepositoryFacade<Role, Guid, IRepository<Role, Guid>>>();
+builder.Services.AddSingleton<IUserBusinessFacade, UserBusinessFacade>();
 builder.Services.AddSession();
 var app = builder.Build();
 

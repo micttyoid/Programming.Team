@@ -107,23 +107,24 @@ namespace Programming.Team.Data
         {
             ContextFactory = contextFactory;
         }
-        protected async Task Use(Func<IUnitOfWork, CancellationToken, Task> worker,
+        protected async Task Use(Func<UnitOfWork, CancellationToken, Task> worker,
             IUnitOfWork? work = null, CancellationToken token = default,
             bool saveChanges = false)
         {
-            bool hasWork = work != null;
-            work ??= new UnitOfWork(ContextFactory);
+            UnitOfWork? uow = work as UnitOfWork;
+            bool hasWork = uow != null;
+            uow ??= (UnitOfWork)CreateUnitOfWork();
             try
             {
-                await worker(work, token);
+                await worker(uow, token);
             }
             finally
             {
                 if (!hasWork)
                 {
                     if (saveChanges)
-                        await work.Commit(token);
-                    await work.DisposeAsync();
+                        await uow.Commit(token);
+                    await uow.DisposeAsync();
                 }
             }
         }

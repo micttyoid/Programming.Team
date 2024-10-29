@@ -6,4 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ReactiveUI" Version="20.1.63" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Programming.Team.Business.Core\Programming.Team.Business.Core.csproj" />
+    <ProjectReference Include="..\Programming.Team.Core\Programming.Team.Core.csproj" />
+    <ProjectReference Include="..\Programming.Team.Data.Core\Programming.Team.Data.Core.csproj" />
+  </ItemGroup>
+
 </Project>

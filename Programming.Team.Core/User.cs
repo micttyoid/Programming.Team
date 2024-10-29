@@ -77,9 +77,19 @@ public partial class User : Entity<Guid>
 
     public virtual ICollection<Position> PositionUsers { get; set; } = new List<Position>();
 
-    public virtual ICollection<Posting> Postings { get; set; } = new List<Posting>();
+    public virtual ICollection<Posting> PostingCreatedByUsers { get; set; } = new List<Posting>();
+
+    public virtual ICollection<Posting> PostingUpdatedByUsers { get; set; } = new List<Posting>();
+
+    public virtual ICollection<Posting> PostingUsers { get; set; } = new List<Posting>();
+
+    public virtual ICollection<Role> RoleCreatedByUsers { get; set; } = new List<Role>();
+
+    public virtual ICollection<Role> RoleUpdatedByUsers { get; set; } = new List<Role>();
 
     public virtual ICollection<Skill> SkillCreatedByUsers { get; set; } = new List<Skill>();
 
     public virtual ICollection<Skill> SkillUpdatedByUsers { get; set; } = new List<Skill>();
+
+    public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
 }

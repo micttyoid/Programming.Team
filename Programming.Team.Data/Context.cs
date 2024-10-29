@@ -39,6 +39,7 @@ public partial class ResumesContext : DbContext
     public virtual DbSet<Skill> Skills { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<Role> Roles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=Resumes");
@@ -316,11 +317,19 @@ public partial class ResumesContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Postings_DocumentTemplates");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Postings)
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.PostingCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.PostingUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(d => d.User).WithMany(p => p.PostingUsers)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Postings_Users");
-             entity.HasQueryFilter(d => !d.IsDeleted);
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasQueryFilter(d => !d.IsDeleted);
         });
 
         modelBuilder.Entity<Skill>(entity =>
@@ -376,7 +385,43 @@ public partial class ResumesContext : DbContext
             entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.InverseUpdatedByUser).HasForeignKey(d => d.UpdatedByUserId);
             entity.HasQueryFilter(d => !d.IsDeleted);
         });
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasIndex(e => e.Name, "IX_Roles").IsUnique();
 
+            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.CreateDate).HasDefaultValueSql("(getutcdate())");
+            entity.Property(e => e.Name).HasMaxLength(100);
+            entity.Property(e => e.UpdateDate).HasDefaultValueSql("(getutcdate())");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.RoleCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Roles_Users");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.RoleUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Roles_Users1");
+
+            entity.HasMany(d => d.Users).WithMany(p => p.Roles)
+                .UsingEntity<Dictionary<string, object>>(
+                    "RolesUser",
+                    r => r.HasOne<User>().WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_RolesUsers_Users"),
+                    l => l.HasOne<Role>().WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_RolesUsers_Roles"),
+                    j =>
+                    {
+                        j.HasKey("RoleId", "UserId");
+                        j.ToTable("RolesUsers");
+                    });
+            entity.HasQueryFilter(d => !d.IsDeleted);
+        });
         OnModelCreatingPartial(modelBuilder);
     }
 
