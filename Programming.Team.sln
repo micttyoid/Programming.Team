@@ -3,23 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Programming.Team.Core", "Programming.Team.Core\Programming.Team.Core.csproj", "{740E5A6A-64F8-402B-A576-B4153ABE83B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Programming.Team.Core", "Programming.Team.Core\Programming.Team.Core.csproj", "{740E5A6A-64F8-402B-A576-B4153ABE83B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Programming.Team.Data.Core", "Programming.Team.Data.Core\Programming.Team.Data.Core.csproj", "{A21DDB43-5951-4AC4-80C8-D72B63174CDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Programming.Team.Data.Core", "Programming.Team.Data.Core\Programming.Team.Data.Core.csproj", "{A21DDB43-5951-4AC4-80C8-D72B63174CDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Programming.Team.Data", "Programming.Team.Data\Programming.Team.Data.csproj", "{25B0F37C-046A-48AE-A91C-E334FF49B59F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Programming.Team.Data", "Programming.Team.Data\Programming.Team.Data.csproj", "{25B0F37C-046A-48AE-A91C-E334FF49B59F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Programming.Team.Business.Core", "Programming.Team.Business.Core\Programming.Team.Business.Core.csproj", "{62CC3439-6F91-4374-876A-72C479C7F8C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Programming.Team.Business.Core", "Programming.Team.Business.Core\Programming.Team.Business.Core.csproj", "{62CC3439-6F91-4374-876A-72C479C7F8C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Programming.Team.Business", "Programming.Team.Business\Programming.Team.Business.csproj", "{EF28F23C-FC5D-4AAC-A99F-40AB4562C25C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Programming.Team.Business", "Programming.Team.Business\Programming.Team.Business.csproj", "{EF28F23C-FC5D-4AAC-A99F-40AB4562C25C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Programming.Team.AI.Core", "Programming.Team.AI.Core\Programming.Team.AI.Core.csproj", "{2359FCAC-76F2-4677-BD13-2CFEDF8228B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Programming.Team.AI.Core", "Programming.Team.AI.Core\Programming.Team.AI.Core.csproj", "{2359FCAC-76F2-4677-BD13-2CFEDF8228B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Programming.Team.AI", "Programming.Team.AI\Programming.Team.AI.csproj", "{1F27933D-722A-4217-8A98-E84FD6F5C02B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Programming.Team.AI", "Programming.Team.AI\Programming.Team.AI.csproj", "{1F27933D-722A-4217-8A98-E84FD6F5C02B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Programming.Team.ViewModels", "Programming.Team.ViewModels\Programming.Team.ViewModels.csproj", "{6FE60239-C532-4864-94B6-AFD2D81F3D4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Programming.Team.ViewModels", "Programming.Team.ViewModels\Programming.Team.ViewModels.csproj", "{6FE60239-C532-4864-94B6-AFD2D81F3D4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Programming.Team.Web", "Programming.Team.Web\Programming.Team.Web.csproj", "{CB10566C-8144-4D19-AC18-8BF563934FB3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Programming.Team.Web", "Programming.Team.Web\Programming.Team.Web.csproj", "{CB10566C-8144-4D19-AC18-8BF563934FB3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

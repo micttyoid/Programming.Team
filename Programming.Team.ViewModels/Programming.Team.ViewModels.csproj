@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Programming.Team.AI.Core\Programming.Team.AI.Core.csproj" />
     <ProjectReference Include="..\Programming.Team.Business.Core\Programming.Team.Business.Core.csproj" />
     <ProjectReference Include="..\Programming.Team.Core\Programming.Team.Core.csproj" />
     <ProjectReference Include="..\Programming.Team.Data.Core\Programming.Team.Data.Core.csproj" />

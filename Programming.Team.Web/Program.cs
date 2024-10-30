@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
-using Programming.Team.Web.Data;
 using Invio.Extensions.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Programming.Team.Data.Core;
@@ -16,6 +15,10 @@ using Programming.Team.Core;
 using Programming.Team.Business.Core;
 using Programming.Team.Business;
 using Microsoft.EntityFrameworkCore;
+using Programming.Team.Web.Authorization;
+using MudBlazor.Services;
+using Programming.Team.Web.Shared;
+using Programming.Team.ViewModels.Admin;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,15 +45,17 @@ builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor()
     .AddMicrosoftIdentityConsentHandler();
+builder.Services.AddMudServices();
 var connectionString = builder.Configuration.GetConnectionString("Resumes");
 builder.Services.AddDbContext<ResumesContext>(options =>
     options.UseSqlServer(connectionString), ServiceLifetime.Singleton);
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<IContextFactory, ContextFactory>();
 builder.Services.AddSingleton<IRepository<Role, Guid>, Repository<Role, Guid>>();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IBusinessRepositoryFacade<Role, Guid>, BusinessRepositoryFacade<Role, Guid, IRepository<Role, Guid>>>();
 builder.Services.AddSingleton<IUserBusinessFacade, UserBusinessFacade>();
+builder.Services.AddTransient<AlertView.AlertViewModel>();
+builder.Services.AddTransient<ManageRolesViewModel>();
 builder.Services.AddSession();
 var app = builder.Build();
 
@@ -69,6 +74,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 app.UseAuthentication();
+app.UseMiddleware<RolePopulationMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();
