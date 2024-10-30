@@ -56,6 +56,7 @@ builder.Services.AddScoped<IBusinessRepositoryFacade<Role, Guid>, BusinessReposi
 builder.Services.AddScoped<IUserBusinessFacade, UserBusinessFacade>();
 builder.Services.AddTransient<AlertView.AlertViewModel>();
 builder.Services.AddTransient<ManageRolesViewModel>();
+builder.Services.AddTransient<UsersViewModel>();
 builder.Services.AddSession();
 var app = builder.Build();
 

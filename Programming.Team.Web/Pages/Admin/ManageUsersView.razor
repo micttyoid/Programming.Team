@@ -1,0 +1,48 @@
+﻿@page "/admin/users"
+@inherits ReactiveInjectableComponentBase<UsersViewModel>
+@if(ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert"/>
+    <h3>Users</h3>
+    <MudDataGrid T="User" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" 
+        SortMode="SortMode.Multiple"
+        ServerData="ViewModel.FetchUsers.BindServerDataCommand()">
+        <Columns>
+            <PropertyColumn Property="x => x.ObjectId" Title="Object Id" Filterable="false" Sortable="false"/>
+            <PropertyColumn Property="x => x.FirstName" Title="First Name"/>
+            <PropertyColumn Property="x => x.LastName" Title="Last Name" />
+            <PropertyColumn Property="x => x.EmailAddress" Title="Email" />
+            <PropertyColumn Property="x => x.PhoneNumber" Title="Phone" />
+            <PropertyColumn Property="x => x.City" Title="City" />
+            <PropertyColumn Property="x => x.State" Title="State" />
+            <PropertyColumn Property="x => x.Country" Title="Country" />
+            <TemplateColumn Title="LinkedIn" Filterable="false">
+               <CellTemplate>
+                    @if (!string.IsNullOrEmpty(context.Item.LinkedInUrl))
+                    {
+                        <MudLink Href="@context.Item.LinkedInUrl">@context.Item.LinkedInUrl</MudLink>
+                    }
+               </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="GitHub" Filterable="false">
+                <CellTemplate>
+                    @if (!string.IsNullOrEmpty(context.Item.GitHubUrl))
+                    {
+                        <MudLink Href="@context.Item.GitHubUrl">@context.Item.GitHubUrl</MudLink>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="Portolfio" Filterable="false">
+                <CellTemplate>
+                    @if (!string.IsNullOrEmpty(context.Item.PortfolioUrl))
+                    {
+                        <MudLink Href="@context.Item.PortfolioUrl">@context.Item.PortfolioUrl</MudLink>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+}
+@code {
+
+}
