@@ -1,9 +1,11 @@
-﻿using MudBlazor;
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using Programming.Team.Core;
 using Programming.Team.ViewModels;
 using ReactiveUI;
 using System.Linq.Expressions;
 using System.Reactive.Linq;
+using System.Windows.Input;
 
 namespace Programming.Team.Web.Helpers
 {
@@ -191,6 +193,11 @@ namespace Programming.Team.Web.Helpers
             };
             return func;
         }
-        
+        public static EventCallback<T> BindCommand<T>(this ICommand command, object? parameter = null)
+        {
+            MulticastDelegate m1 = () => command.Execute(parameter);
+            return new EventCallback<T>(null, m1);
+        }
     }
+
 }

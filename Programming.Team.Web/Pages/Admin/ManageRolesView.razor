@@ -3,14 +3,22 @@
 @if(ViewModel != null)
 {
     <AlertView Alert="ViewModel.Alert"/>
-    <MudDataGrid T="Role" ServerData="ViewModel.FetchRoles.BindServerDataCommand()" 
+    <AddRoleView ViewModel="ViewModel.AddRoleVM"/>
+    <MudDataGrid @ref="grid" T="Role" ServerData="ViewModel.FetchRoles.BindServerDataCommand()" 
         Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu"
         SortMode="SortMode.Multiple">
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="Name"/>
+            
         </Columns>
     </MudDataGrid>
 }
 @code {
-
+    private MudDataGrid<Role> grid = null!;
+    protected override void OnInitialized()
+    {
+        if (ViewModel != null)
+            ViewModel.Reload = async () => await grid.ReloadServerData();
+        base.OnInitialized();
+    }
 }

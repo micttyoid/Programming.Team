@@ -63,30 +63,30 @@ namespace Programming.Team.Data
     {
         public DbContext Context{ get; }
         internal ResumesContext ResumesContext => (ResumesContext)Context;
-        protected TransactionScope Transaction { get; }
+        //protected TransactionScope Transaction { get; }
         public UnitOfWork(IContextFactory contextFactory)
         {
             Context = contextFactory.CreateContext();
-            Transaction = new TransactionScope(
+            /*Transaction = new TransactionScope(
             TransactionScopeOption.Required,
             new TransactionOptions
             {
                 IsolationLevel = IsolationLevel.ReadCommitted,
                 Timeout = TransactionManager.MaximumTimeout
             },
-            TransactionScopeAsyncFlowOption.Enabled);
+            TransactionScopeAsyncFlowOption.Enabled);*/
 
         }
         public async Task Commit(CancellationToken token = default)
         {
             await Context.SaveChangesAsync();
-            Transaction.Complete();
+            //Transaction.Complete();
         }
 
         public async ValueTask DisposeAsync()
         {
             await Context.DisposeAsync();
-            Transaction.Dispose();
+            //Transaction.Dispose();
         }
 
         public async Task Rollback()

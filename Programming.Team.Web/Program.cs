@@ -48,12 +48,12 @@ builder.Services.AddServerSideBlazor()
 builder.Services.AddMudServices();
 var connectionString = builder.Configuration.GetConnectionString("Resumes");
 builder.Services.AddDbContext<ResumesContext>(options =>
-    options.UseSqlServer(connectionString), ServiceLifetime.Singleton);
-builder.Services.AddSingleton<IContextFactory, ContextFactory>();
-builder.Services.AddSingleton<IRepository<Role, Guid>, Repository<Role, Guid>>();
-builder.Services.AddSingleton<IUserRepository, UserRepository>();
-builder.Services.AddSingleton<IBusinessRepositoryFacade<Role, Guid>, BusinessRepositoryFacade<Role, Guid, IRepository<Role, Guid>>>();
-builder.Services.AddSingleton<IUserBusinessFacade, UserBusinessFacade>();
+    options.UseSqlServer(connectionString), ServiceLifetime.Scoped);
+builder.Services.AddScoped<IContextFactory, ContextFactory>();
+builder.Services.AddScoped<IRepository<Role, Guid>, Repository<Role, Guid>>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<Role, Guid>, BusinessRepositoryFacade<Role, Guid, IRepository<Role, Guid>>>();
+builder.Services.AddScoped<IUserBusinessFacade, UserBusinessFacade>();
 builder.Services.AddTransient<AlertView.AlertViewModel>();
 builder.Services.AddTransient<ManageRolesViewModel>();
 builder.Services.AddSession();
