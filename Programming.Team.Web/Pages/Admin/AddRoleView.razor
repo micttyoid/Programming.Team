@@ -3,10 +3,11 @@
 {
     <AlertView Alert="ViewModel.Alert"></AlertView>
     <h3>Add Role</h3>
-    <MudInputLabel ForId="roleName">Role Name</MudInputLabel>
-    <MudTextField id="roleName" @bind-Value="ViewModel.Name" Variant="Variant.Outlined"></MudTextField>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" 
-        OnClick="ViewModel.AddRole.BindCommand<MouseEventArgs>()"><i class="fa-solid fa-plus"></i></MudButton>
+    <MudStack Row="true" Spacing="2">
+        <MudTextField id="roleName" Label="Role Name" @bind-Value="ViewModel.Name" Variant="Variant.Outlined"></MudTextField>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                   OnClick="ViewModel.AddRole.BindCommand<MouseEventArgs>()"><i class="fa-solid fa-plus"></i></MudButton>
+    </MudStack>
 }
 @code {
 
