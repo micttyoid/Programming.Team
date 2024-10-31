@@ -162,36 +162,71 @@ namespace Programming.Team.Web.Helpers
             var method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
             return Expression.Call(property, method!, Expression.Constant(value));
         }
+        public static Func<GridState<TEntity>, Task<GridData<TViewModel>>> BindServerDataCommand<TKey, TEntity, TViewModel>
+     (this ReactiveCommand<DataGridRequest<TKey, TEntity>, ViewModelResult<TKey, TEntity, TViewModel>?> command)
+     where TKey : struct
+     where TEntity : Entity<TKey>, new()
+     where TViewModel : IEntityViewModel<TKey, TEntity>
+        {
+            return async state =>
+            {
+                var request = CreateDataGridRequest<TKey, TEntity>(state);
+
+                var response = await command.Execute(request).GetAwaiter();
+                if (response is null)
+                    return new GridData<TViewModel>();
+
+                return new GridData<TViewModel>
+                {
+                    Items = response.Entities.ToArray(),
+                    TotalItems = response.Count ?? 0
+                };
+            };
+        }
+
         public static Func<GridState<TEntity>, Task<GridData<TEntity>>> BindServerDataCommand<TKey, TEntity>
             (this ReactiveCommand<DataGridRequest<TKey, TEntity>, RepositoryResultSet<TKey, TEntity>?> command)
-            where TKey: struct
-            where TEntity: Entity<TKey>, new()
+            where TKey : struct
+            where TEntity : Entity<TKey>, new()
         {
-            Func<GridState<TEntity>, Task<GridData<TEntity>>> func = async state =>
+            return async state =>
             {
-                GridData<TEntity> data = new GridData<TEntity>();
-                DataGridRequest<TKey, TEntity> request = new DataGridRequest<TKey, TEntity>();
-                if (state.FilterDefinitions.Any())
+                var request = CreateDataGridRequest<TKey, TEntity>(state);
+
+                var response = await command.Execute(request).GetAwaiter();
+                if (response is null)
+                    return new GridData<TEntity>();
+
+                return new GridData<TEntity>
                 {
-                    request.Filter = state.FilterDefinitions.BuildFilterExpression();
-                }
-                if(state.SortDefinitions.Any())
-                {
-                    request.OrderBy = state.SortDefinitions.BuildSort();
-                }
-                if (state.PageSize > 0)
-                {
-                    request.Pager = new Pager() { Page = state.Page + 1, Size = state.PageSize };
-                }
-                var resp = await command.Execute(request).GetAwaiter();
-                if (resp != null)
-                {
-                    data.Items = resp.Entities.ToArray();
-                    data.TotalItems = resp.Count ?? 0;
-                }
-                return data;
+                    Items = response.Entities.ToArray(),
+                    TotalItems = response.Count ?? 0
+                };
             };
-            return func;
+        }
+
+        private static DataGridRequest<TKey, TEntity> CreateDataGridRequest<TKey, TEntity>(GridState<TEntity> state)
+            where TKey : struct
+            where TEntity : Entity<TKey>, new()
+        {
+            var request = new DataGridRequest<TKey, TEntity>();
+
+            if (state.FilterDefinitions.Any())
+            {
+                request.Filter = state.FilterDefinitions.BuildFilterExpression();
+            }
+
+            if (state.SortDefinitions.Any())
+            {
+                request.OrderBy = state.SortDefinitions.BuildSort();
+            }
+
+            if (state.PageSize > 0)
+            {
+                request.Pager = new Pager { Page = state.Page + 1, Size = state.PageSize };
+            }
+
+            return request;
         }
         public static EventCallback<T> BindCommand<T>(this ICommand command, object? parameter = null)
         {

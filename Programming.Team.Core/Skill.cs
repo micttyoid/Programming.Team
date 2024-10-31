@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 
 namespace Programming.Team.Core;
-
-public partial class Skill : Entity<Guid>
+public interface ISkill : IEntity<Guid>
+{
+    string Name { get; set; }
+}
+public partial class Skill : Entity<Guid>, ISkill
 {
 
     public string Name { get; set; } = null!;

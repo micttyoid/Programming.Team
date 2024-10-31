@@ -2,8 +2,23 @@
 using System.Collections.Generic;
 
 namespace Programming.Team.Core;
+public interface ICertificate : IEntity<Guid>
+{
+    Guid IssuerId { get; set; }
 
-public partial class Certificate : Entity<Guid>
+    Guid UserId { get; set; }
+
+    string Name { get; set; }
+
+    DateOnly ValidFromDate { get; set; }
+
+    DateOnly? ValidToDate { get; set; }
+
+    string? Url { get; set; }
+
+    string? Description { get; set; }
+}
+public partial class Certificate : Entity<Guid>, ICertificate
 {
 
     public Guid IssuerId { get; set; }

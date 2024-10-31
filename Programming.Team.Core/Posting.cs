@@ -1,9 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Programming.Team.Core;
 
-namespace Programming.Team.Core;
+public interface IPosting : IEntity<Guid>
+{
+    Guid DocumentTemplateId { get; set; }
 
-public partial class Posting : Entity<Guid>
+    Guid UserId { get; set; }
+
+    string Name { get; set; }
+
+    string Details { get; set; }
+
+    string? RenderedLaTex { get; set; }
+
+    byte[]? RenderedPdf { get; set; }
+
+    string? Configuration { get; set; }
+}
+public partial class Posting : Entity<Guid>, IPosting
 {
 
     public Guid DocumentTemplateId { get; set; }

@@ -3,8 +3,11 @@ using System;
 using System.Collections.Generic;
 
 namespace Programming.Team.Core;
-
-public partial class Role : Entity<Guid>
+public interface IRole : IEntity<Guid>
+{
+    string Name { get; set; }
+}
+public partial class Role : Entity<Guid>, IRole
 {
 
     public string Name { get; set; } = null!;

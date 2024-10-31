@@ -2,8 +2,15 @@
 using System.Collections.Generic;
 
 namespace Programming.Team.Core;
+public interface IDocumentTemplate : IEntity<Guid>
+{
+    int DocumentTypeId { get; set; }
 
-public partial class DocumentTemplate : Entity<Guid>
+    string Name { get; set; }
+
+    string Template { get; set; }
+}
+public partial class DocumentTemplate : Entity<Guid>, IDocumentTemplate
 {
     public int DocumentTypeId { get; set; }
 

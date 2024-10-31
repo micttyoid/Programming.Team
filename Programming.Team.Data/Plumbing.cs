@@ -141,6 +141,19 @@ namespace Programming.Team.Data
             }, work, token, true);
 
         }
+        protected async Task PopulateBaseAttributes(TEntity entity, UnitOfWork uow, CancellationToken token)
+        {
+            if(entity.CreatedByUserId == null)
+            {
+                var e = await GetByID(entity.Id, uow, token: token);
+                if(e != null)
+                {
+                    entity.CreatedByUserId = e.CreatedByUserId;
+                    entity.IsDeleted = e.IsDeleted;
+                    entity.CreateDate = e.CreateDate;
+                }
+            }
+        }
         protected async Task<Guid?> GetCurrentUserId(IUnitOfWork? uow = null, CancellationToken token = default)
         {
             Guid? id = null;
@@ -255,6 +268,7 @@ namespace Programming.Team.Data
         {
             await Use(async (w, t) =>
             {
+                await PopulateBaseAttributes(entity, w, t);
                 var userId = await GetCurrentUserId(work, token);
                 entity.UpdateDate = DateTime.UtcNow;
                 entity.UpdatedByUserId = userId;

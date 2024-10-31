@@ -3,7 +3,33 @@ using System.Collections.Generic;
 
 namespace Programming.Team.Core;
 
-public partial class User : Entity<Guid>
+public interface IUser : IEntity<Guid>
+{
+    string ObjectId { get; set; }
+    string? FirstName { get; set; }
+    string? LastName { get; set; }
+
+    string? EmailAddress { get; set; }
+
+    string? GitHubUrl { get; set; }
+
+    string? LinkedInUrl { get; set; }
+
+    string? PortfolioUrl { get; set; }
+
+    string? Bio { get; set; }
+
+    string? Title { get; set; }
+
+    string? PhoneNumber { get; set; }
+
+    string? City { get; set; }
+
+    string? State { get; set; }
+
+    string? Country { get; set; }
+}
+public partial class User : Entity<Guid>, IUser
 {
     public string ObjectId { get; set; } = null!;
 

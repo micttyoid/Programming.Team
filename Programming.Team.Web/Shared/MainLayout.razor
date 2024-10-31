@@ -8,11 +8,9 @@
 
 <MudLayout>
     <MudAppBar>
-        <MudToolBar>
+        <MudToolBar Class="justify-space-between">
             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-            Programming Team
-        </MudToolBar>
-        <MudToolBar RightAlign="true">
+            <MudText>Programming Team</MudText>
             <LoginDisplay />
         </MudToolBar>
     </MudAppBar>

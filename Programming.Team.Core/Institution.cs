@@ -3,7 +3,21 @@ using System.Collections.Generic;
 
 namespace Programming.Team.Core;
 
-public partial class Institution : Entity<Guid>
+public interface IInstitution : IEntity<Guid>
+{
+    string Name { get; set; }
+
+    string? Description { get; set; }
+
+    string? City { get; set; }
+
+    string? State { get; set; }
+
+    string? Country { get; set; }
+
+    string? Url { get; set; }
+}
+public partial class Institution : Entity<Guid>, IInstitution
 {
     public string Name { get; set; } = null!;
 

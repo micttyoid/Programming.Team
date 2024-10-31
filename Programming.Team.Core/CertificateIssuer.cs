@@ -2,8 +2,15 @@
 using System.Collections.Generic;
 
 namespace Programming.Team.Core;
+public interface ICertificateIssuer : IEntity<Guid>
+{
+    string Name { get; set; }
 
-public partial class CertificateIssuer : Entity<Guid>
+    string? Description { get; set; }
+
+    string? Url { get; set; }
+}
+public partial class CertificateIssuer : Entity<Guid>, ICertificateIssuer
 {
 
     public string Name { get; set; } = null!;

@@ -2,8 +2,23 @@
 using System.Collections.Generic;
 
 namespace Programming.Team.Core;
+public interface IPosition : IEntity<Guid>
+{
+    Guid UserId { get; set; }
 
-public partial class Position : Entity<Guid>
+    Guid CompanyId { get; set; }
+
+    DateOnly StartDate { get; set; }
+
+    DateOnly? EndDate { get; set; }
+
+    string? Title { get; set; }
+
+    string? Description { get; set; }
+
+    string? SortOrder { get; set; }
+}
+public partial class Position : Entity<Guid>, IPosition
 {
 
     public Guid UserId { get; set; }

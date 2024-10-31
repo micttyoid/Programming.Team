@@ -2,8 +2,21 @@
 using System.Collections.Generic;
 
 namespace Programming.Team.Core;
+public interface ICompany : IEntity<Guid>
+{
+    string Name { get; set; }
 
-public partial class Company : Entity<Guid>
+    string? Description { get; set; }
+
+    string? City { get; set; }
+
+    string? State { get; set; }
+
+    string? Country { get; set; }
+
+    string? Url { get; set; }
+}
+public partial class Company : Entity<Guid>, ICompany
 {
 
     public string Name { get; set; } = null!;

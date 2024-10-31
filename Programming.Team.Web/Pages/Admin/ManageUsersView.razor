@@ -6,7 +6,7 @@
     <h3>Users</h3>
     <MudDataGrid T="User" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" 
         SortMode="SortMode.Multiple"
-        ServerData="ViewModel.FetchUsers.BindServerDataCommand()">
+        ServerData="ViewModel.Fetch.BindServerDataCommand()">
         <Columns>
             <PropertyColumn Property="x => x.ObjectId" Title="Object Id" Filterable="false" Sortable="false"/>
             <PropertyColumn Property="x => x.FirstName" Title="First Name"/>

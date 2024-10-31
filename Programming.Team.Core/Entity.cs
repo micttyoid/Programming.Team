@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace Programming.Team.Core
 {
-    public abstract class Entity<TKey>
+    public interface IEntity<TKey>
+        where TKey : struct
+    {
+        TKey Id { get; set; }
+    }
+    public abstract class Entity<TKey> : IEntity<TKey>
         where TKey : struct
     {
         public TKey Id { get; set; }
@@ -24,7 +29,7 @@ namespace Programming.Team.Core
 
         public virtual User? UpdatedByUser { get; set; } = null!;
     }
-    public class RepositoryResultSet<TKey, TEntity>
+    public class RepositoryResultSet<TKey, TEntity> : IPagedResult<TEntity>
         where TEntity : Entity<TKey>, new()
         where TKey : struct
     {
@@ -34,6 +39,13 @@ namespace Programming.Team.Core
         public int? Page { get; set; }
 
 
+    }
+    public interface IPagedResult<T>
+    {
+        IEnumerable<T> Entities { get; set; }
+        int? Count { get; set; }
+        int? PageSize { get; set; }
+        int? Page { get; set; }
     }
     public struct Pager
     {

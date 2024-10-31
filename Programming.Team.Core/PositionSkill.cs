@@ -3,7 +3,19 @@ using System.Collections.Generic;
 
 namespace Programming.Team.Core;
 
-public partial class PositionSkill : Entity<Guid>
+public interface IPositionSkill : IEntity<Guid>
+{
+    Guid PositionId { get; set; }
+
+    Guid SkillId { get; set; }
+
+    string? Description { get; set; }
+
+    DateOnly? StartDate { get; set; }
+
+    DateOnly? EndDate { get; set; }
+}
+public partial class PositionSkill : Entity<Guid>, IPositionSkill
 {
 
     public Guid PositionId { get; set; }

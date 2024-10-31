@@ -3,8 +3,8 @@
 @if(ViewModel != null)
 {
     <AlertView Alert="ViewModel.Alert"/>
-    <AddRoleView ViewModel="ViewModel.AddRoleVM"/>
-    <MudDataGrid @ref="grid" T="Role" ServerData="ViewModel.FetchRoles.BindServerDataCommand()" 
+    <AddRoleView ViewModel="ViewModel.AddViewModel"/>
+    <MudDataGrid @ref="grid" T="Role" ServerData="ViewModel.Fetch.BindServerDataCommand()" 
         Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu"
         SortMode="SortMode.Multiple">
         <Columns>

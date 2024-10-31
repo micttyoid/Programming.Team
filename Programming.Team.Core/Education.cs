@@ -3,6 +3,22 @@ using System.Collections.Generic;
 
 namespace Programming.Team.Core;
 
+public interface IEducation : IEntity<Guid>
+{
+    Guid InstitutionId { get; set; }
+
+    Guid UserId { get; set; }
+
+    string? Major { get; set; }
+
+    DateOnly StartDate { get; set; }
+
+    DateOnly? EndDate { get; set; }
+
+    string? Description { get; set; }
+
+    bool Graduated { get; set; }
+}
 public partial class Education : Entity<Guid>
 {
    

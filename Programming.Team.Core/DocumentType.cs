@@ -3,7 +3,11 @@ using System.Collections.Generic;
 
 namespace Programming.Team.Core;
 
-public partial class DocumentType : Entity<int>
+public interface IDocumentType : IEntity<int>
+{
+    string Name { get; set; }
+}
+public partial class DocumentType : Entity<int>, IDocumentType
 {
     public string Name { get; set; } = null!;
 

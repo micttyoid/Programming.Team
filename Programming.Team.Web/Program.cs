@@ -55,6 +55,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Role, Guid>, BusinessRepositoryFacade<Role, Guid, IRepository<Role, Guid>>>();
 builder.Services.AddScoped<IUserBusinessFacade, UserBusinessFacade>();
 builder.Services.AddTransient<AlertView.AlertViewModel>();
+builder.Services.AddTransient<AddRoleViewModel>();
 builder.Services.AddTransient<ManageRolesViewModel>();
 builder.Services.AddTransient<UsersViewModel>();
 builder.Services.AddSession();
