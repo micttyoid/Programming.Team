@@ -20,6 +20,7 @@ using MudBlazor.Services;
 using Programming.Team.Web.Shared;
 using Programming.Team.ViewModels.Admin;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Programming.Team.ViewModels.Resume;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,7 @@ builder.Services.AddAuthorization(options =>
     // By default, all incoming requests will be authorized according to the default policy
     options.FallbackPolicy = options.DefaultPolicy;
 });
+builder.Services.AddMemoryCache();
 builder.Services.AddAuthorization();
 builder.Services.AddTokenAcquisition();
 builder.Services.AddControllers().AddNewtonsoftJson();
@@ -54,7 +56,11 @@ builder.Services.AddScoped<IContextFactory, ContextFactory>();
 builder.Services.AddScoped<IRepository<Role, Guid>, Repository<Role, Guid>>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IRepository<Company, Guid>, Repository<Company, Guid>>();
+builder.Services.AddScoped<IRepository<Position, Guid>, Repository<Position, Guid>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Role, Guid>, BusinessRepositoryFacade<Role, Guid, IRepository<Role, Guid>>>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<Company, Guid>, BusinessRepositoryFacade<Company, Guid, IRepository<Company, Guid>>>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<Position, Guid>, BusinessRepositoryFacade<Position, Guid, IRepository<Position, Guid>>>();
 builder.Services.AddScoped<IUserBusinessFacade, UserBusinessFacade>();
 builder.Services.AddScoped<IRoleBusinessFacade, RoleBusinessFacade>();
 builder.Services.AddTransient<AlertView.AlertViewModel>();
@@ -63,7 +69,10 @@ builder.Services.AddTransient<ManageRolesViewModel>();
 builder.Services.AddTransient<UsersViewModel>();
 builder.Services.AddTransient<SelectUsersViewModel>();
 builder.Services.AddTransient<RoleLoaderViewModel>();
-
+builder.Services.AddTransient<AddCompanyViewModel>();
+builder.Services.AddTransient<SearchSelectCompanyViewModel>();
+builder.Services.AddTransient<AddPositionViewModel>();
+builder.Services.AddTransient<PositionsViewModel>();
 builder.Services.AddSession();
 var app = builder.Build();
 

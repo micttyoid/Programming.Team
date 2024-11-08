@@ -378,6 +378,10 @@ namespace Programming.Team.Web.Helpers
 
             return request;
         }
+        public static Func<string, CancellationToken, Task<IEnumerable<T>>> BindCommand<T>(this ReactiveCommand<string?, IEnumerable<T>> command)
+        {
+            return async (str, token) =>  await command.Execute(str).GetAwaiter();
+        }
         public static EventCallback<T> BindCommand<T>(this ICommand command, object? parameter = null)
         {
             MulticastDelegate m1 = () => command.Execute(parameter);

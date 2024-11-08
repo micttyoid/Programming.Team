@@ -29,6 +29,11 @@ namespace Programming.Team.Business
         {
             return RepositoryRaw.CreateUnitOfWork();
         }
+
+        public virtual Task<Guid?> GetCurrentUserId(IUnitOfWork? uow = null, CancellationToken token = default)
+        {
+            return RepositoryRaw.GetCurrentUserId(uow, token);
+        }
     }
     public abstract class BusinessRepositoryFacade<TEntity, TKey> : BusinessRepositoryFacade,
         IIBusinessRepositoryFacade<TEntity, TKey>
@@ -51,9 +56,7 @@ namespace Programming.Team.Business
         {
             try
             {
-                var entity = await this.RepositoryDefault.GetByID(id, work, token: token);
-                if (entity != null)
-                    await Delete(entity, work, token);
+                await this.RepositoryDefault.Delete(id, work, token);
             }
             catch (Exception ex)
             {
@@ -106,12 +109,12 @@ namespace Programming.Team.Business
 
         public virtual Task<RepositoryResultSet<TKey, TEntity>> Get(IUnitOfWork? work = null, Pager? page = null, 
             Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, 
-            IOrderedQueryable<TEntity>>? orderBy = null, Expression<Func<TEntity, object>>? properites = null, CancellationToken token = default)
+            IOrderedQueryable<TEntity>>? orderBy = null, IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default)
         {
             return Repository.Get(work, page, filter, orderBy, properites, token);
         }
 
-        public virtual Task<TEntity?> GetByID(TKey key, IUnitOfWork? work = null, Expression<Func<TEntity, object>>? properites = null, CancellationToken token = default)
+        public virtual Task<TEntity?> GetByID(TKey key, IUnitOfWork? work = null, IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default)
         {
             return Repository.GetByID(key, work, properites, token);
         }

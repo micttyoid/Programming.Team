@@ -1,10 +1,8 @@
 ﻿namespace Programming.Team.Core;
 
-public interface IPosting : IEntity<Guid>
+public interface IPosting : IEntity<Guid>, IUserPartionedEntity
 {
     Guid DocumentTemplateId { get; set; }
-
-    Guid UserId { get; set; }
 
     string Name { get; set; }
 

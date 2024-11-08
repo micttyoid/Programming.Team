@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Programming.Team.Core;
 using Programming.Team.Data.Core;
@@ -14,6 +15,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Programming.Team.Data
 {
@@ -104,9 +106,11 @@ namespace Programming.Team.Data
             return new UnitOfWork(ContextFactory);
         }
         protected IContextFactory ContextFactory { get; private set; }
-        public Repository(IContextFactory contextFactory)
+        protected IMemoryCache Cache { get; }
+        public Repository(IContextFactory contextFactory, IMemoryCache cache)
         {
             ContextFactory = contextFactory;
+            Cache = cache;
         }
         protected async Task Use(Func<UnitOfWork, CancellationToken, Task> worker,
             IUnitOfWork? work = null, CancellationToken token = default,
@@ -155,17 +159,26 @@ namespace Programming.Team.Data
                 }
             }
         }
-        protected async Task<Guid?> GetCurrentUserId(IUnitOfWork? uow = null, CancellationToken token = default)
+        public async Task<Guid?> GetCurrentUserId(IUnitOfWork? uow = null, CancellationToken token = default)
         {
             Guid? id = null;
-            await Use(async (w, t) =>
+            var user = await ContextFactory.GetPrincipal();
+            var objectId = user?.GetUserId();
+            if (objectId == null)
+                return null;
+            if (!Cache.TryGetValue(objectId, out id))
             {
-                var user = await ContextFactory.GetPrincipal();
-                var objectId = user?.GetUserId();
-                var work =(UnitOfWork)w;
-                var u = await work.ResumesContext.Users.AsNoTracking().SingleOrDefaultAsync(u => u.ObjectId == objectId, token);
-                id = u?.Id;
-            }, uow, token, false);
+                await Use(async (w, t) =>
+                {
+                    var work = (UnitOfWork)w;
+                    if (!Cache.TryGetValue(objectId, out id))
+                    {
+                        var u = await work.ResumesContext.Users.AsNoTracking().SingleOrDefaultAsync(u => u.ObjectId == objectId, token);
+                        id = u?.Id;
+                        Cache.Set(objectId, id);
+                    }
+                }, uow, token, false);
+            }
             return id;
         }
         public virtual Task Delete(TEntity entity, IUnitOfWork? work = null, CancellationToken token = default)
@@ -184,7 +197,7 @@ namespace Programming.Team.Data
             Pager? page = null,
             Expression<Func<TEntity, bool>>? filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-            Expression<Func<TEntity, object>>? properites = null)
+            IEnumerable<Expression<Func<TEntity, object>>>? properites = null)
         {
             if (filter != null)
             {
@@ -192,7 +205,8 @@ namespace Programming.Team.Data
             }
             if (properites != null)
             {
-               query = query.Include(properites);
+                foreach(var prop in properites)
+                 query = query.Include(prop);
             }
             if (page != null)
             {
@@ -215,7 +229,7 @@ namespace Programming.Team.Data
             Pager? page = null,
             Expression<Func<TEntity, bool>>? filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-            Expression<Func<TEntity, object>>? properites = null, CancellationToken token = default)
+            IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default)
         {
             RepositoryResultSet<TKey, TEntity> results = new RepositoryResultSet<TKey, TEntity>();
             bool hasWork = work != null;
@@ -236,8 +250,8 @@ namespace Programming.Team.Data
             return results;
         }
 
-        public virtual async Task<TEntity?> GetByID(TKey key, IUnitOfWork? work = null, 
-            Expression<Func<TEntity, object>>? properites = null, CancellationToken token = default)
+        public virtual async Task<TEntity?> GetByID(TKey key, IUnitOfWork? work = null,
+            IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default)
         {
             TEntity? entity = null;
             await Use(async (w, t) =>
@@ -245,7 +259,8 @@ namespace Programming.Team.Data
                 var query = w.Context.Set<TEntity>().AsQueryable().AsNoTracking();
                 if (properites != null)
                 {
-                    query = query.Include(properites);
+                    foreach(var prop in properites)
+                        query = query.Include(prop);
                 }
                 entity = await query.SingleOrDefaultAsync(q => q.Id.Equals(key));
                 

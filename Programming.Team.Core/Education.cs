@@ -3,11 +3,9 @@ using System.Collections.Generic;
 
 namespace Programming.Team.Core;
 
-public interface IEducation : IEntity<Guid>
+public interface IEducation : IEntity<Guid>, IUserPartionedEntity
 {
     Guid InstitutionId { get; set; }
-
-    Guid UserId { get; set; }
 
     string? Major { get; set; }
 

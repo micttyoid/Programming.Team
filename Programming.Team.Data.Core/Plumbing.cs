@@ -34,6 +34,7 @@ namespace Programming.Team.Data.Core
     public interface IRepository
     {
         IUnitOfWork CreateUnitOfWork();
+        Task<Guid?> GetCurrentUserId(IUnitOfWork? uow = null, CancellationToken token = default);
     }
     public interface IIRepository<in TEntity, TKey> : IRepository
         where TEntity : Entity<TKey>, new()
@@ -54,13 +55,13 @@ namespace Programming.Team.Data.Core
             Pager? page = null,
             Expression<Func<TEntity, bool>>? filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-            Expression<Func<TEntity, object>>? properites = null,
+            IEnumerable<Expression<Func<TEntity, object>>>? properites = null,
             CancellationToken token = default);
         Task<int> Count(IUnitOfWork? work = null,
             Expression<Func<TEntity, bool>>? filter = null,
             CancellationToken token = default);
         Task<TEntity?> GetByID(TKey key, IUnitOfWork? work = null,
-            Expression<Func<TEntity, object>>? properites = null, CancellationToken token = default);
+            IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default);
 
     }
 }

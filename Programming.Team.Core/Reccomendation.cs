@@ -4,9 +4,8 @@ using System.Collections.Generic;
 
 namespace Programming.Team.Core;
 
-public interface IReccomendation : IEntity<Guid>
+public interface IReccomendation : IEntity<Guid>, IUserPartionedEntity
 {
-    Guid UserId { get; set; }
 
     Guid PositionId { get; set; }
 

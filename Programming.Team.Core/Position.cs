@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 
 namespace Programming.Team.Core;
-public interface IPosition : IEntity<Guid>
+public interface IPosition : IEntity<Guid>, IUserPartionedEntity
 {
-    Guid UserId { get; set; }
 
     Guid CompanyId { get; set; }
 
-    DateOnly StartDate { get; set; }
+    DateOnly StartDate { get; set; } 
 
     DateOnly? EndDate { get; set; }
 
@@ -25,7 +24,7 @@ public partial class Position : Entity<Guid>, IPosition
 
     public Guid CompanyId { get; set; }
 
-    public DateOnly StartDate { get; set; }
+    public DateOnly StartDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
 
     public DateOnly? EndDate { get; set; }
 

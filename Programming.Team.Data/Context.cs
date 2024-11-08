@@ -451,6 +451,7 @@ public partial class ResumesContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Publications_Users");
+            entity.HasQueryFilter(d => !d.IsDeleted);
         });
 
         modelBuilder.Entity<Reccomendation>(entity =>
@@ -487,6 +488,7 @@ public partial class ResumesContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Reccomendations_Users");
+            entity.HasQueryFilter(d => !d.IsDeleted);
         });
         OnModelCreatingPartial(modelBuilder);
     }

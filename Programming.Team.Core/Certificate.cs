@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 
 namespace Programming.Team.Core;
-public interface ICertificate : IEntity<Guid>
+public interface ICertificate : IEntity<Guid>, IUserPartionedEntity
 {
     Guid IssuerId { get; set; }
-
-    Guid UserId { get; set; }
 
     string Name { get; set; }
 

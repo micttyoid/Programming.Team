@@ -88,7 +88,6 @@ namespace Programming.Team.ViewModels.Admin
     public class AddRoleViewModel : AddEntityViewModel<Guid, Role>, IRole
     {
         private string name = null!;
-
         public AddRoleViewModel(IBusinessRepositoryFacade<Role, Guid> facade, ILogger<AddEntityViewModel<Guid, Role, IBusinessRepositoryFacade<Role, Guid>>> logger) : base(facade, logger)
         {
         }
@@ -108,6 +107,10 @@ namespace Programming.Team.ViewModels.Admin
         protected override Task<Role> ConstructEntity()
         {
             return Task.FromResult(new Role() { Name = Name });
+        }
+        public override void SetText(string text)
+        {
+            Name = text;
         }
     }
 }

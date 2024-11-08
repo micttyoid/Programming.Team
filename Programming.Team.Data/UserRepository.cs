@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Programming.Team.Core;
 using Programming.Team.Data.Core;
 using System;
@@ -12,7 +13,7 @@ namespace Programming.Team.Data
 {
     public class UserRepository : Repository<User, Guid>, IUserRepository
     {
-        public UserRepository(IContextFactory contextFactory) : base(contextFactory)
+        public UserRepository(IContextFactory contextFactory, IMemoryCache cache) : base(contextFactory, cache)
         {
         }
 
@@ -31,7 +32,7 @@ namespace Programming.Team.Data
     }
     public class RoleRepository : Repository<Role, Guid>, IRoleRepository
     {
-        public RoleRepository(IContextFactory contextFactory) : base(contextFactory)
+        public RoleRepository(IContextFactory contextFactory, IMemoryCache cache) : base(contextFactory, cache)
         {
         }
 

@@ -11,6 +11,10 @@ namespace Programming.Team.Core
     {
         TKey Id { get; set; }
     }
+    public interface IUserPartionedEntity
+    {
+        Guid UserId { get; set; }
+    }
     public abstract class Entity<TKey> : IEntity<TKey>
         where TKey : struct
     {

@@ -4,9 +4,8 @@ using System.Collections.Generic;
 
 namespace Programming.Team.Core;
 
-public interface IPublication : IEntity<Guid>
+public interface IPublication : IEntity<Guid>, IUserPartionedEntity
 {
-    Guid UserId { get; set; }
 
     string Title { get; set; }
 
