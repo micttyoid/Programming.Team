@@ -1,5 +1,19 @@
-﻿<MudNavMenu>
+﻿@inject AuthenticationStateProvider AuthState
+<MudNavMenu>
     <MudNavLink Href="/" Match="NavLinkMatch.All"><span aria-hidden="true"><i class="fa-duotone fa-solid fa-house"></i> Home</span></MudNavLink>
-    <MudNavLink Href="/admin/roles"><span aria-hidden="true"><i class="fa-solid fa-circle-half-stroke"></i> Roles</span></MudNavLink>
-    <MudNavLink Href="/admin/users"><span aria-hidden="true"><i class="fa-solid fa-users"></i> Users</span></MudNavLink>
+    @if (isAdmin)
+    {
+        <MudNavLink Href="/admin/roles"><span aria-hidden="true"><i class="fa-solid fa-circle-half-stroke"></i> Roles</span></MudNavLink>
+        <MudNavLink Href="/admin/users"><span aria-hidden="true"><i class="fa-solid fa-users"></i> Users</span></MudNavLink>
+    }
 </MudNavMenu>
+
+@code{
+    private bool isAdmin = false;
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthState.GetAuthenticationStateAsync();
+        isAdmin = authState.User?.IsInRole("Admin") ?? false;
+        await base.OnInitializedAsync();
+    }
+}

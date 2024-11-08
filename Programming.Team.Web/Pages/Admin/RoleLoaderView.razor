@@ -1,4 +1,5 @@
 ﻿@page "/admin/roles/{RoleId:guid}"
+@attribute [Authorize(Roles = "Admin")]
 
 @inherits ReactiveInjectableComponentBase<RoleLoaderViewModel>
 @if(ViewModel != null && ViewModel.Id != null)

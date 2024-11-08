@@ -1,5 +1,6 @@
 ﻿@page "/admin/users"
 @inherits ReactiveInjectableComponentBase<UsersViewModel>
+@attribute [Authorize(Roles = "Admin")]
 @if(ViewModel != null)
 {
     <AlertView Alert="ViewModel.Alert"/>
