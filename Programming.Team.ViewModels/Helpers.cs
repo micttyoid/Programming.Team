@@ -221,7 +221,11 @@ namespace Programming.Team.ViewModels
                     Selected.Remove(item);
                 }
                 if (ids.Length == 0)
+                {
+                    IsInitialzed = true;
                     return;
+                }
+                    
                 var missingIds = ids.Where(i => !Selected.Any(e => e.Id.Equals(i))).ToArray();
                 var rs = await Facade.Get(filter: q => missingIds.Contains(q.Id), token: token);
                 foreach (var e in rs.Entities)

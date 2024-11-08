@@ -41,6 +41,9 @@ public partial class ResumesContext : DbContext
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Role> Roles { get; set; }
 
+    public virtual DbSet<Publication> Publications { get; set; }
+
+    public virtual DbSet<Reccomendation> Reccomendations { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=Resumes");
 
@@ -421,6 +424,69 @@ public partial class ResumesContext : DbContext
                         j.ToTable("RolesUsers");
                     });
             entity.HasQueryFilter(d => !d.IsDeleted);
+        });
+        modelBuilder.Entity<Publication>(entity =>
+        {
+            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.CreateDate)
+                .HasDefaultValueSql("(getutcdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Title).HasMaxLength(500);
+            entity.Property(e => e.UpdateDate)
+                .HasDefaultValueSql("(getutcdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Url).HasMaxLength(1000);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.PublicationCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Publications_Users1");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.PublicationUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Publications_Users2");
+
+            entity.HasOne(d => d.User).WithMany(p => p.PublicationUsers)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Publications_Users");
+        });
+
+        modelBuilder.Entity<Reccomendation>(entity =>
+        {
+            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.CreateDate)
+                .HasDefaultValueSql("(getutcdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Name).HasMaxLength(1000);
+            entity.Property(e => e.Body);
+            entity.Property(e => e.SortOrder)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.UpdateDate)
+                .HasDefaultValueSql("(getutcdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.ReccomendationCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Reccomendations_Users1");
+
+            entity.HasOne(d => d.Position).WithMany(p => p.Reccomendations)
+                .HasForeignKey(d => d.PositionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Reccomendations_Positions");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.ReccomendationUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Reccomendations_Users2");
+
+            entity.HasOne(d => d.User).WithMany(p => p.ReccomendationUsers)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Reccomendations_Users");
         });
         OnModelCreatingPartial(modelBuilder);
     }
