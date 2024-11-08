@@ -1,4 +1,5 @@
-﻿using Programming.Team.Core;
+﻿using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+using Programming.Team.Core;
 using Programming.Team.Data.Core;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,10 @@ namespace Programming.Team.Business.Core
     public interface IUserBusinessFacade : IBusinessRepositoryFacade<User, Guid>
     {
         Task<User?> GetByObjectIdAsync(string objectId, IUnitOfWork? work = null, Expression<Func<User, object>>? properties = null, CancellationToken token = default); 
+    }
+    public interface IRoleBusinessFacade : IBusinessRepositoryFacade<Role, Guid>
+    {
+        Task<Guid[]> GetUserIds(Guid roleId, IUnitOfWork? work = null, CancellationToken token = default);
+        Task SetSelectedUsersToRole(Guid roleId, Guid[] userIds, IUnitOfWork? work = null, CancellationToken token = default);
     }
 }

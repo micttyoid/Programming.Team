@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Logging;
 using Programming.Team.Business.Core;
 using Programming.Team.Core;
 using Programming.Team.Data.Core;
@@ -114,7 +116,7 @@ namespace Programming.Team.Business
             return Repository.GetByID(key, work, properites, token);
         }
         public virtual async Task<TEntity> Update(TEntity entity,
-            IUnitOfWork? work = null, CancellationToken token = default)
+            IUnitOfWork? work = null,CancellationToken token = default)
         {
             try
             {

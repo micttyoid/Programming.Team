@@ -1,6 +1,9 @@
 ﻿using DynamicData.Binding;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using Programming.Team.Business.Core;
 using Programming.Team.Core;
 using Programming.Team.ViewModels;
@@ -41,10 +44,9 @@ namespace Programming.Team.ViewModels
         where TEntity : Entity<TKey>, new()
     {
         Interaction<string, bool> Alert { get; }
-        ICommand Load { get; }
-        ICommand Add { get; }
-        ICommand Delete { get; }
-        ICommand Update { get; }
+        ReactiveCommand<Unit, TEntity?> Load { get; }
+        ReactiveCommand<Unit, Unit> Delete { get; }
+        ReactiveCommand<Unit, TEntity> Update { get; }
         bool IsSelected { get; set; }
     }
     public abstract class EntityViewModel<TKey, TEntity, TFacade> : ReactiveObject, IEntityViewModel<TKey, TEntity>
@@ -54,17 +56,15 @@ namespace Programming.Team.ViewModels
     {
         public Interaction<string, bool> Alert { get; } = new Interaction<string, bool>();
         protected TFacade Facade { get; }
-        public ICommand Load { get; }
-        public ICommand Add { get; }
-        public ICommand Delete { get; }
-        public ICommand Update { get; }
+        public ReactiveCommand<Unit, TEntity?> Load { get; }
+        public ReactiveCommand<Unit, Unit> Delete { get; }
+        public ReactiveCommand<Unit, TEntity> Update { get; }
         protected ILogger Logger { get; }
         protected EntityViewModel(ILogger logger, TFacade facade)
         {
             Logger = logger;
             Facade = facade;
             Load = ReactiveCommand.CreateFromTask(DoLoad);
-            Add = ReactiveCommand.CreateFromTask(DoAdd);
             Delete = ReactiveCommand.CreateFromTask(DoDelete);
             Update = ReactiveCommand.CreateFromTask(DoUpdate);
         }
@@ -73,40 +73,29 @@ namespace Programming.Team.ViewModels
         {
             Id = id;
         }
+        protected TEntity? InitializedEntity { get; set; }
         public EntityViewModel(ILogger logger, TFacade facade, TEntity entity)
-            : this(logger, facade, entity.Id)
+            :this(logger, facade, entity.Id)
         {
-            Read(entity);
+            InitializedEntity = entity;
         }
-        protected virtual async Task DoLoad(CancellationToken token)
+        protected virtual async Task<TEntity?> DoLoad(CancellationToken token)
         {
             try
             {
-                var entity = await Facade.GetByID(Id, token: token);
-                if (entity != null)
-                    Read(entity);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, ex.Message);
-                await Alert.Handle(ex.Message).GetAwaiter();
-            }
-        }
-        protected virtual async Task DoAdd(CancellationToken token)
-        {
-            try
-            {
-                var entity = Populate();
-                await Facade.Add(entity, token: token);
-                entity.Id = Id;
-                await DoLoad(token);
 
+                var entity = InitializedEntity ?? await Facade.GetByID(Id, token: token);
+                InitializedEntity = null;
+                if (entity != null)
+                    await Read(entity);
+                return entity;
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, ex.Message);
                 await Alert.Handle(ex.Message).GetAwaiter();
             }
+            return null;
         }
         protected virtual async Task DoDelete(CancellationToken token)
         {
@@ -120,20 +109,22 @@ namespace Programming.Team.ViewModels
                 await Alert.Handle(ex.Message).GetAwaiter();
             }
         }
-        protected virtual async Task DoUpdate(CancellationToken token)
+        protected virtual async Task<TEntity> DoUpdate(CancellationToken token)
         {
             try
             {
-                var entity = Populate();
+                var entity = await Populate();
                 entity = await Facade.Update(entity, token: token);
                 entity.Id = Id;
-                Read(entity);
+                await Read(entity);
+                return entity;
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, ex.Message);
                 await Alert.Handle(ex.Message).GetAwaiter();
             }
+            return new TEntity();
         }
         private TKey id;
         public TKey Id
@@ -147,8 +138,8 @@ namespace Programming.Team.ViewModels
             get => isSelected;
             set => this.RaiseAndSetIfChanged(ref isSelected, value);
         }
-        protected abstract TEntity Populate();
-        protected abstract void Read(TEntity entity);
+        protected abstract Task<TEntity> Populate();
+        protected abstract Task Read(TEntity entity);
     }
     public abstract class EntityViewModel<TKey, TEntity> : EntityViewModel<TKey, TEntity, IBusinessRepositoryFacade<TEntity, TKey>>
         where TKey : struct
@@ -158,7 +149,7 @@ namespace Programming.Team.ViewModels
             : base(logger, facade, id)
         { }
         public EntityViewModel(ILogger logger, IBusinessRepositoryFacade<TEntity, TKey> facade, TEntity entity)
-            : base(logger, facade, entity) { }
+            :base(logger, facade, entity) { }
     }
     public abstract class SelectEntitiesViewModel<TKey, TEntity, TViewModel, TFacade> : ReactiveObject
         where TKey : struct
@@ -178,6 +169,7 @@ namespace Programming.Team.ViewModels
             Facade = facade;
             Fetch = ReactiveCommand.CreateFromTask<DataGridRequest<TKey, TEntity>, ViewModelResult<TKey, TEntity, TViewModel>?>(DoFetch);
         }
+        
         protected virtual async Task<ViewModelResult<TKey, TEntity, TViewModel>?> DoFetch(DataGridRequest<TKey, TEntity> request, CancellationToken token = default)
         {
             try
@@ -190,12 +182,13 @@ namespace Programming.Team.ViewModels
                 vmr.PageSize = resp.PageSize;
                 vmr.Count = resp.Count;
                 List<TViewModel> vms = new List<TViewModel>();
-                foreach (var vm in vmr.Entities)
+                foreach (var en in resp.Entities)
                 {
-                    var existing = Selected.SingleOrDefault(e => e.Id.Equals(vm.Id));
+                    var existing = Selected.SingleOrDefault(e => e.Id.Equals(en.Id));
                     if (existing == null)
                     {
-                        WireupViewModel(vm);
+                        var vm = await ConstructViewModel(en);
+                        await WireupViewModel(vm);
                         vms.Add(vm);
                     }
                     else
@@ -213,6 +206,12 @@ namespace Programming.Team.ViewModels
             }
             return null;
         }
+        private bool isInitialzed;
+        public bool IsInitialzed
+        {
+            get => isInitialzed;
+            protected set => this.RaiseAndSetIfChanged(ref isInitialzed, value);
+        }
         public virtual async Task SetSelected(TKey[] ids, CancellationToken token = default)
         {
             try
@@ -227,11 +226,12 @@ namespace Programming.Team.ViewModels
                 var rs = await Facade.Get(filter: q => missingIds.Contains(q.Id), token: token);
                 foreach (var e in rs.Entities)
                 {
-                    var vm = ConstructViewModel(e);
+                    var vm = await ConstructViewModel(e);
                     vm.IsSelected = true;
-                    WireupViewModel(vm);
+                    await WireupViewModel(vm);
                     Insert(vm);
                 }
+                IsInitialzed = true;
             }
             catch (Exception ex)
             {
@@ -239,8 +239,8 @@ namespace Programming.Team.ViewModels
                 await Alert.Handle(ex.Message).GetAwaiter();
             }
         }
-        protected abstract TViewModel ConstructViewModel(TEntity entity);
-        protected virtual void WireupViewModel(TViewModel viewModel)
+        protected abstract Task<TViewModel> ConstructViewModel(TEntity entity);
+        protected virtual Task WireupViewModel(TViewModel viewModel)
         {
             viewModel.WhenPropertyChanged(p => p.IsSelected).Subscribe(p =>
             {
@@ -249,6 +249,7 @@ namespace Programming.Team.ViewModels
                 else
                     Selected.Remove(p.Sender);
             }).DisposeWith(disposable);
+            return Task.CompletedTask;
         }
         protected readonly object synch = new object();
         protected virtual void Insert(TViewModel vm)
@@ -288,7 +289,7 @@ namespace Programming.Team.ViewModels
         where TAddVM: IAddEntityViewModel<TKey, TEntity>
     {
         Func<Task>? Reload { get; set; }
-        public TAddVM AddViewModel { get; }
+        TAddVM AddViewModel { get; }
     }
     public class ManageEntityViewModel<TKey, TEntity, TFacade> : ReactiveObject, IManageEntityViewModel<TKey, TEntity>
         where TKey : struct
@@ -362,7 +363,7 @@ namespace Programming.Team.ViewModels
         where TEntity : Entity<TKey>, new()
     {
         Interaction<string, bool> Alert { get; }
-        ICommand Add { get; }
+        ReactiveCommand<Unit, TEntity?> Add { get; }
         event EventHandler<TEntity>? Added;
     }
     public abstract class AddEntityViewModel<TKey, TEntity, TFacade> : ReactiveObject, IAddEntityViewModel<TKey, TEntity>
@@ -372,7 +373,7 @@ namespace Programming.Team.ViewModels
     {
         public Interaction<string, bool> Alert { get; } = new Interaction<string, bool>();
 
-        public ICommand Add { get; }
+        public ReactiveCommand<Unit, TEntity?> Add { get; }
 
         private TKey id;
         public TKey Id
@@ -390,23 +391,25 @@ namespace Programming.Team.ViewModels
             Logger = logger;
             Add = ReactiveCommand.CreateFromTask(DoAdd);
         }
-        protected virtual async Task DoAdd(CancellationToken token)
+        protected virtual async Task<TEntity?> DoAdd(CancellationToken token)
         {
             try
             {
-                var e = ConstructEntity();
+                var e = await ConstructEntity();
                 await Facade.Add(e, token: token);
                 Added?.Invoke(this, e);
-                Clear();
+                await Clear();
+                return e;
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, ex.Message);
                 await Alert.Handle(ex.Message).GetAwaiter();
             }
+            return null;
         }
-        protected abstract TEntity ConstructEntity();
-        protected abstract void Clear();
+        protected abstract Task<TEntity> ConstructEntity();
+        protected abstract Task Clear();
     }
     public abstract class AddEntityViewModel<TKey, TEntity> : AddEntityViewModel<TKey, TEntity, IBusinessRepositoryFacade<TEntity, TKey>>
         where TKey : struct
@@ -414,6 +417,72 @@ namespace Programming.Team.ViewModels
     {
         protected AddEntityViewModel(IBusinessRepositoryFacade<TEntity, TKey> facade, ILogger<AddEntityViewModel<TKey, TEntity, IBusinessRepositoryFacade<TEntity, TKey>>> logger) : base(facade, logger)
         {
+        }
+    }
+    public interface IEntityLoaderViewModel<TKey, TEntity, TViewModel>
+        where TKey : struct
+        where TEntity : Entity<TKey>, new()
+        where TViewModel : class, IEntityViewModel<TKey, TEntity>
+    {
+        Interaction<string, bool> Alert { get; }
+        TKey? Id { get; }
+        ReactiveCommand<TKey, Unit> Load { get; }
+        TViewModel? ViewModel { get; }
+    }
+    public abstract class EntityLoaderViewModel<TKey, TEntity, TViewModel, TFacade> : ReactiveObject, IEntityLoaderViewModel<TKey, TEntity, TViewModel>
+        where TKey : struct
+        where TEntity : Entity<TKey>, new()
+        where TViewModel : class, IEntityViewModel<TKey, TEntity>
+        where TFacade : IBusinessRepositoryFacade<TEntity, TKey>
+    {
+        public Interaction<string, bool> Alert { get; } = new Interaction<string, bool>();
+
+        private TKey? id;
+
+        public TKey? Id
+        {
+            get => id;
+            protected set => this.RaiseAndSetIfChanged(ref id, value);
+        }
+
+        public ReactiveCommand<TKey, Unit> Load{ get; }
+        private TViewModel? viewModel;
+        public TViewModel? ViewModel
+        {
+            get => viewModel;
+            protected set => this.RaiseAndSetIfChanged(ref viewModel, value);
+        }
+        protected TFacade Facade { get; }
+        protected ILogger Logger { get; }
+        public EntityLoaderViewModel(TFacade facade, ILogger<EntityLoaderViewModel<TKey, TEntity, TViewModel, TFacade>> logger)
+        {
+            Facade = facade;
+            Logger = logger;
+            Load = ReactiveCommand.CreateFromTask<TKey>(DoLoad);
+        }
+        protected abstract TViewModel Construct(TEntity entity);
+        protected virtual async Task DoLoad(TKey key, CancellationToken token)
+        {
+            try
+            {
+                var entity = await Facade.GetByID(key, token: token);
+                if (entity == null)
+                {
+                    Id = null;
+                    ViewModel = null;
+                }
+                else
+                {
+                    Id = entity.Id;
+                    ViewModel = Construct(entity);
+                    await ViewModel.Load.Execute().GetAwaiter();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, ex.Message);
+                await Alert.Handle(ex.Message).GetAwaiter();
+            }
         }
     }
 }

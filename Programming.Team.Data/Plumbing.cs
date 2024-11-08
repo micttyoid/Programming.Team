@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Programming.Team.Core;
@@ -162,7 +163,7 @@ namespace Programming.Team.Data
                 var user = await ContextFactory.GetPrincipal();
                 var objectId = user?.GetUserId();
                 var work =(UnitOfWork)w;
-                var u = await work.ResumesContext.Users.SingleOrDefaultAsync(u => u.ObjectId == objectId, token);
+                var u = await work.ResumesContext.Users.AsNoTracking().SingleOrDefaultAsync(u => u.ObjectId == objectId, token);
                 id = u?.Id;
             }, uow, token, false);
             return id;
@@ -223,7 +224,7 @@ namespace Programming.Team.Data
             {
                 await Use(async (w, t) =>
                 {
-                    IQueryable<TEntity> query = w.Context.Set<TEntity>();
+                    IQueryable<TEntity> query = w.Context.Set<TEntity>().AsNoTracking();
                     await HydrateResultsSet(results, query, w, t, page, filter, orderBy, properites);
                 }, work, token);
             }
@@ -241,12 +242,13 @@ namespace Programming.Team.Data
             TEntity? entity = null;
             await Use(async (w, t) =>
             {
-                var query = w.Context.Set<TEntity>().AsQueryable();
+                var query = w.Context.Set<TEntity>().AsQueryable().AsNoTracking();
                 if (properites != null)
                 {
                     query = query.Include(properites);
                 }
                 entity = await query.SingleOrDefaultAsync(q => q.Id.Equals(key));
+                
             }, work, token);
             return entity;
         }
@@ -254,7 +256,7 @@ namespace Programming.Team.Data
         {
             return Use(async (w, t) =>
             {
-                var userId = await GetCurrentUserId(work, token);
+                var userId = await GetCurrentUserId(w, token);
                 entity.CreateDate = DateTime.UtcNow;
                 entity.UpdateDate = DateTime.UtcNow;
                 entity.CreatedByUserId = userId;
@@ -269,7 +271,7 @@ namespace Programming.Team.Data
             await Use(async (w, t) =>
             {
                 await PopulateBaseAttributes(entity, w, t);
-                var userId = await GetCurrentUserId(work, token);
+                var userId = await GetCurrentUserId(w, token);
                 entity.UpdateDate = DateTime.UtcNow;
                 entity.UpdatedByUserId = userId;
                 w.Context.Attach(entity);

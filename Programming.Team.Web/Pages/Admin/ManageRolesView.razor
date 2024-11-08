@@ -9,7 +9,15 @@
         SortMode="SortMode.Multiple">
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="Name"/>
-            
+            <TemplateColumn>
+                <CellTemplate>
+                    @{
+                        var strHref = $"/admin/roles/{context.Item.Id}";
+                        <MudLink Href="@strHref">(...)</MudLink>
+                    }
+                    
+                </CellTemplate>
+            </TemplateColumn>
         </Columns>
     </MudDataGrid>
 }

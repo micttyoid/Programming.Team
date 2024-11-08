@@ -12,4 +12,9 @@ namespace Programming.Team.Data.Core
     {
         Task<User?> GetByObjectIdAsync(string objectId, IUnitOfWork? work = null, Expression<Func<User, object>>? properties = null, CancellationToken token = default);
     }
+    public interface IRoleRepository : IRepository<Role, Guid> 
+    {
+        Task<Guid[]> GetUserIds(Guid roleId, IUnitOfWork? work = null, CancellationToken token = default);
+        Task SetSelectedUsersToRole(Guid roleId, Guid[] userIds, IUnitOfWork? work = null, CancellationToken token = default);
+    }
 }

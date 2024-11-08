@@ -23,4 +23,20 @@ namespace Programming.Team.Business
             return Repository.GetByObjectIdAsync(objectId, work, properties, token);
         }
     }
+    public class RoleBusinessFacade : BusinessRepositoryFacade<Role, Guid, IRoleRepository>, IRoleBusinessFacade
+    {
+        public RoleBusinessFacade(IRoleRepository repository, ILogger<Role> logger) : base(repository, logger)
+        {
+        }
+
+        public Task<Guid[]> GetUserIds(Guid roleId, IUnitOfWork? work = null, CancellationToken token = default)
+        {
+            return Repository.GetUserIds(roleId, work, token);
+        }
+
+        public Task SetSelectedUsersToRole(Guid roleId, Guid[] userIds, IUnitOfWork? work = null, CancellationToken token = default)
+        {
+            return Repository.SetSelectedUsersToRole(roleId, userIds, work, token);
+        }
+    }
 }

@@ -29,4 +29,41 @@ namespace Programming.Team.Data
             return user;
         }
     }
+    public class RoleRepository : Repository<Role, Guid>, IRoleRepository
+    {
+        public RoleRepository(IContextFactory contextFactory) : base(contextFactory)
+        {
+        }
+
+        public async Task<Guid[]> GetUserIds(Guid roleId, IUnitOfWork? work = null, CancellationToken token = default)
+        {
+            Guid[] userIds = [];
+            await Use(async (w, t) => 
+            {
+                userIds = await w.ResumesContext.Users.Where(u => u.Roles.Any(r => r.Id == roleId)).Select(u => u.Id).ToArrayAsync(token);
+            },work, token);
+            return userIds;
+        }
+
+        public async Task SetSelectedUsersToRole(Guid roleId, Guid[] userIds, IUnitOfWork? work = null, CancellationToken token = default)
+        {
+            await Use(async (w, t) =>
+            {
+                var role = await w.ResumesContext.Roles.Include(c => c.Users).SingleOrDefaultAsync(w => w.Id == roleId);
+                if(role != null)
+                {
+                    
+                    var userId = await GetCurrentUserId(w, t);
+                    role.Users.Clear();
+                    role.UpdateDate = DateTime.UtcNow;
+                    role.UpdatedByUserId = userId;
+                    foreach(var id in userIds)
+                    {
+                        role.Users.Add(await w.ResumesContext.Users.SingleAsync(w => w.Id == id));
+                    }
+                    
+                }
+            }, work, token, true);
+        }
+    }
 }

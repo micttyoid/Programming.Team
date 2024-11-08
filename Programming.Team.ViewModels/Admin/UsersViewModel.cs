@@ -21,18 +21,27 @@ namespace Programming.Team.ViewModels.Admin
         {
         }
 
-        protected override UserViewModel ConstructViewModel(User entity)
+        protected override async Task<UserViewModel> ConstructViewModel(User entity)
         {
-            return new UserViewModel(Logger, Facade, entity);
+            var vm = new UserViewModel(Logger, Facade, entity.Id);
+            await vm.Load.Execute().GetAwaiter();
+            return vm;
+        }
+    }
+    public class UserLoaderViewModel : EntityLoaderViewModel<Guid, User, UserViewModel, IUserBusinessFacade>
+    {
+        public UserLoaderViewModel(IUserBusinessFacade facade, ILogger<EntityLoaderViewModel<Guid, User, UserViewModel, IUserBusinessFacade>> logger) : base(facade, logger)
+        {
+        }
+
+        protected override UserViewModel Construct(User entity)
+        {
+            return new UserViewModel(Logger, Facade, entity.Id);
         }
     }
     public class UserViewModel : EntityViewModel<Guid, User, IUserBusinessFacade>, IUser
     {
         public UserViewModel(ILogger logger, IUserBusinessFacade facade, Guid id) : base(logger, facade, id)
-        {
-        }
-
-        public UserViewModel(ILogger logger, IUserBusinessFacade facade, User entity) : base(logger, facade, entity)
         {
         }
 
@@ -126,7 +135,7 @@ namespace Programming.Team.ViewModels.Admin
             set => this.RaiseAndSetIfChanged(ref country, value);
         }
 
-        protected override User Populate()
+        protected override Task<User> Populate()
         {
             User user = new User();
             user.Id = Id;
@@ -144,10 +153,10 @@ namespace Programming.Team.ViewModels.Admin
             user.State = State;
             user.Country = Country;
 
-            return user;
+            return Task.FromResult(user);
         }
-
-        protected override void Read(User entity)
+        
+        protected override Task Read(User entity)
         {
             Id = entity.Id;
             ObjectId = entity.ObjectId;
@@ -163,6 +172,7 @@ namespace Programming.Team.ViewModels.Admin
             City = entity.City;
             State = entity.State;
             Country = entity.Country;
+            return Task.CompletedTask;
         }
     }
 }

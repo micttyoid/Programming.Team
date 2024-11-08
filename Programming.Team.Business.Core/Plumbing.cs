@@ -1,4 +1,6 @@
-﻿using Programming.Team.Core;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Programming.Team.Core;
 using Programming.Team.Data.Core;
 using System;
 using System.Collections.Generic;

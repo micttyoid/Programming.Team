@@ -19,6 +19,7 @@ using Programming.Team.Web.Authorization;
 using MudBlazor.Services;
 using Programming.Team.Web.Shared;
 using Programming.Team.ViewModels.Admin;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,12 +53,17 @@ builder.Services.AddDbContext<ResumesContext>(options =>
 builder.Services.AddScoped<IContextFactory, ContextFactory>();
 builder.Services.AddScoped<IRepository<Role, Guid>, Repository<Role, Guid>>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Role, Guid>, BusinessRepositoryFacade<Role, Guid, IRepository<Role, Guid>>>();
 builder.Services.AddScoped<IUserBusinessFacade, UserBusinessFacade>();
+builder.Services.AddScoped<IRoleBusinessFacade, RoleBusinessFacade>();
 builder.Services.AddTransient<AlertView.AlertViewModel>();
 builder.Services.AddTransient<AddRoleViewModel>();
 builder.Services.AddTransient<ManageRolesViewModel>();
 builder.Services.AddTransient<UsersViewModel>();
+builder.Services.AddTransient<SelectUsersViewModel>();
+builder.Services.AddTransient<RoleLoaderViewModel>();
+
 builder.Services.AddSession();
 var app = builder.Build();
 
