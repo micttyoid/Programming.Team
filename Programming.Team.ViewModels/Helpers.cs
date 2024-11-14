@@ -586,12 +586,16 @@ namespace Programming.Team.ViewModels
         {
             return null;
         }
+        protected virtual Expression<Func<TEntity, bool>>? FilterCondition()
+        {
+            return null;
+        }
         protected virtual async Task DoLoad(CancellationToken token)
         {
             try
             {
                 Entities.Clear();
-                var rs = await Facade.Get(orderBy: OrderBy(), properites: PropertiesToLoad(), token: token);
+                var rs = await Facade.Get(filter: FilterCondition(), orderBy: OrderBy(), properites: PropertiesToLoad(), token: token);
                 foreach(var e in rs.Entities)
                 {
                     var vm = await Construct(e, token);

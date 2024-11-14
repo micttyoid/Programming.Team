@@ -11,9 +11,6 @@ public interface IPositionSkill : IEntity<Guid>
 
     string? Description { get; set; }
 
-    DateOnly? StartDate { get; set; }
-
-    DateOnly? EndDate { get; set; }
 }
 public partial class PositionSkill : Entity<Guid>, IPositionSkill
 {
@@ -24,9 +21,6 @@ public partial class PositionSkill : Entity<Guid>, IPositionSkill
 
     public string? Description { get; set; }
 
-    public DateOnly? StartDate { get; set; }
-
-    public DateOnly? EndDate { get; set; }
 
     public virtual Position Position { get; set; } = null!;
 

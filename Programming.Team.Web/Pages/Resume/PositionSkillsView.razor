@@ -1,0 +1,35 @@
+﻿@inherits ReactiveComponentBase<PositionSkillsViewModel>
+
+@if(ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert" />
+    <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()">Add Skill</MudButton>
+    <AddPositionSkillView ViewModel="ViewModel.AddViewModel"/>
+    <MudStack Row="true">
+        @foreach(var e in ViewModel.Entities)
+        {
+            <PositionSkillView ViewModel="e"/>
+        }
+    </MudStack>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        if (ViewModel != null)
+            ViewModel.Entities.CollectionChanged += (s, e) =>
+            {
+                InvokeAsync(StateHasChanged);
+            };
+        base.OnInitialized();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ViewModel != null && firstRender)
+        {
+            await ViewModel.Load.Execute().GetAwaiter();
+
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}
