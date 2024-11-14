@@ -326,7 +326,7 @@ namespace Programming.Team.ViewModels.Resume
         {
             yield return e => e.Skill;
         }
-        protected override Expression<Func<PositionSkill, bool>>? FilterCondition()
+        protected override async Task<Expression<Func<PositionSkill, bool>>?> FilterCondition()
         {
             return e => e.PositionId == PositionId;
         }
@@ -632,6 +632,11 @@ namespace Programming.Team.ViewModels.Resume
         protected override Func<IQueryable<Position>, IOrderedQueryable<Position>>? OrderBy()
         {
             return e => e.OrderByDescending(c => c.StartDate).ThenByDescending(c => c.SortOrder).ThenByDescending(c => c.EndDate);
+        }
+        protected override async Task<Expression<Func<Position, bool>>?> FilterCondition()
+        {
+            var userId = await Facade.GetCurrentUserId();
+            return e => e.UserId == userId;
         }
         protected override Task<PositionViewModel> Construct(Position entity, CancellationToken token)
         {
