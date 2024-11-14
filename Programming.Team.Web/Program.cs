@@ -60,6 +60,8 @@ builder.Services.AddScoped<IRepository<Company, Guid>, Repository<Company, Guid>
 builder.Services.AddScoped<IRepository<Position, Guid>, Repository<Position, Guid>>();
 builder.Services.AddScoped<IRepository<PositionSkill, Guid>, Repository<PositionSkill, Guid>>();
 builder.Services.AddScoped<IRepository<Skill, Guid>, Repository<Skill, Guid>>();
+builder.Services.AddScoped<IRepository<Education, Guid>, Repository<Education, Guid>>();
+builder.Services.AddScoped<IRepository<Institution, Guid>, Repository<Institution, Guid>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Role, Guid>, BusinessRepositoryFacade<Role, Guid, IRepository<Role, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Company, Guid>, BusinessRepositoryFacade<Company, Guid, IRepository<Company, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Position, Guid>, BusinessRepositoryFacade<Position, Guid, IRepository<Position, Guid>>>();
@@ -67,6 +69,8 @@ builder.Services.AddScoped<IUserBusinessFacade, UserBusinessFacade>();
 builder.Services.AddScoped<IRoleBusinessFacade, RoleBusinessFacade>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<PositionSkill, Guid>, BusinessRepositoryFacade<PositionSkill, Guid, IRepository<PositionSkill, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Skill, Guid>, BusinessRepositoryFacade<Skill, Guid, IRepository<Skill, Guid>>>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<Education, Guid>, BusinessRepositoryFacade<Education, Guid, IRepository<Education, Guid>>>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<Institution, Guid>, BusinessRepositoryFacade<Institution, Guid, IRepository<Institution, Guid>>>();
 builder.Services.AddTransient<AlertView.AlertViewModel>();
 builder.Services.AddTransient<AddRoleViewModel>();
 builder.Services.AddTransient<ManageRolesViewModel>();
@@ -81,6 +85,10 @@ builder.Services.AddTransient<AddSkillViewModel>();
 builder.Services.AddTransient<SearchSelectSkillViewModel>();
 builder.Services.AddTransient<AddPositionSkillViewModel>();
 builder.Services.AddTransient<PositionSkillsViewModel>();
+builder.Services.AddTransient<AddInstitutionViewModel>();
+builder.Services.AddTransient<SearchSelectInstiutionViewModel>();
+builder.Services.AddTransient<AddEducationViewModel>();
+builder.Services.AddTransient<EducationsViewModel>();
 builder.Services.AddSession();
 var app = builder.Build();
 

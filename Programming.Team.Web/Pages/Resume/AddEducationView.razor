@@ -1,0 +1,35 @@
+﻿@inherits ReactiveComponentBase<AddEducationViewModel>
+
+@if (ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert" />
+
+    <MudPopover Open="ViewModel.IsOpen" Fixed="true" Class="px-4 pt-4">
+        <div class="d-flex flex-column">
+            <MudStack>
+                <SearchSelectInstiutionView ViewModel="ViewModel.SelectInstiutionViewModel" />
+                <MudCheckBox @bind-Value="ViewModel.Graduated" Label="Graduated?"/>
+                <MudDatePicker @bind-Date="ViewModel.StartDateTime" Label="Start Date" MinDate="new DateTime(1950, 1, 1)" />
+                <MudDatePicker @bind-Date="ViewModel.EndDateTime" Label="End Date" MinDate="new DateTime(1950, 1, 1)" />
+                <MudTextField Lines="10" @bind-Value="ViewModel.Description" Label="Description" Variant="Variant.Outlined" />
+                <MudStack Row="true">
+                    <MudButton OnClick="ViewModel.Add.BindCommand<MouseEventArgs>()">Add Education</MudButton>
+                    <MudButton OnClick="ViewModel.Cancel.BindCommand<MouseEventArgs>()">Cancel</MudButton>
+                </MudStack>
+            </MudStack>
+
+        </div>
+    </MudPopover>
+
+}
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && ViewModel != null)
+        {
+            await ViewModel.Init.Execute().GetAwaiter();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

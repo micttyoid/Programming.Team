@@ -17,7 +17,7 @@ public interface IEducation : IEntity<Guid>, IUserPartionedEntity
 
     bool Graduated { get; set; }
 }
-public partial class Education : Entity<Guid>
+public partial class Education : Entity<Guid>, IEducation
 {
    
 

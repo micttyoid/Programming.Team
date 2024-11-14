@@ -1,0 +1,21 @@
+﻿@inherits ReactiveComponentBase<EducationViewModel>
+
+@if (ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert" />
+    <MudStack>
+        <MudText>Company: @ViewModel.Institution.Name</MudText>
+        <MudTextField @bind-Value="ViewModel.Major" Label="Description" Variant="Variant.Outlined" />
+        <MudCheckBox @bind-Value="ViewModel.Graduated" Label="Graduated?" />
+        <MudDatePicker @bind-Date="ViewModel.StartDateTime" Label="Start Date" MinDate="new DateTime(1950, 1, 1)" />
+        <MudDatePicker @bind-Date="ViewModel.EndDateTime" Label="End Date" MinDate="new DateTime(1950, 1, 1)" />
+        <MudTextField Lines="10" @bind-Value="ViewModel.Description" Label="Description" Variant="Variant.Outlined" />
+        <MudStack Row="true">
+            <MudButton OnClick="ViewModel.Update.BindCommand<MouseEventArgs>()">Update</MudButton>
+            <MudButton OnClick="ViewModel.Delete.BindCommand<MouseEventArgs>()">Delete</MudButton>
+        </MudStack>
+    </MudStack>
+}
+
+@code {
+}
