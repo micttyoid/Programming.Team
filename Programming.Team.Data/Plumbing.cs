@@ -281,7 +281,8 @@ namespace Programming.Team.Data
         }
 
         public async virtual Task<TEntity> Update(TEntity entity,
-            IUnitOfWork? work = null, CancellationToken token = default)
+            
+            IUnitOfWork? work = null, IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default)
         {
             await Use(async (w, t) =>
             {
@@ -291,6 +292,8 @@ namespace Programming.Team.Data
                 entity.UpdatedByUserId = userId;
                 w.Context.Attach(entity);
                 w.Context.Update(entity);
+                if (properites != null)
+                    entity = await GetByID(entity.Id, w, properites, t) ?? throw new InvalidDataException();
             }, work, token, true);
             return entity;
         }

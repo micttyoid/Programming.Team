@@ -4,7 +4,7 @@
 {
     <AlertView Alert="ViewModel.Alert"/>
     <MudStack>
-        <MudText>Company: @ViewModel.Company.Name</MudText>
+        <MudText>Company: @ViewModel.Company?.Name</MudText>
         <MudTextField @bind-Value="ViewModel.Title" Label="Title" Variant="Variant.Outlined" />
         <MudDatePicker @bind-Date="ViewModel.StartDateTime" Label="Start Date" />
         <MudDatePicker @bind-Date="ViewModel.EndDateTime" Label="End Date" />

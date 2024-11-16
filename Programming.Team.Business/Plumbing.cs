@@ -119,18 +119,18 @@ namespace Programming.Team.Business
             return Repository.GetByID(key, work, properites, token);
         }
         public virtual async Task<TEntity> Update(TEntity entity,
-            IUnitOfWork? work = null,CancellationToken token = default)
+            IUnitOfWork? work = null,
+            IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default)
         {
             try
             {
-                await this.Repository.Update(entity, work, token);
+                return await this.Repository.Update(entity, work, properites, token);
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, ex.Message);
                 throw;
             }
-            return entity;
         }
     }
 }

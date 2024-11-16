@@ -122,7 +122,7 @@ namespace Programming.Team.ViewModels
             try
             {
                 var entity = await Populate();
-                entity = await Facade.Update(entity, token: token);
+                entity = await Facade.Update(entity, properites: PropertiesToLoad(), token: token);
                 entity.Id = Id;
                 await Read(entity);
                 Updated?.Invoke(this, entity);

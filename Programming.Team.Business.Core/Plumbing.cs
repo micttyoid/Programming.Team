@@ -30,7 +30,8 @@ namespace Programming.Team.Business.Core
         where TKey : struct
     {
         Task<TEntity> Update(TEntity entity,
-            IUnitOfWork? work = null, CancellationToken token = default);
+            IUnitOfWork? work = null,
+            IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default);
         Task<RepositoryResultSet<TKey, TEntity>> Get(IUnitOfWork? work = null,
             Pager? page = null,
             Expression<Func<TEntity, bool>>? filter = null,

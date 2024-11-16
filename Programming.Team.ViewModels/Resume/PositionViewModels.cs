@@ -166,8 +166,8 @@ namespace Programming.Team.ViewModels.Resume
     }
     public class PositionViewModel : EntityViewModel<Guid, Position>, IPosition
     {
-        private Company company = null!;
-        public Company Company
+        private Company? company;
+        public Company? Company
         {
             get => company;
             set => this.RaiseAndSetIfChanged(ref company, value);
