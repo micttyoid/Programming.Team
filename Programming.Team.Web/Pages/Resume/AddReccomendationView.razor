@@ -1,0 +1,34 @@
+﻿@inherits ReactiveComponentBase<AddReccomendationViewModel>
+
+@if (ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert" />
+
+    <MudPopover Open="ViewModel.IsOpen" Fixed="true" Class="px-4 pt-4">
+        <div class="d-flex flex-column">
+            <MudStack>
+                <SearchSelectPositionView ViewModel="ViewModel.SelectPosition" />
+                <MudTextField @bind-Value="ViewModel.Name" Label="Name" Variant="Variant.Outlined" />
+                <MudTextField Lines="10" @bind-Value="ViewModel.Body" Label="Body" Variant="Variant.Outlined" />
+                <MudTextField @bind-Value="ViewModel.SortOrder" Label="Sort Order" Variant="Variant.Outlined" />
+                <MudStack Row="true">
+                    <MudButton OnClick="ViewModel.Add.BindCommand<MouseEventArgs>()">Add Reccomendation</MudButton>
+                    <MudButton OnClick="ViewModel.Cancel.BindCommand<MouseEventArgs>()">Cancel</MudButton>
+                </MudStack>
+            </MudStack>
+
+        </div>
+    </MudPopover>
+
+}
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && ViewModel != null)
+        {
+            await ViewModel.Init.Execute().GetAwaiter();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

@@ -1,0 +1,20 @@
+﻿@inherits ReactiveComponentBase<SearchSelectPositionViewModel>
+
+@if (ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert" />
+    <MudStack>
+        <MudAutocomplete T="Programming.Team.Core.Position" CoerceText="true" Label="Position" ToStringFunc="c => c.Company.Name"
+                         @bind-Value="ViewModel.Selected" DebounceInterval="250" SearchFunc="ViewModel.Search.BindCommand()" />
+        @if (ViewModel.CanAdd)
+        {
+            <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()">Add Position</MudButton>
+            <AddPositionView ViewModel="ViewModel.AddViewModel" />
+        }
+    </MudStack>
+
+}
+
+@code {
+
+}

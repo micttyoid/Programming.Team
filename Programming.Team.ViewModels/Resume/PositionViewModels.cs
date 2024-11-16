@@ -293,4 +293,27 @@ namespace Programming.Team.ViewModels.Resume
             await SkillsViewModel.Load.Execute().GetAwaiter();
         }
     }
+    public class SearchSelectPositionViewModel : EntitySelectSearchViewModel<Guid, Position, AddPositionViewModel>
+
+    {
+        public SearchSelectPositionViewModel(IBusinessRepositoryFacade<Position, Guid> facade, AddPositionViewModel addViewModel, ILogger<EntitySelectSearchViewModel<Guid, Position, IBusinessRepositoryFacade<Position, Guid>, AddPositionViewModel>> logger) : base(facade, addViewModel, logger)
+        {
+        }
+
+        protected override async Task<IEnumerable<Position>> DoSearch(string? text, CancellationToken token = default)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return [];
+            SearchString = text;
+            var result = await Facade.Get(page: new Pager() { Page = 1, Size = 5 },
+                filter: q => q.Company.Name.StartsWith(text), properites: PropertiesToLoad(), token: token);
+            if (result != null)
+                return result.Entities;
+            return [];
+        }
+        protected virtual IEnumerable<Expression<Func<Position, object>>>? PropertiesToLoad()
+        {
+            yield return e => e.Company;
+        }
+    }
 }

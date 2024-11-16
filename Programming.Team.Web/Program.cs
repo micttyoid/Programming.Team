@@ -57,6 +57,7 @@ builder.Services.AddScoped<IRepository<Role, Guid>, Repository<Role, Guid>>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IRepository<Company, Guid>, Repository<Company, Guid>>();
+builder.Services.AddScoped<IRepository<Reccomendation, Guid>, Repository<Reccomendation, Guid>>();
 builder.Services.AddScoped<IRepository<Position, Guid>, Repository<Position, Guid>>();
 builder.Services.AddScoped<IRepository<PositionSkill, Guid>, Repository<PositionSkill, Guid>>();
 builder.Services.AddScoped<IRepository<Skill, Guid>, Repository<Skill, Guid>>();
@@ -65,6 +66,7 @@ builder.Services.AddScoped<IRepository<Institution, Guid>, Repository<Institutio
 builder.Services.AddScoped<IBusinessRepositoryFacade<Role, Guid>, BusinessRepositoryFacade<Role, Guid, IRepository<Role, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Company, Guid>, BusinessRepositoryFacade<Company, Guid, IRepository<Company, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Position, Guid>, BusinessRepositoryFacade<Position, Guid, IRepository<Position, Guid>>>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<Reccomendation, Guid>, BusinessRepositoryFacade<Reccomendation, Guid, IRepository<Reccomendation, Guid>>>();
 builder.Services.AddScoped<IUserBusinessFacade, UserBusinessFacade>();
 builder.Services.AddScoped<IRoleBusinessFacade, RoleBusinessFacade>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<PositionSkill, Guid>, BusinessRepositoryFacade<PositionSkill, Guid, IRepository<PositionSkill, Guid>>>();
@@ -89,6 +91,9 @@ builder.Services.AddTransient<AddInstitutionViewModel>();
 builder.Services.AddTransient<SearchSelectInstiutionViewModel>();
 builder.Services.AddTransient<AddEducationViewModel>();
 builder.Services.AddTransient<EducationsViewModel>();
+builder.Services.AddTransient<SearchSelectPositionViewModel>();
+builder.Services.AddTransient<AddReccomendationViewModel>();
+builder.Services.AddTransient<ReccomendationsViewModel>();
 builder.Services.AddSession();
 var app = builder.Build();
 
