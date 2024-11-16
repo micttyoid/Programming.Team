@@ -63,6 +63,8 @@ builder.Services.AddScoped<IRepository<PositionSkill, Guid>, Repository<Position
 builder.Services.AddScoped<IRepository<Skill, Guid>, Repository<Skill, Guid>>();
 builder.Services.AddScoped<IRepository<Education, Guid>, Repository<Education, Guid>>();
 builder.Services.AddScoped<IRepository<Institution, Guid>, Repository<Institution, Guid>>();
+builder.Services.AddScoped<IRepository<Certificate, Guid>, Repository<Certificate, Guid>>();
+builder.Services.AddScoped<IRepository<CertificateIssuer, Guid>, Repository<CertificateIssuer, Guid>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Role, Guid>, BusinessRepositoryFacade<Role, Guid, IRepository<Role, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Company, Guid>, BusinessRepositoryFacade<Company, Guid, IRepository<Company, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Position, Guid>, BusinessRepositoryFacade<Position, Guid, IRepository<Position, Guid>>>();
@@ -73,6 +75,8 @@ builder.Services.AddScoped<IBusinessRepositoryFacade<PositionSkill, Guid>, Busin
 builder.Services.AddScoped<IBusinessRepositoryFacade<Skill, Guid>, BusinessRepositoryFacade<Skill, Guid, IRepository<Skill, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Education, Guid>, BusinessRepositoryFacade<Education, Guid, IRepository<Education, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Institution, Guid>, BusinessRepositoryFacade<Institution, Guid, IRepository<Institution, Guid>>>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<Certificate, Guid>, BusinessRepositoryFacade<Certificate, Guid, IRepository<Certificate, Guid>>>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<CertificateIssuer, Guid>, BusinessRepositoryFacade<CertificateIssuer, Guid, IRepository<CertificateIssuer, Guid>>>();
 builder.Services.AddTransient<AlertView.AlertViewModel>();
 builder.Services.AddTransient<AddRoleViewModel>();
 builder.Services.AddTransient<ManageRolesViewModel>();
@@ -94,6 +98,10 @@ builder.Services.AddTransient<EducationsViewModel>();
 builder.Services.AddTransient<SearchSelectPositionViewModel>();
 builder.Services.AddTransient<AddReccomendationViewModel>();
 builder.Services.AddTransient<ReccomendationsViewModel>();
+builder.Services.AddTransient<SearchSelectCertificateIssuerViewModel>();
+builder.Services.AddTransient<AddCertificateIssuerViewModel>();
+builder.Services.AddTransient<AddCertificateViewModel>();
+builder.Services.AddTransient<CertificatesViewModel>();
 builder.Services.AddSession();
 var app = builder.Build();
 

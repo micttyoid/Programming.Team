@@ -61,6 +61,13 @@ namespace Programming.Team.ViewModels.Resume
             set => this.RaiseAndSetIfChanged(ref sortOrder, value);
         }
 
+        private string? title;
+        public string? Title
+        {
+            get => title;
+            set => this.RaiseAndSetIfChanged(ref title, value);
+        }
+
         protected override Task Clear()
         {
             PositionId = Guid.Empty;
@@ -68,6 +75,7 @@ namespace Programming.Team.ViewModels.Resume
             Body = string.Empty;
             SortOrder = null;
             SelectPosition.Selected = null;
+            Title = null;
             return Task.CompletedTask;
         }
 
@@ -79,7 +87,8 @@ namespace Programming.Team.ViewModels.Resume
                 Name = Name,
                 Body = Body,
                 SortOrder = SortOrder,
-                UserId = UserId
+                UserId = UserId,
+                Title = Title
             });
         }
     }
@@ -112,6 +121,12 @@ namespace Programming.Team.ViewModels.Resume
             get => sortOrder;
             set => this.RaiseAndSetIfChanged(ref sortOrder, value);
         }
+        private string? title;
+        public string? Title
+        {
+            get => title;
+            set => this.RaiseAndSetIfChanged(ref title, value);
+        }
         public Guid UserId { get; set; }
         private Position? position;
         public Position? Position
@@ -130,6 +145,7 @@ namespace Programming.Team.ViewModels.Resume
         protected override IEnumerable<Expression<Func<Reccomendation, object>>>? PropertiesToLoad()
         {
             yield return e => e.Position;
+            yield return e => e.Position.Company;
         }
 
         protected override Task<Reccomendation> Populate()
@@ -141,7 +157,8 @@ namespace Programming.Team.ViewModels.Resume
                 Body = body,
                 SortOrder = sortOrder,
                 PositionId = PositionId,
-                UserId = UserId
+                UserId = UserId,
+                Title = Title
             });
         }
 
@@ -153,6 +170,8 @@ namespace Programming.Team.ViewModels.Resume
             SortOrder = entity.SortOrder;
             Name = entity.Name;
             PositionId = entity.PositionId;
+            Position = entity.Position;
+            Title = entity.Title;
             return Task.CompletedTask;
         }
     }
@@ -164,6 +183,7 @@ namespace Programming.Team.ViewModels.Resume
         protected override IEnumerable<Expression<Func<Reccomendation, object>>>? PropertiesToLoad()
         {
             yield return e => e.Position;
+            yield return e => e.Position.Company;
         }
         protected override async Task<Expression<Func<Reccomendation, bool>>?> FilterCondition()
         {

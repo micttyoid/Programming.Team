@@ -5,7 +5,7 @@
     <AlertView Alert="ViewModel.Alert" />
     <MudStack>
         <MudText>Instiution: @ViewModel.Institution?.Name</MudText>
-        <MudTextField @bind-Value="ViewModel.Major" Label="Description" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="ViewModel.Major" Label="Major" Variant="Variant.Outlined" />
         <MudCheckBox @bind-Value="ViewModel.Graduated" Label="Graduated?" />
         <MudDatePicker @bind-Date="ViewModel.StartDateTime" Label="Start Date" MinDate="new DateTime(1950, 1, 1)" />
         <MudDatePicker @bind-Date="ViewModel.EndDateTime" Label="End Date" MinDate="new DateTime(1950, 1, 1)" />

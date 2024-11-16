@@ -16,7 +16,7 @@ public partial class ResumesContext : DbContext
     {
     }
 
-    public virtual DbSet<Certificate> Certificates { get; set; }
+    public virtual DbSet<CertificateIssuer> Certificates { get; set; }
 
     public virtual DbSet<CertificateIssuer> CertificateIssuers { get; set; }
 
@@ -79,6 +79,7 @@ public partial class ResumesContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Certificates_Users");
              entity.HasQueryFilter(d => !d.IsDeleted);
+            entity.ToTable("Certificates");
         });
 
         modelBuilder.Entity<CertificateIssuer>(entity =>
@@ -101,6 +102,7 @@ public partial class ResumesContext : DbContext
                 .HasForeignKey(d => d.UpdatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
              entity.HasQueryFilter(d => !d.IsDeleted);
+            entity.ToTable("CertificateIssuers");
         });
 
         modelBuilder.Entity<Company>(entity =>

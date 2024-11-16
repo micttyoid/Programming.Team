@@ -1,4 +1,4 @@
-﻿@inherits ReactiveComponentBase<AddEducationViewModel>
+﻿@inherits ReactiveComponentBase<AddCertificateViewModel>
 
 @if (ViewModel != null)
 {
@@ -7,14 +7,14 @@
     <MudPopover Open="ViewModel.IsOpen" Fixed="true" Class="px-4 pt-4">
         <div class="d-flex flex-column">
             <MudStack>
-                <SearchSelectInstiutionView ViewModel="ViewModel.SelectInstiutionViewModel" />
-                <MudTextField @bind-Value="ViewModel.Major" Label="Major" Variant="Variant.Outlined" />
-                <MudCheckBox @bind-Value="ViewModel.Graduated" Label="Graduated?"/>
-                <MudDatePicker @bind-Date="ViewModel.StartDateTime" Label="Start Date" MinDate="new DateTime(1950, 1, 1)" />
-                <MudDatePicker @bind-Date="ViewModel.EndDateTime" Label="End Date" MinDate="new DateTime(1950, 1, 1)" />
+                <SearchSelectCertificateIssuerView ViewModel="ViewModel.CertificateIssuer" />
+                <MudTextField @bind-Value="ViewModel.Name" Label="Name" Variant="Variant.Outlined" />
+                <MudTextField @bind-Value="ViewModel.Url" Label="URL" Variant="Variant.Outlined" />
+                <MudDatePicker @bind-Date="ViewModel.ValidFromDateTime" Label="Valid From Date" MinDate="new DateTime(1950, 1, 1)" />
+                <MudDatePicker @bind-Date="ViewModel.ValidToDateTime" Label="Valid To Date" MinDate="new DateTime(1950, 1, 1)" />
                 <MudTextField Lines="10" @bind-Value="ViewModel.Description" Label="Description" Variant="Variant.Outlined" />
                 <MudStack Row="true">
-                    <MudButton OnClick="ViewModel.Add.BindCommand<MouseEventArgs>()">Add Education</MudButton>
+                    <MudButton OnClick="ViewModel.Add.BindCommand<MouseEventArgs>()">Add Certificate</MudButton>
                     <MudButton OnClick="ViewModel.Cancel.BindCommand<MouseEventArgs>()">Cancel</MudButton>
                 </MudStack>
             </MudStack>

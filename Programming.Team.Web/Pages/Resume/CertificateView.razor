@@ -1,0 +1,21 @@
+﻿@inherits ReactiveComponentBase<CertificateViewModel>
+
+@if (ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert" />
+    <MudStack>
+        <MudText>Issuer: @ViewModel.Issuer?.Name</MudText>
+        <MudTextField @bind-Value="ViewModel.Name" Label="Name" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="ViewModel.Url" Label="URL" Variant="Variant.Outlined" />
+        <MudDatePicker @bind-Date="ViewModel.ValidFromDateTime" Label="Valid From Date" MinDate="new DateTime(1950, 1, 1)" />
+        <MudDatePicker @bind-Date="ViewModel.ValidToDateTime" Label="Valid To Date" MinDate="new DateTime(1950, 1, 1)" />
+        <MudTextField Lines="10" @bind-Value="ViewModel.Description" Label="Description" Variant="Variant.Outlined" />
+        <MudStack Row="true">
+            <MudButton OnClick="ViewModel.Update.BindCommand<MouseEventArgs>()">Update</MudButton>
+            <MudButton OnClick="ViewModel.Delete.BindCommand<MouseEventArgs>()">Delete</MudButton>
+        </MudStack>
+    </MudStack>
+}
+
+@code {
+}

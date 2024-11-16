@@ -1,0 +1,20 @@
+﻿@inherits ReactiveComponentBase<SearchSelectCertificateIssuerViewModel>
+
+@if (ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert" />
+    <MudStack>
+        <MudAutocomplete T="CertificateIssuer" CoerceText="true" Label="Certificate Issuer" ToStringFunc="c => c.Name"
+                         @bind-Value="ViewModel.Selected" DebounceInterval="250" SearchFunc="ViewModel.Search.BindCommand()" />
+        @if (ViewModel.CanAdd)
+        {
+            <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()">Add Certificate</MudButton>
+            <AddCertificateIssuerView ViewModel="ViewModel.AddViewModel" />
+        }
+    </MudStack>
+
+}
+
+@code {
+
+}

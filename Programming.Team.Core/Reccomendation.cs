@@ -14,6 +14,7 @@ public interface IReccomendation : IEntity<Guid>, IUserPartionedEntity
     string Body { get; set; }
 
     string? SortOrder { get; set; }
+    string? Title { get; set; }
 }
 public partial class Reccomendation : Entity<Guid>, IReccomendation
 {
@@ -26,6 +27,7 @@ public partial class Reccomendation : Entity<Guid>, IReccomendation
     public string Body { get; set; } = null!;
 
     public string? SortOrder { get; set; }
+    public string? Title { get; set; }
 
     public virtual Position Position { get; set; } = null!;
 
