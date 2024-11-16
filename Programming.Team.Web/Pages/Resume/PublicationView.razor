@@ -1,0 +1,19 @@
+﻿@inherits ReactiveComponentBase<PublicationViewModel>
+
+@if (ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert" />
+    <MudStack>
+        <MudTextField @bind-Value="ViewModel.Title" Label="Title" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="ViewModel.Url" Label="URL" Variant="Variant.Outlined" />
+        <MudDatePicker @bind-Date="ViewModel.PublishDateTime" Label="Publish Date" MinDate="new DateTime(1950, 1, 1)" />
+        <MudTextField Lines="10" @bind-Value="ViewModel.Description" Label="Description" Variant="Variant.Outlined" />
+        <MudStack Row="true">
+            <MudButton OnClick="ViewModel.Update.BindCommand<MouseEventArgs>()">Update</MudButton>
+            <MudButton OnClick="ViewModel.Delete.BindCommand<MouseEventArgs>()">Delete</MudButton>
+        </MudStack>
+    </MudStack>
+}
+
+@code {
+}

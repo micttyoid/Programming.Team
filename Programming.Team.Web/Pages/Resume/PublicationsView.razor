@@ -1,0 +1,34 @@
+﻿@page "/resume/publications"
+@inherits ReactiveInjectableComponentBase<PublicationsViewModel>
+
+@if (ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert" />
+    <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()">Add Publication</MudButton>
+    <AddPublicationView ViewModel="ViewModel.AddViewModel" />
+    @foreach (var position in ViewModel.Entities)
+    {
+        <PublicationView ViewModel="position" />
+    }
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        if (ViewModel != null)
+            ViewModel.Entities.CollectionChanged += (s, e) =>
+            {
+                InvokeAsync(StateHasChanged);
+            };
+        base.OnInitialized();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ViewModel != null && firstRender)
+        {
+            await ViewModel.Load.Execute().GetAwaiter();
+
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

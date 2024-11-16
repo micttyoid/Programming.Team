@@ -65,6 +65,7 @@ builder.Services.AddScoped<IRepository<Education, Guid>, Repository<Education, G
 builder.Services.AddScoped<IRepository<Institution, Guid>, Repository<Institution, Guid>>();
 builder.Services.AddScoped<IRepository<Certificate, Guid>, Repository<Certificate, Guid>>();
 builder.Services.AddScoped<IRepository<CertificateIssuer, Guid>, Repository<CertificateIssuer, Guid>>();
+builder.Services.AddScoped<IRepository<Publication, Guid>, Repository<Publication, Guid>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Role, Guid>, BusinessRepositoryFacade<Role, Guid, IRepository<Role, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Company, Guid>, BusinessRepositoryFacade<Company, Guid, IRepository<Company, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Position, Guid>, BusinessRepositoryFacade<Position, Guid, IRepository<Position, Guid>>>();
@@ -77,6 +78,7 @@ builder.Services.AddScoped<IBusinessRepositoryFacade<Education, Guid>, BusinessR
 builder.Services.AddScoped<IBusinessRepositoryFacade<Institution, Guid>, BusinessRepositoryFacade<Institution, Guid, IRepository<Institution, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Certificate, Guid>, BusinessRepositoryFacade<Certificate, Guid, IRepository<Certificate, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<CertificateIssuer, Guid>, BusinessRepositoryFacade<CertificateIssuer, Guid, IRepository<CertificateIssuer, Guid>>>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<Publication, Guid>, BusinessRepositoryFacade<Publication, Guid, IRepository<Publication, Guid>>>();
 builder.Services.AddTransient<AlertView.AlertViewModel>();
 builder.Services.AddTransient<AddRoleViewModel>();
 builder.Services.AddTransient<ManageRolesViewModel>();
@@ -102,6 +104,8 @@ builder.Services.AddTransient<SearchSelectCertificateIssuerViewModel>();
 builder.Services.AddTransient<AddCertificateIssuerViewModel>();
 builder.Services.AddTransient<AddCertificateViewModel>();
 builder.Services.AddTransient<CertificatesViewModel>();
+builder.Services.AddTransient<AddPublicationViewModel>();
+builder.Services.AddTransient<PublicationsViewModel>();
 builder.Services.AddSession();
 var app = builder.Build();
 
