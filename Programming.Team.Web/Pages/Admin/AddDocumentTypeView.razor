@@ -1,0 +1,19 @@
+﻿@inherits ReactiveComponentBase<AddDocumentTypeViewModel>
+@if (ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert"></AlertView>
+    <h3>Add Document Type</h3>
+    <MudStack Row="true">
+        <MudTextField Label="Name" @bind-Value="ViewModel.Name" Variant="Variant.Outlined"></MudTextField>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                   OnClick="ViewModel.Add.BindCommand<MouseEventArgs>()"><i class="fa-solid fa-plus"></i></MudButton>
+    </MudStack>
+}
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && ViewModel != null)
+            await ViewModel.Init.Execute().GetAwaiter();
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}
