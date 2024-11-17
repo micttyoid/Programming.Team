@@ -1,0 +1,18 @@
+﻿@inherits ReactiveComponentBase<DocumentTemplateViewModel>
+
+@if (ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert" />
+    <MudStack>
+        <MudTextField @bind-Value="ViewModel.Name" Label="Name" Variant="Variant.Outlined" />
+        <MudText>Document Type: @ViewModel.DocumentType?.Name</MudText>
+        <MudTextField @bind-Value="ViewModel.Template" Label="Template" Lines="20" Variant="Variant.Outlined" />
+        <MudStack Row="true">
+            <MudButton OnClick="ViewModel.Update.BindCommand<MouseEventArgs>()">Update</MudButton>
+            <MudButton OnClick="ViewModel.Delete.BindCommand<MouseEventArgs>()">Delete</MudButton>
+        </MudStack>
+    </MudStack>
+}
+
+@code {
+}

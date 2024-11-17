@@ -63,6 +63,7 @@ builder.Services.AddScoped<IRepository<PositionSkill, Guid>, Repository<Position
 builder.Services.AddScoped<IRepository<Skill, Guid>, Repository<Skill, Guid>>();
 builder.Services.AddScoped<IRepository<DocumentType, int>, Repository<DocumentType, int>>();
 builder.Services.AddScoped<IRepository<Education, Guid>, Repository<Education, Guid>>();
+builder.Services.AddScoped<IRepository<DocumentTemplate, Guid>, Repository<DocumentTemplate, Guid>>();
 builder.Services.AddScoped<IRepository<Institution, Guid>, Repository<Institution, Guid>>();
 builder.Services.AddScoped<IRepository<Certificate, Guid>, Repository<Certificate, Guid>>();
 builder.Services.AddScoped<IRepository<CertificateIssuer, Guid>, Repository<CertificateIssuer, Guid>>();
@@ -80,6 +81,7 @@ builder.Services.AddScoped<IBusinessRepositoryFacade<Institution, Guid>, Busines
 builder.Services.AddScoped<IBusinessRepositoryFacade<Certificate, Guid>, BusinessRepositoryFacade<Certificate, Guid, IRepository<Certificate, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<CertificateIssuer, Guid>, BusinessRepositoryFacade<CertificateIssuer, Guid, IRepository<CertificateIssuer, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Publication, Guid>, BusinessRepositoryFacade<Publication, Guid, IRepository<Publication, Guid>>>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<DocumentTemplate, Guid>, BusinessRepositoryFacade<DocumentTemplate, Guid, IRepository<DocumentTemplate, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<DocumentType, int>, BusinessRepositoryFacade<DocumentType, int, IRepository<DocumentType, int>>>();
 builder.Services.AddTransient<AlertView.AlertViewModel>();
 builder.Services.AddTransient<AddRoleViewModel>();
@@ -110,6 +112,8 @@ builder.Services.AddTransient<AddPublicationViewModel>();
 builder.Services.AddTransient<PublicationsViewModel>();
 builder.Services.AddTransient<AddDocumentTypeViewModel>();
 builder.Services.AddTransient<DocumentTypesViewModel>();
+builder.Services.AddTransient<AddDocumentTemplateViewModel>();
+builder.Services.AddTransient<DocumentTemplatesViewModel>();
 builder.Services.AddSession();
 var app = builder.Build();
 
