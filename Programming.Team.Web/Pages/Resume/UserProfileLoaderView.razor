@@ -1,0 +1,18 @@
+﻿@page "/resume/profile"
+@inherits ReactiveInjectableComponentBase<UserProfileLoaderViewModel>
+@if(ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert"/>
+    @if(ViewModel.ViewModel != null)
+    {
+        <UserProfileView ViewModel="ViewModel.ViewModel"/>
+    }
+}
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ViewModel != null && firstRender)
+            await ViewModel.Load.Execute().GetAwaiter();
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

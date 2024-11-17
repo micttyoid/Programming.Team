@@ -114,6 +114,7 @@ builder.Services.AddTransient<AddDocumentTypeViewModel>();
 builder.Services.AddTransient<DocumentTypesViewModel>();
 builder.Services.AddTransient<AddDocumentTemplateViewModel>();
 builder.Services.AddTransient<DocumentTemplatesViewModel>();
+builder.Services.AddTransient<UserProfileLoaderViewModel>();
 builder.Services.AddSession();
 var app = builder.Build();
 
