@@ -21,6 +21,11 @@ using Programming.Team.Web.Shared;
 using Programming.Team.ViewModels.Admin;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Programming.Team.ViewModels.Resume;
+using Azure.Storage.Blobs;
+using Programming.Team.AI.Core;
+using Programming.Team.AI;
+using Programming.Team.Templating.Core;
+using Programming.Team.Templating;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,10 +54,14 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor()
     .AddMicrosoftIdentityConsentHandler();
 builder.Services.AddMudServices();
+builder.Services.AddScoped(provider =>
+    new BlobServiceClient(builder.Configuration.GetConnectionString("ResumesBlob")));
 var connectionString = builder.Configuration.GetConnectionString("Resumes");
 builder.Services.AddDbContext<ResumesContext>(options =>
     options.UseSqlServer(connectionString), ServiceLifetime.Scoped);
 builder.Services.AddScoped<IContextFactory, ContextFactory>();
+builder.Services.AddScoped<IResumeBlob, ResumeBlob>();
+
 builder.Services.AddScoped<IRepository<Role, Guid>, Repository<Role, Guid>>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
@@ -74,6 +83,7 @@ builder.Services.AddScoped<IBusinessRepositoryFacade<Position, Guid>, BusinessRe
 builder.Services.AddScoped<IBusinessRepositoryFacade<Reccomendation, Guid>, BusinessRepositoryFacade<Reccomendation, Guid, IRepository<Reccomendation, Guid>>>();
 builder.Services.AddScoped<IUserBusinessFacade, UserBusinessFacade>();
 builder.Services.AddScoped<IRoleBusinessFacade, RoleBusinessFacade>();
+builder.Services.AddScoped<IRepository<Posting, Guid>, Repository<Posting, Guid>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<PositionSkill, Guid>, BusinessRepositoryFacade<PositionSkill, Guid, IRepository<PositionSkill, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Skill, Guid>, BusinessRepositoryFacade<Skill, Guid, IRepository<Skill, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Education, Guid>, BusinessRepositoryFacade<Education, Guid, IRepository<Education, Guid>>>();
@@ -83,6 +93,11 @@ builder.Services.AddScoped<IBusinessRepositoryFacade<CertificateIssuer, Guid>, B
 builder.Services.AddScoped<IBusinessRepositoryFacade<Publication, Guid>, BusinessRepositoryFacade<Publication, Guid, IRepository<Publication, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<DocumentTemplate, Guid>, BusinessRepositoryFacade<DocumentTemplate, Guid, IRepository<DocumentTemplate, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<DocumentType, int>, BusinessRepositoryFacade<DocumentType, int, IRepository<DocumentType, int>>>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<Posting, Guid>, BusinessRepositoryFacade<Posting, Guid, IRepository<Posting, Guid>>>();
+builder.Services.AddScoped<IChatGPT, ChatGPT>();
+builder.Services.AddScoped<IResumeEnricher, ResumeEnricher>();
+builder.Services.AddScoped<IDocumentTemplator, DocumentTemplator>();
+builder.Services.AddScoped<IResumeBuilder, ResumeBuilder>();
 builder.Services.AddTransient<AlertView.AlertViewModel>();
 builder.Services.AddTransient<AddRoleViewModel>();
 builder.Services.AddTransient<ManageRolesViewModel>();

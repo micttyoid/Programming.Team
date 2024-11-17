@@ -312,7 +312,6 @@ public partial class ResumesContext : DbContext
                 .HasDefaultValueSql("(getutcdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.Name).HasMaxLength(1000);
-            entity.Property(e => e.RenderedPdf).HasColumnName("RenderedPDF");
             entity.Property(e => e.UpdateDate)
                 .HasDefaultValueSql("(getutcdate())")
                 .HasColumnType("datetime");

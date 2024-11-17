@@ -313,13 +313,54 @@ namespace Programming.Team.ViewModels
         Func<Task>? Reload { get; set; }
         TAddVM AddViewModel { get; }
     }
+
+    public static class ExpressionExtensions
+    {
+        public static Expression<Func<T, bool>>? CombineWithAnd<T>(
+            this Expression<Func<T, bool>>? first,
+            Expression<Func<T, bool>>? second)
+        {
+            if (first == null) return second;
+            if (second == null) return first;
+
+            var parameter = Expression.Parameter(typeof(T), "entity");
+
+            var combinedBody = Expression.AndAlso(
+                Expression.Invoke(first, parameter),
+                Expression.Invoke(second, parameter)
+            );
+
+            return Expression.Lambda<Func<T, bool>>(combinedBody, parameter);
+        }
+
+        public static Expression<Func<T, bool>>? CombineWithOr<T>(
+            this Expression<Func<T, bool>>? first,
+            Expression<Func<T, bool>>? second)
+        {
+            if (first == null) return second;
+            if (second == null) return first;
+
+            var parameter = Expression.Parameter(typeof(T), "entity");
+
+            var combinedBody = Expression.OrElse(
+                Expression.Invoke(first, parameter),
+                Expression.Invoke(second, parameter)
+            );
+
+            return Expression.Lambda<Func<T, bool>>(combinedBody, parameter);
+        }
+    }
+
     public class ManageEntityViewModel<TKey, TEntity, TFacade> : ReactiveObject, IManageEntityViewModel<TKey, TEntity>
         where TKey : struct
         where TEntity : Entity<TKey>, new()
         where TFacade : IBusinessRepositoryFacade<TEntity, TKey>
     {
         public Interaction<string, bool> Alert { get; } = new Interaction<string, bool>();
-
+        protected virtual Task<Expression<Func<TEntity, bool>>?> GetBaseFilterCondition()
+        {
+            return Task.FromResult<Expression<Func<TEntity, bool>>?>(null);
+        }
         public ReactiveCommand<DataGridRequest<TKey, TEntity>, RepositoryResultSet<TKey, TEntity>?> Fetch { get; }
         protected ILogger Logger { get; }
         protected TFacade Facade { get; }
@@ -333,7 +374,7 @@ namespace Programming.Team.ViewModels
         {
             try
             {
-                return await Facade.Get(page: request.Pager, filter: request.Filter, orderBy: request.OrderBy, token: token);
+                return await Facade.Get(page: request.Pager, filter: (await GetBaseFilterCondition()).CombineWithAnd(request.Filter), orderBy: request.OrderBy, token: token);
             }
             catch (Exception ex)
             {

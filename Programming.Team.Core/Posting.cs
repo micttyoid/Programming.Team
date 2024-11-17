@@ -10,7 +10,6 @@ public interface IPosting : IEntity<Guid>, IUserPartionedEntity
 
     string? RenderedLaTex { get; set; }
 
-    byte[]? RenderedPdf { get; set; }
 
     string? Configuration { get; set; }
 }
@@ -26,8 +25,6 @@ public partial class Posting : Entity<Guid>, IPosting
     public string Details { get; set; } = null!;
 
     public string? RenderedLaTex { get; set; }
-
-    public byte[]? RenderedPdf { get; set; }
 
     public string? Configuration { get; set; }
 
