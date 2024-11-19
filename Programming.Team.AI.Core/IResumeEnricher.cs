@@ -13,6 +13,6 @@ namespace Programming.Team.AI.Core
     }
     public interface IChatGPT
     {
-        Task<string?> GetRepsonse(string systemPrompt, string userPrompt, int maxTokens = 22, CancellationToken token = default);
+        Task<string?> GetRepsonse(string systemPrompt, string userPrompt, int maxTokens = 2048, CancellationToken token = default);
     }
 }

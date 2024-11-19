@@ -25,7 +25,7 @@ namespace Programming.Team.AI
             {
                 var config = !string.IsNullOrWhiteSpace(posting.Configuration) ? 
                     JsonSerializer.Deserialize<ResumeConfiguration>(posting.Configuration) ?? throw new InvalidDataException() : new ResumeConfiguration();
-                string? postingSkills = await ChatGPT.GetRepsonse("extract skills in json format {\"skill\":\"name\"}",
+                string? postingSkills = await ChatGPT.GetRepsonse("extract skills in json format {\\\"skill\\\":\\\"name\\\"}",
                     posting.Details, token: token);
                 if(postingSkills != null)
                 {
