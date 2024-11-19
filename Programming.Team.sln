@@ -21,9 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Programming.Team.ViewModels
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Programming.Team.Web", "Programming.Team.Web\Programming.Team.Web.csproj", "{CB10566C-8144-4D19-AC18-8BF563934FB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Programming.Team.Templating.Core", "Programming.Team.Templating.Core\Programming.Team.Templating.Core.csproj", "{82103A3C-C592-4410-9F17-6DC3EB649294}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Programming.Team.Templating.Core", "Programming.Team.Templating.Core\Programming.Team.Templating.Core.csproj", "{82103A3C-C592-4410-9F17-6DC3EB649294}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Programming.Team.Templating", "Programming.Team.Templating\Programming.Team.Templating.csproj", "{57761A49-A544-4802-8CEB-1F45D549E66A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Programming.Team.Templating", "Programming.Team.Templating\Programming.Team.Templating.csproj", "{57761A49-A544-4802-8CEB-1F45D549E66A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

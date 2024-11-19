@@ -1,5 +1,5 @@
 ﻿@inherits ReactiveComponentBase<PositionSkillsViewModel>
-
+@attribute [Authorize]
 @if(ViewModel != null)
 {
     <AlertView Alert="ViewModel.Alert" />

@@ -1,4 +1,5 @@
 ﻿@page "/resume/profile"
+@attribute [Authorize]
 @inherits ReactiveInjectableComponentBase<UserProfileLoaderViewModel>
 @if(ViewModel != null)
 {

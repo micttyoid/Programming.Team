@@ -11,6 +11,8 @@ namespace Programming.Team.Business.Core
     {
         Task<Resume> BuildResume(Guid userId, CancellationToken token = default);
         Task<Posting> BuildPosting(Guid userId, Guid documentTemplateId, string name, string positionText, Resume resume, ResumeConfiguration? config = null, CancellationToken token = default);
+        Task<Posting> RebuildPosting(Posting posting, Resume resume, bool enrich = true, bool renderPDF = true, ResumeConfiguration? config = null, CancellationToken token = default);
+        Task RenderResume(Posting posting, CancellationToken token = default);
     }
     public interface IResumeBlob
     {

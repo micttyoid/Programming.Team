@@ -40,11 +40,7 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
 builder.Services.AddControllersWithViews()
     .AddMicrosoftIdentityUI();
 
-builder.Services.AddAuthorization(options =>
-{
-    // By default, all incoming requests will be authorized according to the default policy
-    options.FallbackPolicy = options.DefaultPolicy;
-});
+builder.Services.AddAuthorization();
 builder.Services.AddMemoryCache();
 builder.Services.AddAuthorization();
 builder.Services.AddTokenAcquisition();
@@ -130,6 +126,8 @@ builder.Services.AddTransient<DocumentTypesViewModel>();
 builder.Services.AddTransient<AddDocumentTemplateViewModel>();
 builder.Services.AddTransient<DocumentTemplatesViewModel>();
 builder.Services.AddTransient<UserProfileLoaderViewModel>();
+builder.Services.AddTransient<PostingsViewModel>();
+builder.Services.AddTransient<PostingLoaderViewModel>();
 builder.Services.AddSession();
 var app = builder.Build();
 

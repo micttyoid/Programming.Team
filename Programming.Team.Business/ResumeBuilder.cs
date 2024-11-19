@@ -119,7 +119,6 @@ namespace Programming.Team.Business
         {
             yield return e => e.Issuer;
         }
-
         public async Task<Posting> BuildPosting(Guid userId, Guid documentTemplateId, string name, string positionText, Resume resume, ResumeConfiguration? config = null, CancellationToken token = default)
         {
             try
@@ -127,9 +126,7 @@ namespace Programming.Team.Business
                 var user = await UserFacade.GetByID(userId, token: token);
                 if (user == null)
                     throw new InvalidDataException();
-                var docTemplate = await DocumentTemplateFacade.GetByID(documentTemplateId, token: token);
-                if (docTemplate == null)
-                    throw new InvalidDataException();
+                
                 Posting posting = new Posting()
                 {
                     UserId = userId,
@@ -138,15 +135,46 @@ namespace Programming.Team.Business
                     Details = positionText,
                     Name = name
                 };
-                await PostingFacade.Add(posting, token: token);
-                await Enricher.EnrichResume(resume, posting, token);
-                posting.RenderedLaTex = await Templator.ApplyTemplate(positionText, resume, token);
-                if(posting.RenderedLaTex != null)
-                    await ResumeBlob.UploadResume(posting.Id, await Templator.RenderLatex(posting.RenderedLaTex, token), token);
-                posting = await PostingFacade.Update(posting, token: token);
+                posting = await RebuildPosting(posting, resume, config: config, token: token);
                 return posting;
             }
             catch (Exception ex)
+            {
+                Logger.LogError(ex, ex.Message);
+                throw;
+            }
+        }
+
+        public async Task<Posting> RebuildPosting(Posting posting, Resume resume, bool enrich = true, bool renderPDF = true, ResumeConfiguration? config = null, CancellationToken token = default)
+        {
+            try
+            {
+                var docTemplate = await DocumentTemplateFacade.GetByID(posting.DocumentTemplateId, token: token);
+                if (docTemplate == null)
+                    throw new InvalidDataException();
+                await PostingFacade.Add(posting, token: token);
+                if(enrich)
+                    await Enricher.EnrichResume(resume, posting, token);
+                posting.RenderedLaTex = await Templator.ApplyTemplate(docTemplate.Template, resume, token);
+                if (posting.RenderedLaTex != null && renderPDF)
+                    await RenderResume(posting, token);
+                return await PostingFacade.Update(posting, token: token);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, ex.Message);
+                throw;
+            }
+        }
+
+        public async Task RenderResume(Posting posting, CancellationToken token = default)
+        {
+            try
+            {
+                if (posting.RenderedLaTex != null)
+                    await ResumeBlob.UploadResume(posting.Id, await Templator.RenderLatex(posting.RenderedLaTex, token), token);
+            }
+            catch(Exception ex)
             {
                 Logger.LogError(ex, ex.Message);
                 throw;

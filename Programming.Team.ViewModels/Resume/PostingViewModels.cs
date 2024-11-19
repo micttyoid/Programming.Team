@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
@@ -32,14 +33,16 @@ namespace Programming.Team.ViewModels.Resume
     public class PostingLoaderViewModel : EntityLoaderViewModel<Guid, Posting, PostingViewModel, IBusinessRepositoryFacade<Posting, Guid>>
     {
         protected IBusinessRepositoryFacade<DocumentTemplate, Guid> DocumentTemplateFacade { get; }
-        public PostingLoaderViewModel(IBusinessRepositoryFacade<DocumentTemplate, Guid> documentTemplateFacade, IBusinessRepositoryFacade<Posting, Guid> facade, ILogger<EntityLoaderViewModel<Guid, Posting, PostingViewModel, IBusinessRepositoryFacade<Posting, Guid>>> logger) : base(facade, logger)
+        protected IResumeBuilder Builder { get; }
+        public PostingLoaderViewModel(IResumeBuilder builder, IBusinessRepositoryFacade<DocumentTemplate, Guid> documentTemplateFacade, IBusinessRepositoryFacade<Posting, Guid> facade, ILogger<EntityLoaderViewModel<Guid, Posting, PostingViewModel, IBusinessRepositoryFacade<Posting, Guid>>> logger) : base(facade, logger)
         {
             DocumentTemplateFacade = documentTemplateFacade;
+            Builder = builder;
         }
 
         protected override PostingViewModel Construct(Posting entity)
         {
-            return new PostingViewModel(DocumentTemplateFacade, Logger, Facade, entity);
+            return new PostingViewModel(Builder, DocumentTemplateFacade, Logger, Facade, entity);
         }
     }
     public class PostingViewModel : EntityViewModel<Guid, Posting>, IPosting
@@ -48,20 +51,58 @@ namespace Programming.Team.ViewModels.Resume
         public ResumeConfigurationViewModel ConfigurationViewModel { get; } = new ResumeConfigurationViewModel();
         public ObservableCollection<DocumentTemplate> DocumentTemplates { get; } = new ObservableCollection<DocumentTemplate>();
         protected IBusinessRepositoryFacade<DocumentTemplate, Guid> DocumentTemplateFacade { get; }
+        protected IResumeBuilder Builder { get; }
+        public ReactiveCommand<Unit, Unit> Rebuild { get; }
+        public ReactiveCommand<Unit, Unit> Render { get; }
         ~PostingViewModel()
         {
             disposables.Dispose();
         }
-        public PostingViewModel(IBusinessRepositoryFacade<DocumentTemplate, Guid>  documentTemplateFacade, ILogger logger, IBusinessRepositoryFacade<Posting, Guid> facade, Guid id) : base(logger, facade, id)
+        public PostingViewModel(IResumeBuilder builder, IBusinessRepositoryFacade<DocumentTemplate, Guid>  documentTemplateFacade, ILogger logger, IBusinessRepositoryFacade<Posting, Guid> facade, Guid id) : base(logger, facade, id)
         {
             DocumentTemplateFacade = documentTemplateFacade;
+            Builder = builder;
+            Rebuild = ReactiveCommand.CreateFromTask(DoRebuild);
+            Render = ReactiveCommand.CreateFromTask(DoRender);
             WireUpEvents();
         }
 
-        public PostingViewModel(IBusinessRepositoryFacade<DocumentTemplate, Guid> documentTemplateFacade, ILogger logger, IBusinessRepositoryFacade<Posting, Guid> facade, Posting entity) : base(logger, facade, entity)
+        public PostingViewModel(IResumeBuilder builder, IBusinessRepositoryFacade<DocumentTemplate, Guid> documentTemplateFacade, ILogger logger, IBusinessRepositoryFacade<Posting, Guid> facade, Posting entity) : base(logger, facade, entity)
         {
             DocumentTemplateFacade = documentTemplateFacade;
+            Builder = builder;
+            Rebuild = ReactiveCommand.CreateFromTask(DoRebuild);
+            Render = ReactiveCommand.CreateFromTask(DoRender);
             WireUpEvents();
+        }
+        protected async Task DoRebuild(CancellationToken token)
+        {
+            try
+            {
+                await Update.Execute().GetAwaiter();
+                var userId = await Facade.GetCurrentUserId();
+                if (userId == null)
+                    throw new InvalidDataException();
+                await Builder.RebuildPosting(await Populate(), await Builder.BuildResume(userId.Value, token), Enrich, RenderPDF, ConfigurationViewModel.GetConfiguration(), token);
+                await Load.Execute().GetAwaiter();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, ex.Message);
+                await Alert.Handle(ex.Message).GetAwaiter();
+            }
+        }
+        protected async Task DoRender(CancellationToken token)
+        {
+            try
+            {
+                await Builder.RenderResume(await Populate(), token);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, ex.Message);
+                await Alert.Handle(ex.Message).GetAwaiter();
+            }
         }
         protected void WireUpEvents()
         {
@@ -74,6 +115,18 @@ namespace Programming.Team.ViewModels.Resume
             {
                 ConfigurationViewModel.Load(p.Sender.Configuration);
             }).DisposeWith(disposables);
+        }
+        private bool enrich = true;
+        public bool Enrich
+        {
+            get => enrich;
+            set => this.RaiseAndSetIfChanged(ref enrich, value);
+        }
+        private bool renderPDF = true;
+        public bool RenderPDF
+        {
+            get => renderPDF;
+            set => this.RaiseAndSetIfChanged(ref renderPDF, value);
         }
         private DocumentTemplate? selectedTemplate;
         public DocumentTemplate? SelectedTemplate
