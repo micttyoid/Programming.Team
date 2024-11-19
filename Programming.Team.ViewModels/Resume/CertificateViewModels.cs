@@ -1,4 +1,5 @@
 ﻿using DynamicData.Binding;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Programming.Team.Business.Core;
 using Programming.Team.Core;
@@ -338,9 +339,9 @@ namespace Programming.Team.ViewModels.Resume
             Issuer = entity.Issuer;
             return Task.CompletedTask;
         }
-        protected override IEnumerable<Expression<Func<Certificate, object>>>? PropertiesToLoad()
+        protected override Func<IQueryable<Certificate>, IQueryable<Certificate>>? PropertiesToLoad()
         {
-            yield return e => e.Issuer;
+            return e => e.Include(x => x.Issuer);
         }
     }
     public class CertificatesViewModel : EntitiesDefaultViewModel<Guid, Certificate, CertificateViewModel, AddCertificateViewModel>
@@ -353,9 +354,9 @@ namespace Programming.Team.ViewModels.Resume
             var userid = await Facade.GetCurrentUserId();
             return e => e.UserId == userid;
         }
-        protected override IEnumerable<Expression<Func<Certificate, object>>>? PropertiesToLoad()
+        protected override Func<IQueryable<Certificate>, IQueryable<Certificate>>? PropertiesToLoad()
         {
-            yield return e => e.Issuer;
+            return x => x.Include(e => e.Issuer);
         }
         protected override Func<IQueryable<Certificate>, IOrderedQueryable<Certificate>>? OrderBy()
         {

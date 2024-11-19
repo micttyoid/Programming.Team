@@ -109,18 +109,18 @@ namespace Programming.Team.Business
 
         public virtual Task<RepositoryResultSet<TKey, TEntity>> Get(IUnitOfWork? work = null, Pager? page = null, 
             Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, 
-            IOrderedQueryable<TEntity>>? orderBy = null, IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default)
+            IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null, CancellationToken token = default)
         {
             return Repository.Get(work, page, filter, orderBy, properites, token);
         }
 
-        public virtual Task<TEntity?> GetByID(TKey key, IUnitOfWork? work = null, IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default)
+        public virtual Task<TEntity?> GetByID(TKey key, IUnitOfWork? work = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null, CancellationToken token = default)
         {
             return Repository.GetByID(key, work, properites, token);
         }
         public virtual async Task<TEntity> Update(TEntity entity,
             IUnitOfWork? work = null,
-            IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default)
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null, CancellationToken token = default)
         {
             try
             {

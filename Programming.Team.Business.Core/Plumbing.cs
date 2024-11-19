@@ -31,18 +31,18 @@ namespace Programming.Team.Business.Core
     {
         Task<TEntity> Update(TEntity entity,
             IUnitOfWork? work = null,
-            IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default);
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null, CancellationToken token = default);
         Task<RepositoryResultSet<TKey, TEntity>> Get(IUnitOfWork? work = null,
             Pager? page = null,
             Expression<Func<TEntity, bool>>? filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-            IEnumerable<Expression<Func<TEntity, object>>>? properites = null,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null,
             CancellationToken token = default);
         Task<int> Count(IUnitOfWork? work = null,
             Expression<Func<TEntity, bool>>? filter = null,
             CancellationToken token = default);
         Task<TEntity?> GetByID(TKey key, IUnitOfWork? work = null,
-            IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default);
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null, CancellationToken token = default);
 
     }
 }

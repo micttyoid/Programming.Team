@@ -128,6 +128,7 @@ builder.Services.AddTransient<DocumentTemplatesViewModel>();
 builder.Services.AddTransient<UserProfileLoaderViewModel>();
 builder.Services.AddTransient<PostingsViewModel>();
 builder.Services.AddTransient<PostingLoaderViewModel>();
+builder.Services.AddTransient<ResumeBuilderViewModel>();
 builder.Services.AddSession();
 var app = builder.Build();
 

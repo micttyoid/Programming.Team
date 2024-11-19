@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Programming.Team.AI.Core;
 using Programming.Team.Business.Core;
 using Programming.Team.Core;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -105,19 +107,17 @@ namespace Programming.Team.Business
                 throw;
             }
         }
-        protected IEnumerable<Expression<Func<Position, object>>> GetPositionProperties()
+        protected Func<IQueryable<Position>, IQueryable<Position>> GetPositionProperties()
         {
-            yield return e => e.PositionSkills;
-            yield return e => e.PositionSkills.Select(ps => ps.Skill);
-            yield return e => e.Reccomendations;
+            return e => e.Include(x => x.PositionSkills).ThenInclude(x => x.Skill).Include(x => x.Reccomendations);
         }
-        protected IEnumerable<Expression<Func<Education, object>>> GetEducationProperties() 
+        protected Func<IQueryable<Education>, IQueryable<Education>> GetEducationProperties() 
         {
-            yield return e => e.Institution;
+            return e => e.Include(x => x.Institution);
         }
-        protected IEnumerable<Expression<Func<Certificate, object>>> GetCertificateProperties()
+        protected Func<IQueryable<Certificate>, IQueryable<Certificate>> GetCertificateProperties()
         {
-            yield return e => e.Issuer;
+            return e => e.Include(x => x.Issuer);
         }
         public async Task<Posting> BuildPosting(Guid userId, Guid documentTemplateId, string name, string positionText, Resume resume, ResumeConfiguration? config = null, CancellationToken token = default)
         {

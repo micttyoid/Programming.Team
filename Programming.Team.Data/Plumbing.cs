@@ -197,7 +197,7 @@ namespace Programming.Team.Data
             Pager? page = null,
             Expression<Func<TEntity, bool>>? filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-            IEnumerable<Expression<Func<TEntity, object>>>? properites = null)
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null)
         {
             if (filter != null)
             {
@@ -205,8 +205,7 @@ namespace Programming.Team.Data
             }
             if (properites != null)
             {
-                foreach(var prop in properites)
-                 query = query.Include(prop);
+                query = properites(query);
             }
             if (page != null)
             {
@@ -229,7 +228,7 @@ namespace Programming.Team.Data
             Pager? page = null,
             Expression<Func<TEntity, bool>>? filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-            IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default)
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null, CancellationToken token = default)
         {
             RepositoryResultSet<TKey, TEntity> results = new RepositoryResultSet<TKey, TEntity>();
             bool hasWork = work != null;
@@ -251,7 +250,7 @@ namespace Programming.Team.Data
         }
 
         public virtual async Task<TEntity?> GetByID(TKey key, IUnitOfWork? work = null,
-            IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default)
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null, CancellationToken token = default)
         {
             TEntity? entity = null;
             await Use(async (w, t) =>
@@ -259,8 +258,7 @@ namespace Programming.Team.Data
                 var query = w.Context.Set<TEntity>().AsQueryable().AsNoTracking();
                 if (properites != null)
                 {
-                    foreach(var prop in properites)
-                        query = query.Include(prop);
+                    query = properites(query);
                 }
                 entity = await query.SingleOrDefaultAsync(q => q.Id.Equals(key));
                 
@@ -282,7 +280,7 @@ namespace Programming.Team.Data
 
         public async virtual Task<TEntity> Update(TEntity entity,
             
-            IUnitOfWork? work = null, IEnumerable<Expression<Func<TEntity, object>>>? properites = null, CancellationToken token = default)
+            IUnitOfWork? work = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null, CancellationToken token = default)
         {
             await Use(async (w, t) =>
             {

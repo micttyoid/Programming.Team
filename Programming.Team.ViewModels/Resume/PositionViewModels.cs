@@ -1,4 +1,5 @@
 ﻿using DynamicData.Binding;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Programming.Team.Business.Core;
@@ -144,9 +145,9 @@ namespace Programming.Team.ViewModels.Resume
         {
             ServiceProvider = serviceProvider;
         }
-        protected override IEnumerable<Expression<Func<Position, object>>>? PropertiesToLoad()
+        protected override Func<IQueryable<Position>, IQueryable<Position>>? PropertiesToLoad()
         {
-            yield return e => e.Company;
+            return x => x.Include(e => e.Company);
         }
         protected override Func<IQueryable<Position>, IOrderedQueryable<Position>>? OrderBy()
         {
@@ -256,10 +257,9 @@ namespace Programming.Team.ViewModels.Resume
         {
             SkillsViewModel = skillsViewModel;
         }
-        protected override IEnumerable<Expression<Func<Position, object>>>? PropertiesToLoad()
+        protected override Func<IQueryable<Position>, IQueryable<Position>>? PropertiesToLoad()
         {
-            yield return e => e.Company;
-            yield return e => e.PositionSkills;
+            return e => e.Include(x => x.Company).Include(x => x.PositionSkills);
         }
         protected override Task<Position> Populate()
         {
@@ -311,9 +311,9 @@ namespace Programming.Team.ViewModels.Resume
                 return result.Entities;
             return [];
         }
-        protected virtual IEnumerable<Expression<Func<Position, object>>>? PropertiesToLoad()
+        protected virtual Func<IQueryable<Position>, IQueryable<Position>>? PropertiesToLoad()
         {
-            yield return e => e.Company;
+            return e => e.Include(x => x.Company);
         }
     }
 }

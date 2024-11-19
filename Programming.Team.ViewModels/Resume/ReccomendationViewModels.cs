@@ -1,4 +1,5 @@
 ﻿using DynamicData.Binding;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Programming.Team.Business.Core;
 using Programming.Team.Core;
@@ -141,11 +142,10 @@ namespace Programming.Team.ViewModels.Resume
         public ReccomendationViewModel(ILogger logger, IBusinessRepositoryFacade<Reccomendation, Guid> facade, Reccomendation entity) : base(logger, facade, entity)
         {
         }
-
-        protected override IEnumerable<Expression<Func<Reccomendation, object>>>? PropertiesToLoad()
+        
+        protected override Func<IQueryable<Reccomendation>, IQueryable<Reccomendation>>? PropertiesToLoad()
         {
-            yield return e => e.Position;
-            yield return e => e.Position.Company;
+            return e => e.Include(x => x.Position).ThenInclude(x => x.Company);
         }
 
         protected override Task<Reccomendation> Populate()
@@ -180,10 +180,9 @@ namespace Programming.Team.ViewModels.Resume
         public ReccomendationsViewModel(AddReccomendationViewModel addViewModel, IBusinessRepositoryFacade<Reccomendation, Guid> facade, ILogger<EntitiesViewModel<Guid, Reccomendation, ReccomendationViewModel, IBusinessRepositoryFacade<Reccomendation, Guid>>> logger) : base(addViewModel, facade, logger)
         {
         }
-        protected override IEnumerable<Expression<Func<Reccomendation, object>>>? PropertiesToLoad()
+        protected override Func<IQueryable<Reccomendation>, IQueryable<Reccomendation>>? PropertiesToLoad()
         {
-            yield return e => e.Position;
-            yield return e => e.Position.Company;
+            return x => x.Include(e => e.Position).ThenInclude(e => e.Company);
         }
         protected override async Task<Expression<Func<Reccomendation, bool>>?> FilterCondition()
         {

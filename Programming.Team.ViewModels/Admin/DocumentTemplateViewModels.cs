@@ -1,4 +1,5 @@
 ﻿using DynamicData.Binding;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Programming.Team.Business.Core;
 using Programming.Team.Core;
@@ -141,9 +142,9 @@ namespace Programming.Team.ViewModels.Admin
             get => template;
             set => this.RaiseAndSetIfChanged(ref template, value);
         }
-        protected override IEnumerable<Expression<Func<DocumentTemplate, object>>>? PropertiesToLoad()
+        protected override Func<IQueryable<DocumentTemplate>, IQueryable<DocumentTemplate>>? PropertiesToLoad()
         {
-            yield return e => e.DocumentType;
+            return x => x.Include(e => e.DocumentType);
         }
         protected override Task<DocumentTemplate> Populate()
         {
@@ -171,9 +172,9 @@ namespace Programming.Team.ViewModels.Admin
         public DocumentTemplatesViewModel(AddDocumentTemplateViewModel addViewModel, IBusinessRepositoryFacade<DocumentTemplate, Guid> facade, ILogger<EntitiesViewModel<Guid, DocumentTemplate, DocumentTemplateViewModel, IBusinessRepositoryFacade<DocumentTemplate, Guid>>> logger) : base(addViewModel, facade, logger)
         {
         }
-        protected override IEnumerable<Expression<Func<DocumentTemplate, object>>>? PropertiesToLoad()
+        protected override Func<IQueryable<DocumentTemplate>, IQueryable<DocumentTemplate>>? PropertiesToLoad()
         {
-            yield return e => e.DocumentType;
+            return e => e.Include(e => e.DocumentType);
         }
         protected override Func<IQueryable<DocumentTemplate>, IOrderedQueryable<DocumentTemplate>>? OrderBy()
         {

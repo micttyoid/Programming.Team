@@ -12,6 +12,7 @@ using System.Reactive.Linq;
 using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Programming.Team.ViewModels.Resume
 {
@@ -187,10 +188,9 @@ namespace Programming.Team.ViewModels.Resume
             await Load.Execute().GetAwaiter();
         }
 
-        protected override IEnumerable<Expression<Func<PositionSkill, object>>>? PropertiesToLoad()
+        protected override Func<IQueryable<PositionSkill>, IQueryable<PositionSkill>>? PropertiesToLoad()
         {
-            yield return e => e.Skill;
-            yield return e => e.Position;
+            return q => q.Include(e => e.Skill).Include(e => e.Position);
         }
 
         private Skill skill = null!;
@@ -241,9 +241,9 @@ namespace Programming.Team.ViewModels.Resume
         {
             return e => e.OrderBy(c => c.Skill.Name);
         }
-        protected override IEnumerable<Expression<Func<PositionSkill, object>>>? PropertiesToLoad()
+        protected override Func<IQueryable<PositionSkill>, IQueryable<PositionSkill>>? PropertiesToLoad()
         {
-            yield return e => e.Skill;
+            return e => e.Include(x => x.Skill);
         }
         protected override async Task<Expression<Func<PositionSkill, bool>>?> FilterCondition()
         {

@@ -82,7 +82,7 @@ namespace Programming.Team.ViewModels
         {
             InitializedEntity = entity;
         }
-        protected virtual IEnumerable<Expression<Func<TEntity, object>>>? PropertiesToLoad()
+        protected virtual Func<IQueryable<TEntity>, IQueryable<TEntity>>? PropertiesToLoad()
         {
             return null;
         }
@@ -184,7 +184,7 @@ namespace Programming.Team.ViewModels
             Facade = facade;
             Fetch = ReactiveCommand.CreateFromTask<DataGridRequest<TKey, TEntity>, ViewModelResult<TKey, TEntity, TViewModel>?>(DoFetch);
         }
-        protected virtual IEnumerable<Expression<Func<TEntity, object>>>? PropertiesToLoad()
+        protected virtual Func<IQueryable<TEntity>, IQueryable<TEntity>>? PropertiesToLoad()
         {
             return null;
         }
@@ -619,7 +619,7 @@ namespace Programming.Team.ViewModels
             Logger = logger;
             Load = ReactiveCommand.CreateFromTask(DoLoad);
         }
-        protected virtual IEnumerable<Expression<Func<TEntity, object>>>? PropertiesToLoad()
+        protected virtual Func<IQueryable<TEntity>, IQueryable<TEntity>>? PropertiesToLoad()
         {
             return null;
         }

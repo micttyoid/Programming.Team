@@ -1,4 +1,5 @@
 ﻿using DynamicData.Binding;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Programming.Team.Business.Core;
 using Programming.Team.Core;
@@ -289,9 +290,9 @@ namespace Programming.Team.ViewModels.Resume
             set => this.RaiseAndSetIfChanged(ref graduated, value);
         }
         public Guid UserId { get; set; }
-        protected override IEnumerable<Expression<Func<Education, object>>>? PropertiesToLoad()
+        protected override Func<IQueryable<Education>, IQueryable<Education>>? PropertiesToLoad()
         {
-            yield return e => e.Institution;
+            return x => x.Include(x => x.Institution);
         }
         protected override Task<Education> Populate()
         {
@@ -337,9 +338,9 @@ namespace Programming.Team.ViewModels.Resume
         {
             return e => e.OrderByDescending(c => c.EndDate).ThenBy(c => c.StartDate).ThenBy(c => c.Institution.Name);
         }
-        protected override IEnumerable<Expression<Func<Education, object>>>? PropertiesToLoad()
+        protected override Func<IQueryable<Education>, IQueryable<Education>>? PropertiesToLoad()
         {
-            yield return e => e.Institution;
+            return e => e.Include(x => x.Institution);
         }
         protected override Task<EducationViewModel> Construct(Education entity, CancellationToken token)
         {
