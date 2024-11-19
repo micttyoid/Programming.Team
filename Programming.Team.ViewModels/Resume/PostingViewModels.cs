@@ -195,7 +195,8 @@ namespace Programming.Team.ViewModels.Resume
                 Details = Details,
                 RenderedLaTex = RenderedLaTex,
                 DocumentTemplateId = DocumentTemplateId,
-                Configuration = ConfigurationViewModel.GetSerializedConfiguration()
+                Configuration = ConfigurationViewModel.GetSerializedConfiguration(),
+                UserId = UserId
             });
         }
 
@@ -207,6 +208,7 @@ namespace Programming.Team.ViewModels.Resume
             Configuration = entity.Configuration;
             RenderedLaTex = entity.RenderedLaTex;
             SelectedTemplate = DocumentTemplates.SingleOrDefault(d => d.Id == entity.DocumentTemplateId);
+            UserId = entity.UserId;
             return Task.CompletedTask;
         }
     }

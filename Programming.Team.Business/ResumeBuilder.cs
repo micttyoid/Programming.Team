@@ -109,7 +109,7 @@ namespace Programming.Team.Business
         }
         protected Func<IQueryable<Position>, IQueryable<Position>> GetPositionProperties()
         {
-            return e => e.Include(x => x.PositionSkills).ThenInclude(x => x.Skill).Include(x => x.Reccomendations);
+            return e => e.Include(x => x.PositionSkills).ThenInclude(x => x.Skill).Include(x => x.Company).Include(x => x.Reccomendations);
         }
         protected Func<IQueryable<Education>, IQueryable<Education>> GetEducationProperties() 
         {
@@ -135,6 +135,7 @@ namespace Programming.Team.Business
                     Details = positionText,
                     Name = name
                 };
+                await PostingFacade.Add(posting, token: token);
                 posting = await RebuildPosting(posting, resume, config: config, token: token);
                 return posting;
             }
@@ -152,13 +153,15 @@ namespace Programming.Team.Business
                 var docTemplate = await DocumentTemplateFacade.GetByID(posting.DocumentTemplateId, token: token);
                 if (docTemplate == null)
                     throw new InvalidDataException();
-                await PostingFacade.Add(posting, token: token);
+                
                 if(enrich)
                     await Enricher.EnrichResume(resume, posting, token);
                 posting.RenderedLaTex = await Templator.ApplyTemplate(docTemplate.Template, resume, token);
+                posting.RenderedLaTex = posting.RenderedLaTex?.Replace("#", "\\#");
+                posting = await PostingFacade.Update(posting, token: token);
                 if (posting.RenderedLaTex != null && renderPDF)
                     await RenderResume(posting, token);
-                return await PostingFacade.Update(posting, token: token);
+                return posting;
             }
             catch (Exception ex)
             {

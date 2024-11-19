@@ -2,11 +2,13 @@
 using Programming.Team.Core;
 using Programming.Team.Templating.Core;
 using Scriban;
+using Scriban.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Programming.Team.Templating
 {
@@ -22,7 +24,12 @@ namespace Programming.Team.Templating
             try
             {
                 var templator = Template.Parse(template);
-                return await templator.RenderAsync(templator);
+                var context = new ScriptObject();
+                context.Import(resume);
+                var scriptContext = new TemplateContext { MemberRenamer = member => member.Name };
+                scriptContext.PushGlobal(context);
+
+                return await templator.RenderAsync(scriptContext);
             }
             catch (Exception ex)
             {
@@ -37,14 +44,11 @@ namespace Programming.Team.Templating
             {
                 using (var client = new HttpClient())
                 {
-                    var content = new MultipartFormDataContent
-                    {
-                        { new StringContent(latex), "input" }
-                    };
+                    var url = $"https://latexonline.cc/compile?text={HttpUtility.UrlEncode(latex)}";
 
-                    HttpResponseMessage response = await client.PostAsync("https://latexonline.cc/compile", content);
+                    HttpResponseMessage response = await client.GetAsync(url, token);
                     response.EnsureSuccessStatusCode();
-                    return await response.Content.ReadAsByteArrayAsync();
+                    return await response.Content.ReadAsByteArrayAsync(token);
                 }
             }
             catch(Exception ex)

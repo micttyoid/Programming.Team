@@ -23,7 +23,7 @@
             <TemplateColumn Title="Download Resume">
                 <CellTemplate>
                     @{
-                        var strHref = $"api/resume/{context.Item.Id}";
+                        var strHref = $"api/resumes/{context.Item.Id}";
                         <MudLink Href="@strHref">(...)</MudLink>
                     }
 
