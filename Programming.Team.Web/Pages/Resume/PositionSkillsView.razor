@@ -5,7 +5,7 @@
     <AlertView Alert="ViewModel.Alert" />
     <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()">Add Skill</MudButton>
     <AddPositionSkillView ViewModel="ViewModel.AddViewModel"/>
-    <MudStack Row="true">
+    <MudStack Row="true" Wrap="Wrap.Wrap">
         @foreach(var e in ViewModel.Entities)
         {
             <PositionSkillView ViewModel="e"/>
