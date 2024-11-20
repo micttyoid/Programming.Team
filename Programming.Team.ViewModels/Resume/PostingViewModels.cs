@@ -85,6 +85,7 @@ namespace Programming.Team.ViewModels.Resume
                     throw new InvalidDataException();
                 await Builder.RebuildPosting(await Populate(), await Builder.BuildResume(userId.Value, token), Enrich, RenderPDF, ConfigurationViewModel.GetConfiguration(), token);
                 await Load.Execute().GetAwaiter();
+                await Alert.Handle("Resume Rebuilt!").GetAwaiter();
             }
             catch (Exception ex)
             {

@@ -25,9 +25,16 @@ public partial class Position : Entity<Guid>, IPosition
     public Guid CompanyId { get; set; }
 
     public DateOnly StartDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+    public string StartDateString
+    {
+        get => StartDate.ToString("yyyy-MM-dd");
+    }
 
     public DateOnly? EndDate { get; set; }
-
+    public string? EndDateString
+    {
+        get => EndDate?.ToString("yyyy-MM-dd");
+    }
     public string? Title { get; set; }
 
     public string? Description { get; set; }

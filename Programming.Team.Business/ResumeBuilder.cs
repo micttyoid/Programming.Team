@@ -93,11 +93,14 @@ namespace Programming.Team.Business
                                 skill.Positions.Add(position);
                             }
                             else
+                            {
                                 skill.YearsOfExperience += (position.EndDate ?? DateOnly.FromDateTime(DateTime.Today)).ToDateTime(TimeOnly.MinValue).Subtract(position.StartDate.ToDateTime(TimeOnly.MinValue)).TotalDays / 365d;
+                                skill.Positions.Add(position);
+                            }
                             rollups[posskill.SkillId] = skill;
                         }
                     }
-                    resume.Skills = rollups.Values.ToList();
+                    resume.Skills = rollups.Values.OrderByDescending(e => e.YearsOfExperience).ToList();
                 }
                 return resume;
             }
@@ -135,8 +138,8 @@ namespace Programming.Team.Business
                     Details = positionText,
                     Name = name
                 };
-                await PostingFacade.Add(posting, token: token);
-                posting = await RebuildPosting(posting, resume, config: config, token: token);
+                await PostingFacade.Add(posting, token: token); //TODO: enable pdf rendering when implemented
+                posting = await RebuildPosting(posting, resume, renderPDF: false, config: config, token: token);
                 return posting;
             }
             catch (Exception ex)
@@ -157,7 +160,7 @@ namespace Programming.Team.Business
                 if(enrich)
                     await Enricher.EnrichResume(resume, posting, token);
                 posting.RenderedLaTex = await Templator.ApplyTemplate(docTemplate.Template, resume, token);
-                posting.RenderedLaTex = posting.RenderedLaTex?.Replace("#", "\\#");
+                posting.RenderedLaTex = posting.RenderedLaTex?.Replace("#", "\\#").Replace("$", "\\$");
                 posting = await PostingFacade.Update(posting, token: token);
                 if (posting.RenderedLaTex != null && renderPDF)
                     await RenderResume(posting, token);

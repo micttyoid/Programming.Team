@@ -7,8 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using static System.Net.WebRequestMethods;
 
 namespace Programming.Team.Templating
 {
@@ -38,24 +40,9 @@ namespace Programming.Team.Templating
             }
         }
 
-        public async Task<byte[]> RenderLatex(string latex, CancellationToken token = default)
+        public Task<byte[]> RenderLatex(string latex, CancellationToken token = default)
         {
-            try
-            {
-                using (var client = new HttpClient())
-                {
-                    var url = $"https://latexonline.cc/compile?text={HttpUtility.UrlEncode(latex)}";
-
-                    HttpResponseMessage response = await client.GetAsync(url, token);
-                    response.EnsureSuccessStatusCode();
-                    return await response.Content.ReadAsByteArrayAsync(token);
-                }
-            }
-            catch(Exception ex)
-            {
-                Logger.LogError(ex, ex.Message);
-                throw;
-            }
+            throw new NotImplementedException();
         }
     }
 }
