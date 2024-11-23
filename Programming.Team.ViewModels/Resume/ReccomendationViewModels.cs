@@ -191,7 +191,7 @@ namespace Programming.Team.ViewModels.Resume
         }
         protected override Func<IQueryable<Reccomendation>, IOrderedQueryable<Reccomendation>>? OrderBy()
         {
-            return e => e.OrderBy(c => c.SortOrder).OrderBy(c => c.Name);
+            return e => e.OrderBy(c => c.SortOrder).ThenBy(c => c.Name);
         }
         protected override Task<ReccomendationViewModel> Construct(Reccomendation entity, CancellationToken token)
         {

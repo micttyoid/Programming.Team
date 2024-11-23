@@ -30,6 +30,15 @@ public partial class Education : Entity<Guid>, IEducation
     public DateOnly StartDate { get; set; }
 
     public DateOnly? EndDate { get; set; }
+    public string StartDateString
+    {
+        get => StartDate.ToString("yyyy-MM-dd");
+    }
+
+    public string? EndDateString
+    {
+        get => EndDate?.ToString("yyyy-MM-dd");
+    }
 
     public string? Description { get; set; }
 

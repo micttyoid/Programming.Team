@@ -77,7 +77,7 @@ namespace Programming.Team.Business
                     var certs = await CertificateFacade.Get(work: uow, properites: GetCertificateProperties(), orderBy: q => q.OrderByDescending(e => e.ValidToDate ?? DateOnly.MaxValue).ThenByDescending(e => e.ValidFromDate),
                         filter: q => q.UserId == userId, token: token);
                     resume.Certificates.AddRange(certs.Entities);
-                    resume.Reccomendations = resume.Positions.SelectMany(e => e.Reccomendations).ToList();
+                    resume.Reccomendations = resume.Positions.SelectMany(e => e.Reccomendations).OrderBy(c => c.SortOrder).ThenBy(c => c.Name).ToList();
                     Dictionary<Guid, SkillRollup> rollups = new Dictionary<Guid, SkillRollup>();
                     foreach(var position in resume.Positions)
                     {
@@ -160,7 +160,6 @@ namespace Programming.Team.Business
                 if(enrich)
                     await Enricher.EnrichResume(resume, posting, token);
                 posting.RenderedLaTex = await Templator.ApplyTemplate(docTemplate.Template, resume, token);
-                posting.RenderedLaTex = posting.RenderedLaTex?.Replace("#", "\\#").Replace("$", "\\$");
                 posting = await PostingFacade.Update(posting, token: token);
                 if (posting.RenderedLaTex != null && renderPDF)
                     await RenderResume(posting, token);

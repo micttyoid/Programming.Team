@@ -4,7 +4,7 @@
 @if(ViewModel != null)
 {
     <AlertView Alert="ViewModel.Alert"/>
-    <MudDataGrid @ref="grid" T="Posting" ServerData="ViewModel.Fetch.BindServerDataCommand()" 
+    <MudDataGrid @ref="grid" T="Posting" ServerData="ViewModel.Fetch.BindServerDataCommand()" RowsPerPage="10"
         Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu"
         SortMode="SortMode.Multiple">
         <Columns>
@@ -30,6 +30,9 @@
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
+        <PagerContent>
+            <MudDataGridPager T="Posting" />
+        </PagerContent>
     </MudDataGrid>
 }
 @code {

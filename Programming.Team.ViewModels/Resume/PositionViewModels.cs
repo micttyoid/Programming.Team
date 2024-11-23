@@ -151,7 +151,7 @@ namespace Programming.Team.ViewModels.Resume
         }
         protected override Func<IQueryable<Position>, IOrderedQueryable<Position>>? OrderBy()
         {
-            return e => e.OrderByDescending(c => c.StartDate).ThenByDescending(c => c.SortOrder).ThenByDescending(c => c.EndDate);
+            return e => e.OrderByDescending(c => c.EndDate ?? DateOnly.MaxValue).ThenByDescending(c => c.SortOrder).ThenByDescending(c => c.StartDate);
         }
         protected override async Task<Expression<Func<Position, bool>>?> FilterCondition()
         {

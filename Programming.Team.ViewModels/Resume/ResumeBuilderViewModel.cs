@@ -59,7 +59,9 @@ namespace Programming.Team.ViewModels.Resume
                 if (userId == null)
                     return null;
                 var resume = await Builder.BuildResume(userId.Value, token);
-                return await Builder.BuildPosting(userId.Value, SelectedTemplate!.Id, Name, PostingText, resume, Configuration.GetConfiguration(), token: token);
+                var posting = await Builder.BuildPosting(userId.Value, SelectedTemplate!.Id, Name, PostingText, resume, Configuration.GetConfiguration(), token: token);
+                await Alert.Handle("Resume Built").GetAwaiter();
+                return posting;
             }
             catch (Exception ex)
             {
