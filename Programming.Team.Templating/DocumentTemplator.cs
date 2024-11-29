@@ -6,6 +6,7 @@ using Scriban.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -39,10 +40,43 @@ namespace Programming.Team.Templating
                 throw;
             }
         }
-
-        public Task<byte[]> RenderLatex(string latex, CancellationToken token = default)
+        protected class LatexRequest
         {
-            throw new NotImplementedException();
+            public string latex { get; set; } = null!;
+        }
+       
+
+    public async Task<byte[]> RenderLatex(string latex, CancellationToken token = default)
+    {
+        string url = "https://api.programming.team/Latex/compile"; 
+
+        try
+        {
+            // Define the HTTP request payload
+            LatexRequest request = new LatexRequest()
+            {
+                latex = latex
+            };
+
+            // Serialize the request object to JSON
+            var content = JsonContent.Create(request);
+
+            // Send the HTTP POST request
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, content, token);
+
+            // Ensure the response indicates success
+            response.EnsureSuccessStatusCode();
+
+            // Return the response content as a byte array
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, ex.Message);
+            throw; // Re-throw the exception to let the caller handle it
         }
     }
+
+}
 }

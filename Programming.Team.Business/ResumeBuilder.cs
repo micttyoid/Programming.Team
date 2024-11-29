@@ -139,7 +139,7 @@ namespace Programming.Team.Business
                     Name = name
                 };
                 await PostingFacade.Add(posting, token: token); //TODO: enable pdf rendering when implemented
-                posting = await RebuildPosting(posting, resume, renderPDF: false, config: config, token: token);
+                posting = await RebuildPosting(posting, resume, config: config, token: token);
                 return posting;
             }
             catch (Exception ex)

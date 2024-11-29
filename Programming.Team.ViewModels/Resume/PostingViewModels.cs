@@ -98,6 +98,7 @@ namespace Programming.Team.ViewModels.Resume
             try
             {
                 await Builder.RenderResume(await Populate(), token);
+                await Alert.Handle("Resume Rendered!").GetAwaiter();
             }
             catch (Exception ex)
             {

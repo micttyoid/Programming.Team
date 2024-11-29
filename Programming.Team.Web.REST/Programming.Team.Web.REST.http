@@ -1,0 +1,6 @@
+@Programming.Team.Web.REST_HostAddress = http://localhost:8055
+
+GET {{Programming.Team.Web.REST_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
