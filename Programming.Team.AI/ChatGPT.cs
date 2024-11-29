@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Programming.Team.AI
@@ -32,7 +33,7 @@ namespace Programming.Team.AI
                     // Build the request.
                     request.Method = HttpMethod.Post;
                     request.RequestUri = new Uri(Enpoint);
-                    var requestBody = $"{{\"model\": \"gpt-4o\", \"messages\": [{{\"role\": \"system\", \"content\": \"{systemPrompt.ReplaceLineEndings(" ")}\"}},{{\"role\": \"user\", \"content\": \"{userPrompt.ReplaceLineEndings(" ")}\"}}], \"temperature\": 1, \"max_tokens\": {maxTokens}, \"top_p\": 1, \"frequency_penalty\":0 , \"presence_penalty\": 0}}";
+                    var requestBody = $"{{\"model\": \"gpt-4o\", \"messages\": [{{\"role\": \"system\", \"content\":{JsonSerializer.Serialize(systemPrompt)}}},{{\"role\": \"user\", \"content\": {JsonSerializer.Serialize(userPrompt)}}}], \"temperature\": 1, \"max_tokens\": {maxTokens}, \"top_p\": 1, \"frequency_penalty\":0 , \"presence_penalty\": 0}}";
                     Logger.LogInformation(requestBody);
                     request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
                     request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", ApiKey);

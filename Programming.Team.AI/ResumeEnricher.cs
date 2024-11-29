@@ -29,11 +29,11 @@ namespace Programming.Team.AI
                 
                 if (config.HideSkillsNotInJD)
                 {
-                    string? postingSkills = await ChatGPT.GetRepsonse("extract as many skill keywords as possible from user message in json format {\\\"skill\\\":\\\"name\\\"}",
+                    string? postingSkills = await ChatGPT.GetRepsonse("extract as many skill keywords as possible from user message in json dictionary format {\"skill\":\"name\"}",
                         posting.Details.Replace("\"", "\\\""), token: token);
                     if (postingSkills != null)
                     {
-                        postingSkills = postingSkills.Replace("```json", "").Replace("```", "");
+                        postingSkills = postingSkills.Replace("```json", "").Replace("```", "").Trim().ReplaceLineEndings();
                         try
                         {
                             var skills = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(postingSkills);
