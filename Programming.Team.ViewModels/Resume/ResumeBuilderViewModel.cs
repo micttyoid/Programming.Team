@@ -1,4 +1,6 @@
 ﻿using DynamicData;
+using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.Extensions.Logging;
 using Programming.Team.Business.Core;
@@ -21,17 +23,19 @@ namespace Programming.Team.ViewModels.Resume
         public Interaction<string, bool> Alert { get; } = new Interaction<string, bool>();
         protected ILogger Logger { get; }
         protected IResumeBuilder Builder { get; }
-        public ReactiveCommand<Unit, Posting?> Build { get; }
+        public ReactiveCommand<Unit, Unit> Build { get; }
         public ReactiveCommand<Unit, Unit> Load { get; }
         protected IBusinessRepositoryFacade<DocumentTemplate, Guid> DocumentTemplateFacade { get; }
         public ObservableCollection<DocumentTemplate> DocumentTemplates { get; } = new ObservableCollection<DocumentTemplate>();
-        public ResumeBuilderViewModel(IBusinessRepositoryFacade<DocumentTemplate, Guid>  documentTemplateFacade, ILogger<ResumeBuilderViewModel> logger, IResumeBuilder builder)
+        protected NavigationManager NavMan { get; } 
+        public ResumeBuilderViewModel(NavigationManager navMan, IBusinessRepositoryFacade<DocumentTemplate, Guid>  documentTemplateFacade, ILogger<ResumeBuilderViewModel> logger, IResumeBuilder builder)
         {
             Logger = logger;
             DocumentTemplateFacade = documentTemplateFacade;
             Builder = builder;
             Build = ReactiveCommand.CreateFromTask(DoBuild);
             Load = ReactiveCommand.CreateFromTask(DoLoad);
+            NavMan = navMan;
         }
         private DocumentTemplate? selectedTemplate;
         public DocumentTemplate? SelectedTemplate
@@ -51,24 +55,23 @@ namespace Programming.Team.ViewModels.Resume
             get => name;
             set => this.RaiseAndSetIfChanged(ref name, value);
         }
-        protected async Task<Posting?> DoBuild(CancellationToken token)
+        protected async Task DoBuild(CancellationToken token)
         {
             try
             {
                 var userId = await DocumentTemplateFacade.GetCurrentUserId();
                 if (userId == null)
-                    return null;
+                    return;
                 var resume = await Builder.BuildResume(userId.Value, token);
                 var posting = await Builder.BuildPosting(userId.Value, SelectedTemplate!.Id, Name, PostingText, resume, Configuration.GetConfiguration(), token: token);
                 await Alert.Handle("Resume Built").GetAwaiter();
-                return posting;
+                NavMan.NavigateTo($"/resume/postings/{posting.Id}");
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, ex.Message);
                 await Alert.Handle(ex.Message).GetAwaiter();
             }
-            return null;
         }
         protected async Task DoLoad(CancellationToken token)
         {

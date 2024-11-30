@@ -134,8 +134,16 @@ builder.Services.AddTransient<ImpersonatorViewModel>();
 builder.Services.AddTransient<AcceptRecruiterViewModel>();
 builder.Services.AddTransient<RecruitersViewModel>();
 builder.Services.AddTransient<RecruitsViewModel>();
-builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust timeout as needed
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true; // For GDPR compliance
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Use HTTPS
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -145,13 +153,13 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+app.UseSession();
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseSession();
+
 app.UseAuthentication();
 app.UseMiddleware<RolePopulationMiddleware>();
 app.UseAuthorization();
