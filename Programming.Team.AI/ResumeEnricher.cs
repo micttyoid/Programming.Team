@@ -29,8 +29,8 @@ namespace Programming.Team.AI
                 
                 if (config.HideSkillsNotInJD)
                 {
-                    string? postingSkills = await ChatGPT.GetRepsonse("extract as many skill keywords as possible from user message in json dictionary format {\"skill\":\"name\"}",
-                        posting.Details.Replace("\"", "\\\""), token: token);
+                    string? postingSkills = await ChatGPT.GetRepsonse("extract as many skill keywords as possible from user message in json dictionary format [{\"skill\":\"name\"}]",
+                        posting.Details, token: token);
                     if (postingSkills != null)
                     {
                         postingSkills = postingSkills.Replace("```json", "").Replace("```", "").Trim().ReplaceLineEndings();
