@@ -14,7 +14,7 @@ namespace Programming.Team.Business.Core
     public interface IBusinessRepositoryFacade
     {
         IUnitOfWork CreateUnitOfWork();
-        Task<Guid?> GetCurrentUserId(IUnitOfWork? uow = null, CancellationToken token = default);
+        Task<Guid?> GetCurrentUserId(IUnitOfWork? uow = null, bool fetchTrueUserId = false, CancellationToken token = default);
     }
     public interface IIBusinessRepositoryFacade<in TEntity, TKey> : IBusinessRepositoryFacade
         where TEntity : Entity<TKey>, new()

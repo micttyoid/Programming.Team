@@ -1,0 +1,35 @@
+﻿@page "/recruiters/impersonate"
+@inherits ReactiveInjectableComponentBase<ImpersonatorViewModel>
+@attribute [Authorize(Roles = "Recruiter")]
+@if(ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert" />
+    @if(ViewModel.ImpersonatedUser != null)
+    {
+        <h2>Impersonating @ViewModel.ImpersonatedUser.EmailAddress</h2>
+        <MudButton OnClick="ViewModel.EndImpersonation.BindCommand<MouseEventArgs>()">End Impersonation</MudButton>
+    }
+    <MudDataGrid T="User" ServerData="ViewModel.Fetch.BindServerDataCommand()" RowsPerPage="10"
+                 Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu"
+                 SortMode="SortMode.Multiple">
+        <Columns>
+            <PropertyColumn Property="x => x.FirstName" Title="First Name" />
+            <PropertyColumn Property="x => x.LastName" Title="Last Name" />
+            <PropertyColumn Property="x => x.EmailAddress" Title="Email"/>
+            <TemplateColumn Title="Impersonate">
+                <CellTemplate>
+                    @{
+                        <MudButton OnClick="ViewModel.Impersonate.BindCommand<MouseEventArgs>(context.Item.Id)">Impersonate</MudButton>
+                    }
+
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="User" />
+        </PagerContent>
+    </MudDataGrid>
+}
+@code {
+
+}

@@ -1,0 +1,17 @@
+﻿@page "/recruiters/accept"
+@inherits ReactiveInjectableComponentBase<AcceptRecruiterViewModel>
+@if (ViewModel != null)
+{
+    <MudStack Row="true">
+        <MudTextField @bind-Value="ViewModel.RecruiterId" Label="Recruiter ID" />
+        <MudButton OnClick="ViewModel.FetchRecruiter.BindCommand<MouseEventArgs>()">Fetch Recruiter</MudButton>
+    </MudStack>
+    @if(ViewModel.Recruiter != null)
+    {
+        <h3>@ViewModel.Recruiter.FirstName @ViewModel.Recruiter.LastName</h3>
+        <MudButton OnClick="ViewModel.AddRecruiter.BindCommand<MouseEventArgs>()">Add Recruiter</MudButton>
+    }
+}
+@code {
+
+}

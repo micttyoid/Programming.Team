@@ -388,6 +388,22 @@ public partial class ResumesContext : DbContext
             entity.HasOne(d => d.CreatedByUser).WithMany(p => p.InverseCreatedByUser).HasForeignKey(d => d.CreatedByUserId);
             entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.InverseUpdatedByUser).HasForeignKey(d => d.UpdatedByUserId);
             entity.HasQueryFilter(d => !d.IsDeleted);
+            entity.HasMany(d => d.Recruiters).WithMany(p => p.Recruits)
+                .UsingEntity<Dictionary<string, object>>(
+                    "RecruiterUsers",
+                    r => r.HasOne<User>().WithMany()
+                        .HasForeignKey("RecruiterUserId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_RecruiterUsers_Users"),
+                    l => l.HasOne<User>().WithMany()
+                        .HasForeignKey("TargetUserId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_RecruiterUsers_Users1"),
+                    j =>
+                    {
+                        j.HasKey("RecruiterUserId", "TargetUserId");
+                        j.ToTable("RecruiterUsers");
+                    });
         });
         modelBuilder.Entity<Role>(entity =>
         {

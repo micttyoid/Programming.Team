@@ -22,6 +22,15 @@ namespace Programming.Team.Business
         {
             return Repository.GetByObjectIdAsync(objectId, work, properties, token);
         }
+        public Task AddRecruiter(Guid targetUserId, Guid recruiterId, IUnitOfWork? work = null, CancellationToken token = default)
+        {
+            return Repository.AddRecruiter(targetUserId, recruiterId, work, token);
+        }
+
+        public Task RemoveRecruiter(Guid targetUserId, Guid recruiterId, IUnitOfWork? work = null, CancellationToken token = default)
+        {
+            return Repository.RemoveRecruiter(targetUserId, recruiterId, work, token);
+        }
     }
     public class RoleBusinessFacade : BusinessRepositoryFacade<Role, Guid, IRoleRepository>, IRoleBusinessFacade
     {

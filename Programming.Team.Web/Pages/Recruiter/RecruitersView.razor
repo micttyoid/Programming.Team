@@ -1,0 +1,30 @@
+﻿@page "/recruiters"
+@inherits ReactiveInjectableComponentBase<RecruitersViewModel>
+@if(ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert" />
+    <h3>Associated Recruiters</h3>
+    <MudDataGrid T="User" ServerData="ViewModel.Fetch.BindServerDataCommand()" RowsPerPage="10"
+                 Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu"
+                 SortMode="SortMode.Multiple">
+        <Columns>
+            <PropertyColumn Property="x => x.FirstName" Title="First Name" />
+            <PropertyColumn Property="x => x.LastName" Title="Last Name" />
+            <PropertyColumn Property="x => x.EmailAddress" Title="Email" />
+            <TemplateColumn Title="Remove">
+                <CellTemplate>
+                    @{
+                        <MudButton OnClick="ViewModel.RemoveRecruiter.BindCommand<MouseEventArgs>(context.Item.Id)">Remove</MudButton>
+                    }
+
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="User" />
+        </PagerContent>
+    </MudDataGrid>
+}
+@code {
+
+}

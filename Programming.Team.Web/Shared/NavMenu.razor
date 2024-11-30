@@ -10,6 +10,16 @@
             <MudNavLink Href="/admin/documenttypes"><span aria-hidden="true"><i class="fa-solid fa-file-code"></i> Document Types</span></MudNavLink>
             <MudNavLink Href="/admin/documenttemplates"><span aria-hidden="true"><i class="fa-solid fa-folder-open"></i> Document Templates</span></MudNavLink>
         }
+        @if (!isRecruiter)
+        {
+            <MudNavLink Href="/recruiters"><span aria-hidden="true"><i class="fa-solid fa-users-viewfinder"></i> Recruiters</span></MudNavLink>
+            <MudNavLink Href="/recruiters/accept"><span aria-hidden="true"><i class="fa-solid fa-hat-wizard"></i> Accept Recruiter</span></MudNavLink>
+        }
+        @if (isRecruiter)
+        {
+            <MudNavLink Href="/recruiters/impersonate"><span aria-hidden="true"><i class="fa-solid fa-user-ninja"></i> Impersonate</span></MudNavLink>
+            <MudNavLink Href="/recruits"><span aria-hidden="true"><i class="fa-solid fa-users-between-lines"></i> Recruits</span></MudNavLink>
+        }
         <MudNavLink Href="/resume/builder"><span aria-hidden="true"><i class="fa-solid fa-book"></i> Build Resume</span></MudNavLink>
         <MudNavLink Href="/resume/postings"><span aria-hidden="true"><i class="fa-regular fa-clipboard"></i> Postings</span></MudNavLink>
         <MudNavLink Href="/resume/profile"><span aria-hidden="true"><i class="fa-solid fa-user-pen"></i> Profile</span></MudNavLink>
@@ -23,11 +33,13 @@
 
 @code{
     private bool isAdmin = false;
+    private bool isRecruiter = false;
     private bool isAuthenticated = false;
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthState.GetAuthenticationStateAsync();
         isAdmin = authState.User?.IsInRole("Admin") ?? false;
+        isRecruiter = authState.User?.IsInRole("Recruiter") ?? false;
         isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
         await base.OnInitializedAsync();
     }

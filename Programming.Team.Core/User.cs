@@ -129,4 +129,6 @@ public partial class User : Entity<Guid>, IUser
     public virtual ICollection<Reccomendation> ReccomendationUpdatedByUsers { get; set; } = new List<Reccomendation>();
 
     public virtual ICollection<Reccomendation> ReccomendationUsers { get; set; } = new List<Reccomendation>();
+    public virtual ICollection<User> Recruiters { get; set; } = new List<User>();
+    public virtual ICollection<User> Recruits { get; set; } = new List<User>();
 }

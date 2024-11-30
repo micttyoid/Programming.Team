@@ -17,6 +17,8 @@ namespace Programming.Team.Data.Core
     {
         DbContext CreateContext();
         Task<ClaimsPrincipal?> GetPrincipal();
+        Task<Guid?> GetImpersonatedUser();
+        Task SetImpersonatedUser(Guid? userId);
     }
     public static class ClaimsPrincipalExtentension
     {
@@ -34,7 +36,7 @@ namespace Programming.Team.Data.Core
     public interface IRepository
     {
         IUnitOfWork CreateUnitOfWork();
-        Task<Guid?> GetCurrentUserId(IUnitOfWork? uow = null, CancellationToken token = default);
+        Task<Guid?> GetCurrentUserId(IUnitOfWork? uow = null, bool fetchTrueUserId = false, CancellationToken token = default);
     }
     public interface IIRepository<in TEntity, TKey> : IRepository
         where TEntity : Entity<TKey>, new()

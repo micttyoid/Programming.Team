@@ -45,6 +45,10 @@ namespace Programming.Team.ViewModels.Admin
         {
         }
 
+        public UserViewModel(ILogger logger, IUserBusinessFacade facade, User entity) : base(logger, facade, entity)
+        {
+        }
+
         private string objectId = null!;
         public string ObjectId 
         {

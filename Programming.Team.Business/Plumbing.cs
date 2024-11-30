@@ -30,9 +30,9 @@ namespace Programming.Team.Business
             return RepositoryRaw.CreateUnitOfWork();
         }
 
-        public virtual Task<Guid?> GetCurrentUserId(IUnitOfWork? uow = null, CancellationToken token = default)
+        public virtual Task<Guid?> GetCurrentUserId(IUnitOfWork? uow = null, bool fetchTrueUserId = false, CancellationToken token = default)
         {
-            return RepositoryRaw.GetCurrentUserId(uow, token);
+            return RepositoryRaw.GetCurrentUserId(uow, fetchTrueUserId, token: token);
         }
     }
     public abstract class BusinessRepositoryFacade<TEntity, TKey> : BusinessRepositoryFacade,

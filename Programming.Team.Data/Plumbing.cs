@@ -15,7 +15,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Programming.Team.Data
 {
@@ -60,6 +59,30 @@ namespace Programming.Team.Data
                     return Thread.CurrentPrincipal as ClaimsPrincipal;
             }
             return null;
+        }
+        private const string ImpersonatedUserId = nameof(ImpersonatedUserId);
+        public async Task<Guid?> GetImpersonatedUser()
+        {
+            var httpContext = ServiceProvider.GetService<IHttpContextAccessor>();
+            var strUserId = httpContext?.HttpContext.Session.GetString(ImpersonatedUserId);
+            
+            if(Guid.TryParse(strUserId, out Guid userId))
+                return userId;
+            return null;
+        }
+
+        public Task SetImpersonatedUser(Guid? userId)
+        {
+            var httpContext = ServiceProvider.GetService<IHttpContextAccessor>();
+            if(httpContext != null)
+            {
+                if(userId == null)
+                    httpContext.HttpContext.Session.Remove(ImpersonatedUserId);
+                else
+                    httpContext.HttpContext.Session.SetString(ImpersonatedUserId, userId.ToString());
+
+            }
+            return Task.CompletedTask;
         }
     }
     public class UnitOfWork : IUnitOfWork
@@ -159,34 +182,41 @@ namespace Programming.Team.Data
                 }
             }
         }
-        public async Task<Guid?> GetCurrentUserId(IUnitOfWork? uow = null, CancellationToken token = default)
+        public async Task<Guid?> GetCurrentUserId(IUnitOfWork? uow = null, bool fetchTrueUserId = false, CancellationToken token = default)
         {
-            Guid? id = null;
-            var user = await ContextFactory.GetPrincipal();
-            var objectId = user?.GetUserId();
-            if (objectId == null)
-                return null;
-            if (!Cache.TryGetValue(objectId, out id))
+            var userId = await ContextFactory.GetImpersonatedUser();
+            if (userId == null || fetchTrueUserId)
             {
-                await Use(async (w, t) =>
+                Guid? id = null;
+                var user = await ContextFactory.GetPrincipal();
+                var objectId = user?.GetUserId();
+                if (objectId == null)
+                    return null;
+                if (!Cache.TryGetValue(objectId, out id))
                 {
-                    var work = (UnitOfWork)w;
-                    if (!Cache.TryGetValue(objectId, out id))
+                    await Use(async (w, t) =>
                     {
-                        var u = await work.ResumesContext.Users.AsNoTracking().SingleOrDefaultAsync(u => u.ObjectId == objectId, token);
-                        id = u?.Id;
-                        Cache.Set(objectId, id);
-                    }
-                }, uow, token, false);
+                        var work = (UnitOfWork)w;
+                        if (!Cache.TryGetValue(objectId, out id))
+                        {
+                            var u = await work.ResumesContext.Users.AsNoTracking().SingleOrDefaultAsync(u => u.ObjectId == objectId, token);
+                            id = u?.Id;
+                            Cache.Set(objectId, id);
+                        }
+                    }, uow, token, false);
+                }
+                return id;
             }
-            return id;
+            else
+                return userId;
+            
         }
         public virtual Task Delete(TEntity entity, IUnitOfWork? work = null, CancellationToken token = default)
         {
             return Use(async (w, t) =>
             {
                 entity.UpdateDate = DateTime.UtcNow;
-                entity.UpdatedByUserId = await GetCurrentUserId(work, token);
+                entity.UpdatedByUserId = await GetCurrentUserId(work, true, token: token);
                 entity.IsDeleted = true;
             }, work, token, true);
         }
@@ -269,7 +299,7 @@ namespace Programming.Team.Data
         {
             return Use(async (w, t) =>
             {
-                var userId = await GetCurrentUserId(w, token);
+                var userId = await GetCurrentUserId(w, true, token: token);
                 entity.CreateDate = DateTime.UtcNow;
                 entity.UpdateDate = DateTime.UtcNow;
                 entity.CreatedByUserId = userId;
@@ -285,7 +315,7 @@ namespace Programming.Team.Data
             await Use(async (w, t) =>
             {
                 await PopulateBaseAttributes(entity, w, t);
-                var userId = await GetCurrentUserId(w, token);
+                var userId = await GetCurrentUserId(w, true, token: token);
                 entity.UpdateDate = DateTime.UtcNow;
                 entity.UpdatedByUserId = userId;
                 w.Context.Attach(entity);

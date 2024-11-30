@@ -16,7 +16,28 @@ namespace Programming.Team.Data
         public UserRepository(IContextFactory contextFactory, IMemoryCache cache) : base(contextFactory, cache)
         {
         }
-
+        public async Task AddRecruiter(Guid targetUserId, Guid recruiterId, IUnitOfWork? work = null, CancellationToken token = default)
+        {
+            await Use(async (w, t) =>
+            {
+                var user = await w.ResumesContext.Users.Include(c => c.Recruiters).SingleAsync(w => w.Id == targetUserId);
+                var updateUserId = await GetCurrentUserId(w, true, t);
+                user.UpdateDate = DateTime.UtcNow;
+                user.UpdatedByUserId = updateUserId;
+                user.Recruiters.Add(await w.ResumesContext.Users.SingleAsync(w => w.Id == recruiterId));
+            }, work, token, true);
+        }
+        public async Task RemoveRecruiter(Guid targetUserId, Guid recruiterId, IUnitOfWork? work = null, CancellationToken token = default)
+        {
+            await Use(async (w, t) =>
+            {
+                var user = await w.ResumesContext.Users.Include(c => c.Recruiters).SingleAsync(w => w.Id == targetUserId);
+                var updateUserId = await GetCurrentUserId(w, true, t);
+                user.UpdateDate = DateTime.UtcNow;
+                user.UpdatedByUserId = updateUserId;
+                user.Recruiters.Remove(user.Recruiters.Single(w => w.Id == recruiterId));
+            }, work, token, true);
+        }
         public async Task<User?> GetByObjectIdAsync(string objectId, IUnitOfWork? work = null, Expression<Func<User, object>>? properties = null, CancellationToken token = default)
         {
             User? user = null;
@@ -45,7 +66,7 @@ namespace Programming.Team.Data
             },work, token);
             return userIds;
         }
-
+        
         public async Task SetSelectedUsersToRole(Guid roleId, Guid[] userIds, IUnitOfWork? work = null, CancellationToken token = default)
         {
             await Use(async (w, t) =>
@@ -54,7 +75,7 @@ namespace Programming.Team.Data
                 if(role != null)
                 {
                     
-                    var userId = await GetCurrentUserId(w, t);
+                    var userId = await GetCurrentUserId(w, true, token: t);
                     role.Users.Clear();
                     role.UpdateDate = DateTime.UtcNow;
                     role.UpdatedByUserId = userId;

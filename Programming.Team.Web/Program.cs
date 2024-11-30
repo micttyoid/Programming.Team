@@ -26,6 +26,7 @@ using Programming.Team.AI.Core;
 using Programming.Team.AI;
 using Programming.Team.Templating.Core;
 using Programming.Team.Templating;
+using Programming.Team.ViewModels.Recruiter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -129,7 +130,12 @@ builder.Services.AddTransient<UserProfileLoaderViewModel>();
 builder.Services.AddTransient<PostingsViewModel>();
 builder.Services.AddTransient<PostingLoaderViewModel>();
 builder.Services.AddTransient<ResumeBuilderViewModel>();
+builder.Services.AddTransient<ImpersonatorViewModel>();
+builder.Services.AddTransient<AcceptRecruiterViewModel>();
+builder.Services.AddTransient<RecruitersViewModel>();
+builder.Services.AddTransient<RecruitsViewModel>();
 builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
