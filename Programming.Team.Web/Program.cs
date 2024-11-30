@@ -49,6 +49,10 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor()
+    .AddHubOptions(options =>
+    {
+        options.MaximumReceiveMessageSize = 1024 * 1024 * 10; // 10 MB
+    })
     .AddMicrosoftIdentityConsentHandler();
 builder.Services.AddMudServices();
 builder.Services.AddScoped(provider =>

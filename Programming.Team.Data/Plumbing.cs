@@ -173,7 +173,7 @@ namespace Programming.Team.Data
         {
             if(entity.CreatedByUserId == null)
             {
-                var e = await GetByID(entity.Id, uow, token: token);
+                var e = await GetByID(entity.Id, token: token);
                 if(e != null)
                 {
                     entity.CreatedByUserId = e.CreatedByUserId;
@@ -318,12 +318,12 @@ namespace Programming.Team.Data
                 var userId = await GetCurrentUserId(w, true, token: token);
                 entity.UpdateDate = DateTime.UtcNow;
                 entity.UpdatedByUserId = userId;
-                w.Context.Attach(entity);
                 w.Context.Update(entity);
-                if (properites != null)
-                    entity = await GetByID(entity.Id, w, properites, t) ?? throw new InvalidDataException();
             }, work, token, true);
-            return entity;
+            if(properites != null)
+                return await GetByID(entity.Id, properites: properites, token: token) ?? throw new InvalidDataException();
+            else
+                return entity;
         }
 
         public virtual async Task<int> Count(IUnitOfWork? work = null,
