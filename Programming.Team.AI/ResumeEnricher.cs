@@ -20,7 +20,7 @@ namespace Programming.Team.AI
             Logger = logger;
             ChatGPT = chatGPT;
         }
-        public async Task EnrichResume(Resume resume, Posting posting, CancellationToken token = default)
+        public async Task EnrichResume(Resume resume, Posting posting, IProgress<string>? progress = null, CancellationToken token = default)
         {
             try
             {
@@ -29,6 +29,7 @@ namespace Programming.Team.AI
                 
                 if (config.HideSkillsNotInJD)
                 {
+                    progress?.Report("Filtering Skills");
                     string? postingSkills = await ChatGPT.GetRepsonse("extract as many skill keywords as possible from user message in json dictionary format [{\"skill\":\"name\"}]",
                         posting.Details, token: token);
                     if (postingSkills != null)
@@ -58,27 +59,30 @@ namespace Programming.Team.AI
                 
                 if (!string.IsNullOrWhiteSpace(resume.User.Bio))
                 {
+                    progress?.Report("Tailoring Bio");
                     resume.User.Bio = await ChatGPT.GetRepsonse($"Tailor the user message biography to the following requirement, limit result to three paragraphs stick to what you know, don't make things up: {posting.Details.Replace("\"", "\\\"")}", resume.User.Bio.Replace("\"", "\\\""), token: token);
-                    resume.User.Bio = resume.User.Bio?.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&");
+                    resume.User.Bio = resume.User.Bio?.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
                 }
                 foreach (var skill in resume.Skills.Select(p => p.Skill).Union(resume.Positions.SelectMany(p => p.PositionSkills.Select(p => p.Skill))))
                 {
-                    skill.Name = skill.Name.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&");
+                    skill.Name = skill.Name.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
                 }
                 foreach(var rec in resume.Reccomendations)
                 {
-                    rec.Body = rec.Body.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&");
-                    rec.Name = rec.Name.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&");
+                    rec.Body = rec.Body.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
+                    rec.Name = rec.Name.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
                 }
                 foreach(var edu in resume.Educations)
                 {
-                    edu.Description = edu.Description?.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&");
+                    edu.Description = edu.Description?.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
                 }
                 foreach(var pub in resume.Publications)
                 {
-                    pub.Title = pub.Title.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&");
-                    pub.Description = pub.Description?.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&");
+                    pub.Title = pub.Title.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
+                    pub.Description = pub.Description?.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
                 }
+                int count = resume.Positions.Count;
+                int numberProcessed = 0;
                 await Parallel.ForEachAsync(resume.Positions, token, async (position, t) =>
                 {
                     if (!string.IsNullOrWhiteSpace(position.Description))
@@ -91,13 +95,14 @@ namespace Programming.Team.AI
                             {
                                 double length = mtch * 10 * (config.TargetLengthPer10Percent ?? 200);
                                 position.Description = await ChatGPT.GetRepsonse($"tailor user message, resulting in a total text length of no more than {length} characters, to the following job requirement sticking to the facts included in the user message, do not be creative IF A TECHNOLOGY IS NOT MENTIONED IN THE USER MESSAGE DO NOT INCLUDE IT IN THE SUMMARY!!!!", position.Description.Replace("\"", "\\\""), token: t);
-                                position.Description = position.Description?.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&");
+                                position.Description = position.Description?.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
                             }
                             else
                                 position.Description = "";
                         }
                     }
-
+                    int currentCount = Interlocked.Increment(ref numberProcessed);
+                    progress?.Report($"{currentCount}/{count} Positions Processed");
                 });
             }
             catch (Exception ex)

@@ -79,11 +79,16 @@ namespace Programming.Team.ViewModels.Resume
         {
             try
             {
+                Progress<string> prog = new Progress<string>(str =>
+                {
+                    Progress = str;
+                });
                 await Update.Execute().GetAwaiter();
                 var userId = await Facade.GetCurrentUserId();
                 if (userId == null)
                     throw new InvalidDataException();
-                await Builder.RebuildPosting(await Populate(), await Builder.BuildResume(userId.Value, token), Enrich, RenderPDF, ConfigurationViewModel.GetConfiguration(), token);
+                await Builder.RebuildPosting(await Populate(), await Builder.BuildResume(userId.Value, prog, token), Enrich, RenderPDF, prog, ConfigurationViewModel.GetConfiguration(), token);
+                Progress = null;
                 await Load.Execute().GetAwaiter();
                 await Alert.Handle("Resume Rebuilt!").GetAwaiter();
             }
@@ -170,7 +175,21 @@ namespace Programming.Team.ViewModels.Resume
             get => configuration;
             set => this.RaiseAndSetIfChanged(ref configuration, value);
         }
-
+        private string? progress;
+        public string? Progress
+        {
+            get => progress;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref progress, value);
+                this.RaisePropertyChanged(nameof(IsOverlayOpen));
+            }
+        }
+        public bool IsOverlayOpen
+        {
+            get => Progress != null;
+            set { }
+        }
         public Guid UserId { get; set; }
         protected override async Task<Posting?> DoLoad(CancellationToken token)
         {

@@ -14,6 +14,10 @@
     <MudTextField Lines="10" @bind-Value="ViewModel.PostingText" Label="Posting Text" Variant="Variant.Outlined" />
     <ResumeConfigurationView ViewModel="ViewModel.Configuration"/>
     <MudButton OnClick="ViewModel.Build.BindCommand<MouseEventArgs>()">Build Resume</MudButton>
+    <MudOverlay @bind-Visible="ViewModel.IsOverlayOpen" DarkBackground="true" AutoClose="false">
+        <MudProgressCircular Color="Color.Secondary" Size="Size.Large" Indeterminate="true" />
+        <h1><MudText Color="Color.Secondary">@ViewModel.Progress</MudText></h1>
+    </MudOverlay>
 }
 @code {
     protected override async Task OnAfterRenderAsync(bool firstRender)

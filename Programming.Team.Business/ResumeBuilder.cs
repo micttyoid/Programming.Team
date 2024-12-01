@@ -55,13 +55,14 @@ namespace Programming.Team.Business
             PostingFacade = postingFacade;
             ResumeBlob = resumeBlob;
         }
-        public async Task<Resume> BuildResume(Guid userId, CancellationToken token = default)
+        public async Task<Resume> BuildResume(Guid userId, IProgress<string>? progress = null, CancellationToken token = default)
         {
             try
             {
                 Resume resume = new Resume();
                 await using (var uow = UserFacade.CreateUnitOfWork())
                 {
+                    progress?.Report("Building Resume");
                     resume.User = await UserFacade.GetByID(userId, work: uow, token: token) ?? throw new InvalidDataException();
                     var positions = await PositionFacade.Get(work: uow, properites: GetPositionProperties(), filter: q => q.UserId == userId, 
                         orderBy: q => q.OrderBy(c => c.SortOrder).ThenByDescending(c => c.EndDate ?? DateOnly.MaxValue).ThenByDescending(c => c.StartDate),
@@ -122,7 +123,7 @@ namespace Programming.Team.Business
         {
             return e => e.Include(x => x.Issuer);
         }
-        public async Task<Posting> BuildPosting(Guid userId, Guid documentTemplateId, string name, string positionText, Resume resume, ResumeConfiguration? config = null, CancellationToken token = default)
+        public async Task<Posting> BuildPosting(Guid userId, Guid documentTemplateId, string name, string positionText, Resume resume, IProgress<string>? progress = null, ResumeConfiguration? config = null, CancellationToken token = default)
         {
             try
             {
@@ -138,8 +139,8 @@ namespace Programming.Team.Business
                     Details = positionText,
                     Name = name
                 };
-                await PostingFacade.Add(posting, token: token); //TODO: enable pdf rendering when implemented
-                posting = await RebuildPosting(posting, resume, config: config, token: token);
+                await PostingFacade.Add(posting, token: token);
+                posting = await RebuildPosting(posting, resume,progress: progress, config: config, token: token);
                 return posting;
             }
             catch (Exception ex)
@@ -149,7 +150,7 @@ namespace Programming.Team.Business
             }
         }
 
-        public async Task<Posting> RebuildPosting(Posting posting, Resume resume, bool enrich = true, bool renderPDF = true, ResumeConfiguration? config = null, CancellationToken token = default)
+        public async Task<Posting> RebuildPosting(Posting posting, Resume resume, bool enrich = true, bool renderPDF = true, IProgress<string>? progress = null, ResumeConfiguration? config = null, CancellationToken token = default)
         {
             try
             {
@@ -158,7 +159,7 @@ namespace Programming.Team.Business
                     throw new InvalidDataException();
                 
                 if(enrich)
-                    await Enricher.EnrichResume(resume, posting, token);
+                    await Enricher.EnrichResume(resume, posting, progress, token);
                 posting.RenderedLaTex = await Templator.ApplyTemplate(docTemplate.Template, resume, token);
                 posting = await PostingFacade.Update(posting, token: token);
                 if (posting.RenderedLaTex != null && renderPDF)

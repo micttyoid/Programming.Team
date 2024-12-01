@@ -55,6 +55,21 @@ namespace Programming.Team.ViewModels.Resume
             get => name;
             set => this.RaiseAndSetIfChanged(ref name, value);
         }
+        private string? progress;
+        public string? Progress
+        {
+            get => progress;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref progress, value);
+                this.RaisePropertyChanged(nameof(IsOverlayOpen));
+            }
+        }
+        public bool IsOverlayOpen
+        {
+            get => Progress != null;
+            set { }
+        }
         protected async Task DoBuild(CancellationToken token)
         {
             try
@@ -62,8 +77,13 @@ namespace Programming.Team.ViewModels.Resume
                 var userId = await DocumentTemplateFacade.GetCurrentUserId();
                 if (userId == null)
                     return;
-                var resume = await Builder.BuildResume(userId.Value, token);
-                var posting = await Builder.BuildPosting(userId.Value, SelectedTemplate!.Id, Name, PostingText, resume, Configuration.GetConfiguration(), token: token);
+                Progress<string> progressable = new Progress<string>(str =>
+                {
+                    Progress = str;
+                });
+                var resume = await Builder.BuildResume(userId.Value, progressable, token);
+                var posting = await Builder.BuildPosting(userId.Value, SelectedTemplate!.Id, Name, PostingText, resume,progressable, Configuration.GetConfiguration(), token: token);
+                Progress = null;
                 await Alert.Handle("Resume Built").GetAwaiter();
                 NavMan.NavigateTo($"/resume/postings/{posting.Id}");
             }

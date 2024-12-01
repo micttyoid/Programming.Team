@@ -29,6 +29,10 @@
             <MudButton OnClick="ViewModel.Delete.BindCommand<MouseEventArgs>()">Delete</MudButton>
         </MudStack>
     </MudStack>
+    <MudOverlay @bind-Visible="ViewModel.IsOverlayOpen" DarkBackground="true" AutoClose="false">
+        <MudProgressCircular Color="Color.Secondary" Size="Size.Large" Indeterminate="true"/>
+        <h1><MudText Color="Color.Secondary">@ViewModel.Progress</MudText></h1>
+    </MudOverlay>
 }
 
 @code {
