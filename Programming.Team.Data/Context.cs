@@ -29,7 +29,8 @@ public partial class ResumesContext : DbContext
     public virtual DbSet<Education> Educations { get; set; }
 
     public virtual DbSet<Institution> Institutions { get; set; }
-
+    public virtual DbSet<Package> Packages { get; set; }
+    public virtual DbSet<Purchase> Purchases { get; set; }
     public virtual DbSet<Position> Positions { get; set; }
 
     public virtual DbSet<PositionSkill> PositionSkills { get; set; }
@@ -381,6 +382,7 @@ public partial class ResumesContext : DbContext
             entity.Property(e => e.PortfolioUrl).HasMaxLength(2000);
             entity.Property(e => e.State).HasMaxLength(500);
             entity.Property(e => e.Title).HasMaxLength(100);
+            entity.Property(e => e.ResumeGenerationsLeft).HasDefaultValue(15);
             entity.Property(e => e.UpdateDate)
                 .HasDefaultValueSql("(getutcdate())")
                 .HasColumnType("datetime");
@@ -506,6 +508,58 @@ public partial class ResumesContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Reccomendations_Users");
             entity.HasQueryFilter(d => !d.IsDeleted);
+        });
+        modelBuilder.Entity<Package>(entity =>
+        {
+            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.CreateDate)
+                .HasDefaultValueSql("(getutcdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Price).HasColumnType("money");
+            entity.Property(e => e.StripePriceId).HasMaxLength(1000);
+            entity.Property(e => e.StripeProductId).HasMaxLength(1000);
+            entity.Property(e => e.StripeUrl).HasMaxLength(1000);
+            entity.Property(e => e.UpdateDate)
+                .HasDefaultValueSql("(getutcdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.PackageCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Packages_Users");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.PackageUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Packages_Users1");
+        });
+        modelBuilder.Entity<Purchase>(entity =>
+        {
+            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.PricePaid).HasColumnType("money");
+            entity.Property(e => e.StripeSessionUrl).HasMaxLength(1000);
+            entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.PurchaseCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Purchases_Users1");
+
+            entity.HasOne(d => d.Package).WithMany(p => p.Purchases)
+                .HasForeignKey(d => d.PackageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Purchases_Packages");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.PurchaseUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Purchases_Users2");
+
+            entity.HasOne(d => d.User).WithMany(p => p.PurchaseUsers)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Purchases_Users");
         });
         OnModelCreatingPartial(modelBuilder);
     }

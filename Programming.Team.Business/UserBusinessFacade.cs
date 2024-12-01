@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Programming.Team.Business.Core;
 using Programming.Team.Core;
 using Programming.Team.Data;
@@ -30,6 +31,20 @@ namespace Programming.Team.Business
         public Task RemoveRecruiter(Guid targetUserId, Guid recruiterId, IUnitOfWork? work = null, CancellationToken token = default)
         {
             return Repository.RemoveRecruiter(targetUserId, recruiterId, work, token);
+        }
+        public override async Task<User> Update(User entity, IUnitOfWork? work = null, Func<IQueryable<User>, IQueryable<User>>? properites = null, CancellationToken token = default)
+        {
+            var user = await GetByID(entity.Id, work, token: token);
+            entity.ResumeGenerationsLeft = user?.ResumeGenerationsLeft ?? throw new InvalidDataException();
+            return await base.Update(entity, work, properites, token);
+        }
+
+        public async Task<bool> UtilizeResumeGeneration(Guid userId, IUnitOfWork? work = null, CancellationToken token = default)
+        {
+            var user = await GetByID(userId, properites: q => q.Include(e => e.Roles), work: work, token: token);
+            if(!user!.Roles.Any(e => e.Name == "Admin"))
+                return await Repository.UtilizeResumeGeneration(userId, work, token);
+            return true;
         }
     }
     public class RoleBusinessFacade : BusinessRepositoryFacade<Role, Guid, IRoleRepository>, IRoleBusinessFacade

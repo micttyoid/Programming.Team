@@ -155,8 +155,12 @@ namespace Programming.Team.ViewModels.Resume
             get => country;
             set => this.RaiseAndSetIfChanged(ref country, value);
         }
-
-
+        private int resumeGenerationsLeft;
+        public int ResumeGenerationsLeft
+        {
+            get => resumeGenerationsLeft;
+            set => this.RaiseAndSetIfChanged(ref resumeGenerationsLeft, value);
+        }
         protected override Task<User> Populate()
         {
             return Task.FromResult(new User()
@@ -174,7 +178,8 @@ namespace Programming.Team.ViewModels.Resume
                 PhoneNumber = PhoneNumber,
                 City = City,
                 State = State,
-                Country = Country
+                Country = Country,
+                ResumeGenerationsLeft = ResumeGenerationsLeft
             });
         }
 
@@ -194,6 +199,7 @@ namespace Programming.Team.ViewModels.Resume
             City = entity.City;
             State = entity.State;
             Country = entity.Country;
+            ResumeGenerationsLeft = entity.ResumeGenerationsLeft;
             return Task.CompletedTask;
         }
     }

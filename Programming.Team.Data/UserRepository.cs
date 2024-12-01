@@ -50,6 +50,25 @@ namespace Programming.Team.Data
             }, work, token);
             return user;
         }
+
+        public async Task<bool> UtilizeResumeGeneration(Guid userId, IUnitOfWork? work = null, CancellationToken token = default)
+        {
+            bool canGenerate = false;
+            await Use(async (w, t) =>
+            {
+                var user = await w.ResumesContext.Users.FindAsync(userId, token);
+                if (user != null)
+                {
+                    canGenerate = user.ResumeGenerationsLeft > 0;
+                    if (canGenerate)
+                    {
+                        user.ResumeGenerationsLeft--;
+                        w.Context.Update(user);
+                    }
+                }
+            }, work, token, true);
+            return canGenerate;
+        }
     }
     public class RoleRepository : Repository<Role, Guid>, IRoleRepository
     {

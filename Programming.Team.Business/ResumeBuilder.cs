@@ -157,8 +157,8 @@ namespace Programming.Team.Business
                 var docTemplate = await DocumentTemplateFacade.GetByID(posting.DocumentTemplateId, token: token);
                 if (docTemplate == null)
                     throw new InvalidDataException();
-                
-                if(enrich)
+
+                if (enrich && await UserFacade.UtilizeResumeGeneration(resume.User.Id, token: token))
                     await Enricher.EnrichResume(resume, posting, progress, token);
                 posting.RenderedLaTex = await Templator.ApplyTemplate(docTemplate.Template, resume, token);
                 posting = await PostingFacade.Update(posting, token: token);

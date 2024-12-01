@@ -28,6 +28,7 @@ public interface IUser : IEntity<Guid>
     string? State { get; set; }
 
     string? Country { get; set; }
+    int ResumeGenerationsLeft { get; set; }
 }
 public partial class User : Entity<Guid>, IUser
 {
@@ -131,4 +132,13 @@ public partial class User : Entity<Guid>, IUser
     public virtual ICollection<Reccomendation> ReccomendationUsers { get; set; } = new List<Reccomendation>();
     public virtual ICollection<User> Recruiters { get; set; } = new List<User>();
     public virtual ICollection<User> Recruits { get; set; } = new List<User>();
+    public int ResumeGenerationsLeft { get; set; } = 15;
+    public virtual ICollection<Package> PackageCreatedByUsers { get; set; } = new List<Package>();
+
+    public virtual ICollection<Package> PackageUpdatedByUsers { get; set; } = new List<Package>();
+    public virtual ICollection<Purchase> PurchaseCreatedByUsers { get; set; } = new List<Purchase>();
+
+    public virtual ICollection<Purchase> PurchaseUpdatedByUsers { get; set; } = new List<Purchase>();
+
+    public virtual ICollection<Purchase> PurchaseUsers { get; set; } = new List<Purchase>();
 }

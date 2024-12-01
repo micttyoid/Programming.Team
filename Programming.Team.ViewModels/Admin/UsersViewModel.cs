@@ -138,7 +138,12 @@ namespace Programming.Team.ViewModels.Admin
             get => country;
             set => this.RaiseAndSetIfChanged(ref country, value);
         }
-
+        private int resumeGenerationsLeft;
+        public int ResumeGenerationsLeft
+        {
+            get => resumeGenerationsLeft;
+            set => this.RaiseAndSetIfChanged(ref resumeGenerationsLeft, value);
+        }
         protected override Task<User> Populate()
         {
             User user = new User();
@@ -156,7 +161,7 @@ namespace Programming.Team.ViewModels.Admin
             user.City = City;
             user.State = State;
             user.Country = Country;
-
+            user.ResumeGenerationsLeft = ResumeGenerationsLeft;
             return Task.FromResult(user);
         }
         
@@ -176,6 +181,7 @@ namespace Programming.Team.ViewModels.Admin
             City = entity.City;
             State = entity.State;
             Country = entity.Country;
+            ResumeGenerationsLeft = entity.ResumeGenerationsLeft;
             return Task.CompletedTask;
         }
     }
