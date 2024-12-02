@@ -361,6 +361,10 @@ namespace Programming.Team.ViewModels
         {
             return Task.FromResult<Expression<Func<TEntity, bool>>?>(null);
         }
+        protected virtual Func<IQueryable<TEntity>, IQueryable<TEntity>>? PropertiesToLoad()
+        {
+            return null;
+        }
         public ReactiveCommand<DataGridRequest<TKey, TEntity>, RepositoryResultSet<TKey, TEntity>?> Fetch { get; }
         protected ILogger Logger { get; }
         protected TFacade Facade { get; }
@@ -374,7 +378,7 @@ namespace Programming.Team.ViewModels
         {
             try
             {
-                return await Facade.Get(page: request.Pager, filter: (await GetBaseFilterCondition()).CombineWithAnd(request.Filter), orderBy: request.OrderBy, token: token);
+                return await Facade.Get(page: request.Pager, properites: PropertiesToLoad(), filter: (await GetBaseFilterCondition()).CombineWithAnd(request.Filter), orderBy: request.OrderBy, token: token);
             }
             catch (Exception ex)
             {

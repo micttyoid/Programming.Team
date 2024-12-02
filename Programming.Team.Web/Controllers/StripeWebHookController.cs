@@ -1,7 +1,9 @@
-﻿/*using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using Programming.Team.Core;
+using Programming.Team.PurchaseManager.Core;
 using Stripe;
 using Stripe.Checkout;
 
@@ -14,12 +16,14 @@ namespace Programming.Team.Web.Controllers
         protected string WebHookSecret { get; }
         protected ILogger Logger { get; }
         protected SessionService SessionService { get; }
-        public StripeWebhookController(IConfiguration configuration,
+        protected IPurchaseManager PurchaseManager { get; }
+        public StripeWebhookController(IConfiguration configuration, IPurchaseManager purchaseManager,
             ILogger<StripeWebhookController> logger, SessionService sessionService)
         {
             WebHookSecret = configuration["Stripe:WebHookKey"] ?? throw new InvalidDataException();
             Logger = logger;
             SessionService = sessionService;
+            PurchaseManager = purchaseManager;
         }
         [HttpPost]
         public async Task<IActionResult> Index()
@@ -39,11 +43,10 @@ namespace Programming.Team.Web.Controllers
 
                     // Retrieve the session. If you require line items in the response, you may include them by expanding line_items.
                     var sessionWithLineItems = await SessionService.GetAsync(session.Id, options);
-                    if (sessionWithLineItems.Metadata.TryGetValue(nameof(Sub.Id), out var subscriptionId)
-                        && sessionWithLineItems.Metadata.TryGetValue(nameof(U.ObjectId), out var objectId))
+                    if (sessionWithLineItems.Metadata.TryGetValue(nameof(Purchase.Id), out var subscriptionId))
                     {
                         if (sessionWithLineItems.AmountTotal != null)
-                            await SubscriptionManager.FinishSubscription(Guid.Parse(subscriptionId), objectId, sessionWithLineItems.AmountTotal.Value / 100m);
+                            await PurchaseManager.FinishPurchase(Guid.Parse(subscriptionId));
                     }
                     else
                         throw new InvalidDataException();
@@ -58,4 +61,3 @@ namespace Programming.Team.Web.Controllers
         }
     }
 }
-*/

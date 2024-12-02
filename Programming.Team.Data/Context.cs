@@ -532,6 +532,7 @@ public partial class ResumesContext : DbContext
                 .HasForeignKey(d => d.UpdatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Packages_Users1");
+            entity.HasQueryFilter(d => !d.IsDeleted);
         });
         modelBuilder.Entity<Purchase>(entity =>
         {
@@ -560,6 +561,7 @@ public partial class ResumesContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Purchases_Users");
+            entity.HasQueryFilter(d => !d.IsDeleted);
         });
         OnModelCreatingPartial(modelBuilder);
     }

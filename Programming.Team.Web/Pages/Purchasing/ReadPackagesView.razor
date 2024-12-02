@@ -1,0 +1,32 @@
+﻿@page "/purchasing/packages"
+@inherits ReactiveInjectableComponentBase<PackagesViewModel>
+@if(ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert"/>
+    <MudStack>
+        @foreach(var pack in ViewModel.Entities)
+        {
+            <ReadPackageView ViewModel="pack"/>
+        }
+    </MudStack>
+}
+@code {
+    protected override void OnInitialized()
+    {
+        if (ViewModel != null)
+            ViewModel.Entities.CollectionChanged += (s, e) =>
+            {
+                InvokeAsync(StateHasChanged);
+            };
+        base.OnInitialized();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ViewModel != null && firstRender)
+        {
+            await ViewModel.Load.Execute().GetAwaiter();
+
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

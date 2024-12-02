@@ -36,7 +36,7 @@ namespace Programming.Team.Business
         }
     }
     public abstract class BusinessRepositoryFacade<TEntity, TKey> : BusinessRepositoryFacade,
-        IIBusinessRepositoryFacade<TEntity, TKey>
+        IBusinessRepositoryFacade<TEntity, TKey>
         where TEntity : Entity<TKey>, new()
         where TKey: struct
     {
@@ -90,6 +90,36 @@ namespace Programming.Team.Business
                 throw;
             }
         }
+        public virtual Task<int> Count(IUnitOfWork? work = null, Expression<Func<TEntity, bool>>? filter = null, CancellationToken token = default)
+        {
+            return RepositoryDefault.Count(work, filter, token);
+        }
+
+        public virtual Task<RepositoryResultSet<TKey, TEntity>> Get(IUnitOfWork? work = null, Pager? page = null,
+            Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>,
+            IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null, CancellationToken token = default)
+        {
+            return RepositoryDefault.Get(work, page, filter, orderBy, properites, token);
+        }
+
+        public virtual Task<TEntity?> GetByID(TKey key, IUnitOfWork? work = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null, CancellationToken token = default)
+        {
+            return RepositoryDefault.GetByID(key, work, properites, token);
+        }
+        public virtual async Task<TEntity> Update(TEntity entity,
+            IUnitOfWork? work = null,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null, CancellationToken token = default)
+        {
+            try
+            {
+                return await this.RepositoryDefault.Update(entity, work, properites, token);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, ex.Message);
+                throw;
+            }
+        }
     }
     public class BusinessRepositoryFacade<TEntity, TKey, TRepository> : BusinessRepositoryFacade<TEntity, TKey>, IBusinessRepositoryFacade<TEntity, TKey>
         where TEntity : Entity<TKey>, new()
@@ -102,35 +132,6 @@ namespace Programming.Team.Business
         {
         }
 
-        public virtual Task<int> Count(IUnitOfWork? work = null, Expression<Func<TEntity, bool>>? filter = null, CancellationToken token = default)
-        {
-            return Repository.Count(work, filter, token);
-        }
-
-        public virtual Task<RepositoryResultSet<TKey, TEntity>> Get(IUnitOfWork? work = null, Pager? page = null, 
-            Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, 
-            IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null, CancellationToken token = default)
-        {
-            return Repository.Get(work, page, filter, orderBy, properites, token);
-        }
-
-        public virtual Task<TEntity?> GetByID(TKey key, IUnitOfWork? work = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null, CancellationToken token = default)
-        {
-            return Repository.GetByID(key, work, properites, token);
-        }
-        public virtual async Task<TEntity> Update(TEntity entity,
-            IUnitOfWork? work = null,
-            Func<IQueryable<TEntity>, IQueryable<TEntity>>? properites = null, CancellationToken token = default)
-        {
-            try
-            {
-                return await this.Repository.Update(entity, work, properites, token);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, ex.Message);
-                throw;
-            }
-        }
+       
     }
 }

@@ -1,9 +1,28 @@
-﻿<AuthorizeView>
+﻿@inherits ReactiveInjectableComponentBase<UserBarLoaderViewModel>
+<AuthorizeView>
     <Authorized>
-        Hello, @context.User.Identity?.Name! &nbsp;<MudLink Href="MicrosoftIdentity/Account/SignOut" Color="Color.Inherit">Log out</MudLink>
+        @if(ViewModel?.ViewModel != null)
+        {
+            <MudStack Row="true">
+                <span>Hello, @ViewModel.ViewModel.EmailAddress! &nbsp;</span>
+                <MudLink Href="MicrosoftIdentity/Account/SignOut" Color="Color.Inherit">Log out</MudLink>
+                <MudSpacer/>
+                <MudText>Resume Generations Left: @ViewModel.ViewModel.ResumeGenerationsLeft</MudText>
+            </MudStack>
+            
+        }
+        
     </Authorized>
     <NotAuthorized>
         &nbsp;<MudLink Href="MicrosoftIdentity/Account/SignIn" Color="Color.Inherit"><i class="fa-solid fa-right-to-bracket"></i> Log in</MudLink>
     </NotAuthorized>
 </AuthorizeView>
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        if (ViewModel != null)
+            await ViewModel.Load.Execute().GetAwaiter();
+        await base.OnInitializedAsync();
+    }
+}
  

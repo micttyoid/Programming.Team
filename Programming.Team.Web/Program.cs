@@ -27,6 +27,11 @@ using Programming.Team.AI;
 using Programming.Team.Templating.Core;
 using Programming.Team.Templating;
 using Programming.Team.ViewModels.Recruiter;
+using Stripe;
+using Stripe.Checkout;
+using Programming.Team.ViewModels.Purchase;
+using Programming.Team.PurchaseManager.Core;
+using Programming.Team.PurchaseManager;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +60,13 @@ builder.Services.AddServerSideBlazor()
     })
     .AddMicrosoftIdentityConsentHandler();
 builder.Services.AddMudServices();
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:APIKey"];
+builder.Services.AddTransient<PriceService>();
+builder.Services.AddTransient<ProductService>();
+builder.Services.AddTransient<PaymentLinkService>();
+builder.Services.AddTransient<SessionService>();
+builder.Services.AddTransient<AccountService>();
+builder.Services.AddTransient<PayoutService>();
 builder.Services.AddScoped(provider =>
     new BlobServiceClient(builder.Configuration.GetConnectionString("ResumesBlob")));
 var connectionString = builder.Configuration.GetConnectionString("Resumes");
@@ -78,6 +90,8 @@ builder.Services.AddScoped<IRepository<Institution, Guid>, Repository<Institutio
 builder.Services.AddScoped<IRepository<Certificate, Guid>, Repository<Certificate, Guid>>();
 builder.Services.AddScoped<IRepository<CertificateIssuer, Guid>, Repository<CertificateIssuer, Guid>>();
 builder.Services.AddScoped<IRepository<Publication, Guid>, Repository<Publication, Guid>>();
+builder.Services.AddScoped<IRepository<Package, Guid>, Repository<Package, Guid>>();
+builder.Services.AddScoped<IRepository<Purchase, Guid>, Repository<Purchase, Guid>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Role, Guid>, BusinessRepositoryFacade<Role, Guid, IRepository<Role, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Company, Guid>, BusinessRepositoryFacade<Company, Guid, IRepository<Company, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Position, Guid>, BusinessRepositoryFacade<Position, Guid, IRepository<Position, Guid>>>();
@@ -95,11 +109,15 @@ builder.Services.AddScoped<IBusinessRepositoryFacade<Publication, Guid>, Busines
 builder.Services.AddScoped<IBusinessRepositoryFacade<DocumentTemplate, Guid>, BusinessRepositoryFacade<DocumentTemplate, Guid, IRepository<DocumentTemplate, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<DocumentType, int>, BusinessRepositoryFacade<DocumentType, int, IRepository<DocumentType, int>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Posting, Guid>, BusinessRepositoryFacade<Posting, Guid, IRepository<Posting, Guid>>>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<Purchase, Guid>, BusinessRepositoryFacade<Purchase, Guid, IRepository<Purchase, Guid>>>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<Package, Guid>, PackageBusinessFacade>();
+builder.Services.AddScoped<IPurchaseManager, PurhcaseManager>();
 builder.Services.AddScoped<IChatGPT, ChatGPT>();
 builder.Services.AddScoped<IResumeEnricher, ResumeEnricher>();
 builder.Services.AddScoped<IDocumentTemplator, DocumentTemplator>();
 builder.Services.AddScoped<IResumeBuilder, ResumeBuilder>();
 builder.Services.AddTransient<AlertView.AlertViewModel>();
+builder.Services.AddTransient<UserBarLoaderViewModel>();
 builder.Services.AddTransient<AddRoleViewModel>();
 builder.Services.AddTransient<ManageRolesViewModel>();
 builder.Services.AddTransient<UsersViewModel>();
@@ -138,6 +156,10 @@ builder.Services.AddTransient<ImpersonatorViewModel>();
 builder.Services.AddTransient<AcceptRecruiterViewModel>();
 builder.Services.AddTransient<RecruitersViewModel>();
 builder.Services.AddTransient<RecruitsViewModel>();
+builder.Services.AddTransient<PurchaseHistoryViewModel>();
+builder.Services.AddTransient<GlobalPurchaseHistoryViewModel>();
+builder.Services.AddTransient<AddPackageViewModel>();
+builder.Services.AddTransient<PackagesViewModel>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
 {

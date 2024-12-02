@@ -1,0 +1,16 @@
+﻿@inherits ReactiveComponentBase<PackageViewModel>
+@if(ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert" />
+    <MudStack Row="true">
+        <MudNumericField @bind-Value="ViewModel.ResumeGenerations" Label="Resume Generations" Variant="Variant.Outlined"/>
+        <MudNumericField @bind-Value="ViewModel.Price" Label="Price" Adornment="Adornment.Start" AdornmentText="$" Variant="Variant.Outlined"/>
+    </MudStack>
+    <MudStack Row="true">
+        <MudButton OnClick="ViewModel.Update.BindCommand<MouseEventArgs>()">Update</MudButton>
+        <MudButton OnClick="ViewModel.Delete.BindCommand<MouseEventArgs>()">Delete</MudButton>
+    </MudStack>
+}
+@code {
+
+}

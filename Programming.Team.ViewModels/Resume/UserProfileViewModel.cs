@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Programming.Team.Business.Core;
 using Programming.Team.Core;
+using Programming.Team.ViewModels.Admin;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,35 @@ using System.Threading.Tasks;
 
 namespace Programming.Team.ViewModels.Resume
 {
+    public class UserBarLoaderViewModel : UserProfileLoaderViewModel
+    {
+        public UserBarLoaderViewModel(IUserBusinessFacade facade, ILogger<UserProfileLoaderViewModel> logger) : base(facade, logger)
+        {
+        }
+        protected async override Task DoLoad(CancellationToken token)
+        {
+            try
+            {
+                var userId = await Facade.GetCurrentUserId(fetchTrueUserId: true, token: token);
+                if (userId != null)
+                {
+                    var user = await Facade.GetByID(userId.Value, token: token);
+                    if (user != null)
+                    {
+                        ViewModel = new UserProfileViewModel(Logger, Facade, user);
+                        await ViewModel.Load.Execute().GetAwaiter();
+                    }
+                }
+                else
+                    ViewModel = null;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, ex.Message);
+                await Alert.Handle(ex.Message).GetAwaiter();
+            }
+        }
+    }
     public class UserProfileLoaderViewModel : ReactiveObject
     {
         public Interaction<string, bool> Alert { get; } = new Interaction<string, bool>();

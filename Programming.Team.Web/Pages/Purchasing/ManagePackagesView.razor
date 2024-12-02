@@ -1,0 +1,35 @@
+﻿@page "/purchasing/packages/manage"
+@inherits ReactiveInjectableComponentBase<PackagesViewModel>
+@attribute [Authorize(Roles = "Admin")]
+@if(ViewModel != null)
+{
+    <AlertView Alert="ViewModel.Alert" />
+    <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()">Add Package</MudButton>
+    <AddPackageView ViewModel="ViewModel.AddViewModel"/>
+    <MudStack>
+        @foreach(var pack in ViewModel.Entities)
+        {
+            <ManagePackageView ViewModel="pack"/>
+        }
+    </MudStack>
+}
+@code {
+    protected override void OnInitialized()
+    {
+        if (ViewModel != null)
+            ViewModel.Entities.CollectionChanged += (s, e) =>
+            {
+                InvokeAsync(StateHasChanged);
+            };
+        base.OnInitialized();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ViewModel != null && firstRender)
+        {
+            await ViewModel.Load.Execute().GetAwaiter();
+
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

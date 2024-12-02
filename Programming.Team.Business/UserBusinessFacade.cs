@@ -4,6 +4,7 @@ using Programming.Team.Business.Core;
 using Programming.Team.Core;
 using Programming.Team.Data;
 using Programming.Team.Data.Core;
+using Programming.Team.PurchaseManager.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,6 +62,25 @@ namespace Programming.Team.Business
         public Task SetSelectedUsersToRole(Guid roleId, Guid[] userIds, IUnitOfWork? work = null, CancellationToken token = default)
         {
             return Repository.SetSelectedUsersToRole(roleId, userIds, work, token);
+        }
+    }
+    public class PackageBusinessFacade : BusinessRepositoryFacade<Package, Guid>
+    {
+        protected IPurchaseManager PurchaseManager { get; }
+        public PackageBusinessFacade(IPurchaseManager purchaseManager, IRepository<Package, Guid> repository, ILogger<Package> logger) : base(repository, logger)
+        {
+            PurchaseManager = purchaseManager;
+        }
+        public override async Task Add(Package entity, IUnitOfWork? work = null, CancellationToken token = default)
+        {
+            await base.Add(entity, work, token);
+            await PurchaseManager.ConfigurePackage(entity, token);
+        }
+        public override async Task<Package> Update(Package entity, IUnitOfWork? work = null, Func<IQueryable<Package>, IQueryable<Package>>? properites = null, CancellationToken token = default)
+        {
+            var pack = await base.Update(entity, work, properites, token);
+            await PurchaseManager.ConfigurePackage(pack, token);
+            return pack;
         }
     }
 }
