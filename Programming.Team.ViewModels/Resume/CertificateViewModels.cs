@@ -153,12 +153,16 @@ namespace Programming.Team.ViewModels.Resume
                     IssuerId = Guid.Empty;
             }).DisposeWith(disposable);
         }
-
+        public override bool CanAdd => CertificateIssuer.Selected != null;
         private Guid issuerId;
         public Guid IssuerId
         {
             get => issuerId;
-            set => this.RaiseAndSetIfChanged(ref issuerId, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref issuerId, value);
+                this.RaisePropertyChanged(nameof(CanAdd));
+            }
         }
 
         private string name = string.Empty;

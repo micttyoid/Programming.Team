@@ -93,7 +93,7 @@ namespace Programming.Team.ViewModels.Resume
                     SkillId = p.Sender.Selected.Id;
             }).DisposeWith(disposables);
         }
-
+        public override bool CanAdd => SkillSelectorViewModel.Selected != null;
         private Guid positionId;
         public Guid PositionId
         {
@@ -105,7 +105,11 @@ namespace Programming.Team.ViewModels.Resume
         public Guid SkillId
         {
             get => skillId;
-            set => this.RaiseAndSetIfChanged(ref skillId, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref skillId, value);
+                this.RaisePropertyChanged(nameof(CanAdd));
+            }
         }
 
         private string? description;

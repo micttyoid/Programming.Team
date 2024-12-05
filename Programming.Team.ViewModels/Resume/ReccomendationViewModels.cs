@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -38,7 +39,11 @@ namespace Programming.Team.ViewModels.Resume
         public Guid PositionId
         {
             get => positionId;
-            set => this.RaiseAndSetIfChanged(ref positionId, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref positionId, value);
+                this.RaisePropertyChanged(nameof(CanAdd));
+            }
         }
 
         private string name = string.Empty;
@@ -79,7 +84,7 @@ namespace Programming.Team.ViewModels.Resume
             Title = null;
             return Task.CompletedTask;
         }
-
+        public override bool CanAdd => SelectPosition.Selected != null;
         protected override Task<Reccomendation> ConstructEntity()
         {
             return Task.FromResult(new Reccomendation()

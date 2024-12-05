@@ -436,12 +436,14 @@ namespace Programming.Team.ViewModels
         ReactiveCommand<Unit, Unit>  Init { get; }
         ReactiveCommand<Unit, Unit> Cancel { get; }
         void SetText(string text);
+        bool CanAdd { get; }
     }
     public abstract class AddEntityViewModel<TKey, TEntity, TFacade> : ReactiveObject, IAddEntityViewModel<TKey, TEntity>
         where TKey : struct
         where TEntity : Entity<TKey>, new()
         where TFacade : IBusinessRepositoryFacade<TEntity, TKey>
     {
+        public virtual bool CanAdd { get => true; }
         private bool isOpen;
         public bool IsOpen
         {
@@ -485,12 +487,20 @@ namespace Programming.Team.ViewModels
         {
             try
             {
-                var e = await ConstructEntity();
-                await Facade.Add(e, token: token);
-                Added?.Invoke(this, e);
-                await Clear();
-                IsOpen = false;
-                return e;
+                if (CanAdd)
+                {
+                    var e = await ConstructEntity();
+                    await Facade.Add(e, token: token);
+                    Added?.Invoke(this, e);
+                    await Clear();
+                    IsOpen = false;
+                    return e;
+                }
+                else
+                {
+                    await Alert.Handle("Validation Error").GetAwaiter();
+                    return null;
+                }
             }
             catch (Exception ex)
             {

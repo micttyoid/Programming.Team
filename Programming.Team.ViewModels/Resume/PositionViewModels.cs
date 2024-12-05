@@ -40,9 +40,13 @@ namespace Programming.Team.ViewModels.Resume
         public Guid CompanyId
         {
             get => companyId;
-            set => this.RaiseAndSetIfChanged(ref companyId, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref companyId, value);
+                this.RaisePropertyChanged(nameof(CanAdd));
+            }
         }
-
+        public override bool CanAdd => CompanyViewModel.Selected != null;
         private DateOnly startDate;
         [Required]
         public DateOnly StartDate

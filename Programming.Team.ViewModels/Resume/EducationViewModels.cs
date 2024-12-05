@@ -116,9 +116,13 @@ namespace Programming.Team.ViewModels.Resume
         public Guid InstitutionId
         {
             get => institutionId;
-            set => this.RaiseAndSetIfChanged(ref institutionId, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref institutionId, value);
+                this.RaisePropertyChanged(nameof(CanAdd));
+            }
         }
-
+        public override bool CanAdd => SelectInstiutionViewModel.Selected != null;
         private string? major;
         public string? Major
         {

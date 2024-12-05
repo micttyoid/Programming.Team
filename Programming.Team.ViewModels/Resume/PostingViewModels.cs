@@ -1,5 +1,6 @@
 ﻿using DynamicData;
 using DynamicData.Binding;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Programming.Team.Business.Core;
 using Programming.Team.Core;
@@ -24,6 +25,10 @@ namespace Programming.Team.ViewModels.Resume
         {
         }
 
+        protected override Func<IQueryable<Posting>, IQueryable<Posting>>? PropertiesToLoad()
+        {
+            return e => e.Include(x => x.DocumentTemplate);
+        }
         protected override async Task<Expression<Func<Posting, bool>>?> GetBaseFilterCondition()
         {
             var userId = await Facade.GetCurrentUserId();
