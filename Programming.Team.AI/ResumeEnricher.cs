@@ -94,7 +94,9 @@ namespace Programming.Team.AI
                             if (mtch >= (config.MatchThreshold ?? 0.45))
                             {
                                 double length = mtch * 10 * (config.TargetLengthPer10Percent ?? 200);
-                                double bullets = mtch * 5;
+                                double bullets = (Math.Ceiling((mtch / 0.2) * (config.BulletsPer20Percent ?? 0.45)));
+                                if(bullets < 2)
+                                    bullets = 2;
                                 position.Description = await ChatGPT.GetRepsonse($"Output a LaTex snippet, with proper escaping, that will be added to an existing latex document - do not generate opening or closing article, document sections or headers. Tailor user message - which is a description of a job experience, resulting in a total text length of no more than {length} characters, to the following job requirement sticking to the facts included in the user message, do not be creative IF A TECHNOLOGY IS NOT MENTIONED IN THE USER MESSAGE DO NOT INCLUDE IT IN THE SUMMARY!!!! include a short paragraph and {Math.Round(bullets)} bullet points: {JsonSerializer.Serialize(posting.Details)}", JsonSerializer.Serialize(position.Description), token: t);
                                 position.Description = position.Description?.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
                             }

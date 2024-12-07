@@ -253,6 +253,7 @@ namespace Programming.Team.ViewModels.Resume
             MatchThreshold = config.MatchThreshold;
             TargetLengthPer10Percent = config.TargetLengthPer10Percent;
             HideSkillsNotInJD = config.HideSkillsNotInJD;
+            BulletsPer20Percent = config.BulletsPer20Percent;
         }
         public ResumeConfiguration GetConfiguration()
         {
@@ -260,7 +261,8 @@ namespace Programming.Team.ViewModels.Resume
             {
                 MatchThreshold = MatchThreshold,
                 TargetLengthPer10Percent = TargetLengthPer10Percent,
-                HideSkillsNotInJD = HideSkillsNotInJD
+                HideSkillsNotInJD = HideSkillsNotInJD,
+                BulletsPer20Percent = BulletsPer20Percent
             };
         }
         public string GetSerializedConfiguration()
@@ -287,6 +289,11 @@ namespace Programming.Team.ViewModels.Resume
             get => hideSkillsNotInJD;
             set => this.RaiseAndSetIfChanged(ref hideSkillsNotInJD, value);
         }
-
+        private double? bulletsPer20Percent;
+        public double? BulletsPer20Percent
+        {
+            get => bulletsPer20Percent;
+            set => this.RaiseAndSetIfChanged(ref  bulletsPer20Percent, value);
+        }
     }
 }
