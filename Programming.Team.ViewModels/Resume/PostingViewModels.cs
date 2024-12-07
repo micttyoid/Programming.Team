@@ -44,7 +44,14 @@ namespace Programming.Team.ViewModels.Resume
             DocumentTemplateFacade = documentTemplateFacade;
             Builder = builder;
         }
-
+        protected override async Task DoLoad(Guid key, CancellationToken token)
+        {
+            var posting = await Facade.GetByID(key, token:token);
+            var userID = await Facade.GetCurrentUserId();
+            if (posting?.UserId != userID)
+                throw new UnauthorizedAccessException();
+            await base.DoLoad(key, token);
+        }
         protected override PostingViewModel Construct(Posting entity)
         {
             return new PostingViewModel(Builder, DocumentTemplateFacade, Logger, Facade, entity);
