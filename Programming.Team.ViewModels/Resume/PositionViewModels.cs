@@ -263,7 +263,7 @@ namespace Programming.Team.ViewModels.Resume
         }
         protected override Func<IQueryable<Position>, IQueryable<Position>>? PropertiesToLoad()
         {
-            return e => e.Include(x => x.Company).Include(x => x.PositionSkills);
+            return e => e.Include(x => x.Company).Include(x => x.PositionSkills).ThenInclude(c => c.Skill);
         }
         protected override Task<Position> Populate()
         {
@@ -294,6 +294,7 @@ namespace Programming.Team.ViewModels.Resume
             EndDate = entity.EndDate;
             Company = entity.Company;
             SkillsViewModel.PositionId = entity.Id;
+            SkillsViewModel.InitialEntities = entity.PositionSkills;
             await SkillsViewModel.Load.Execute().GetAwaiter();
         }
     }

@@ -3,8 +3,10 @@
     <Authorized>
         @if(ViewModel?.ViewModel != null)
         {
+            
             <MudStack Row="true">
-                <span>Hello, @ViewModel.ViewModel.EmailAddress! &nbsp;</span>
+                <MudSpacer />
+                <MudText> Hello, @ViewModel.ViewModel.EmailAddress! &nbsp;</MudText>
                 <MudLink Href="MicrosoftIdentity/Account/SignOut" Color="Color.Inherit">Log out</MudLink>
                 <MudSpacer/>
                 <MudText>Resume Generations Left: @ViewModel.ViewModel.ResumeGenerationsLeft</MudText>

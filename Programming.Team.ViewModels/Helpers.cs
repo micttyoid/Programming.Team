@@ -645,19 +645,45 @@ namespace Programming.Team.ViewModels
         {
             return Task.FromResult<Expression<Func<TEntity, bool>>?>(null);
         }
+        public IEnumerable<TEntity>? InitialEntities { get; set; }
+        private bool isLoading = false;
+        private readonly object synch = new object();
+        protected bool CanLoad()
+        {
+            lock (synch)
+            {
+                if (!isLoading)
+                {
+                    isLoading = true;
+                    return true;
+                }
+                return false;
+            }
+        }
         protected virtual async Task DoLoad(CancellationToken token)
         {
             try
             {
-                Entities.Clear();
-                var rs = await Facade.Get(filter: await FilterCondition(), orderBy: OrderBy(), properites: PropertiesToLoad(), token: token);
-                foreach(var e in rs.Entities)
+                if (CanLoad())
                 {
-                    var vm = await Construct(e, token);
-                    await vm.Load.Execute().GetAwaiter();
-                    vm.Deleted += async (s, id) => await Load.Execute().GetAwaiter();
-                    vm.Updated += async (s, ne) => await Load.Execute().GetAwaiter();
-                    Entities.Add(vm);
+                    try
+                    {
+                        Entities.Clear();
+                        var rs = InitialEntities ?? InitialEntities ?? (await Facade.Get(filter: await FilterCondition(), orderBy: OrderBy(), properites: PropertiesToLoad(), token: token)).Entities;
+                        InitialEntities = null;
+                        foreach (var e in rs)
+                        {
+                            var vm = await Construct(e, token);
+                            await vm.Load.Execute().GetAwaiter();
+                            vm.Deleted += async (s, id) => await Load.Execute().GetAwaiter();
+                            vm.Updated += async (s, ne) => await Load.Execute().GetAwaiter();
+                            Entities.Add(vm);
+                        }
+                    }
+                    finally
+                    {
+                        isLoading = false;
+                    }
                 }
             }
             catch(Exception ex)

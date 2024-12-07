@@ -238,7 +238,6 @@ namespace Programming.Team.ViewModels.Resume
         protected override async Task<PositionSkillViewModel> Construct(PositionSkill entity, CancellationToken token)
         {
             var vm = new PositionSkillViewModel(Logger, Facade, entity);
-            await vm.Load.Execute().GetAwaiter();
             return vm;
         }
         protected override Func<IQueryable<PositionSkill>, IOrderedQueryable<PositionSkill>>? OrderBy()
