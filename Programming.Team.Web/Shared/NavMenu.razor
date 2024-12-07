@@ -1,8 +1,7 @@
 ﻿@inject AuthenticationStateProvider AuthState
 <MudNavMenu>
     <MudNavLink Href="/" Match="NavLinkMatch.All"><span aria-hidden="true"><i class="fa-duotone fa-solid fa-house"></i> Home</span></MudNavLink>
-    @if (isAuthenticated)
-    {
+
         @if (isAdmin)
         {
             <MudNavLink Href="/admin/roles"><span aria-hidden="true"><i class="fa-solid fa-circle-half-stroke"></i> Roles</span></MudNavLink>
@@ -12,7 +11,7 @@
             <MudNavLink Href="/purchasing/admin"><span aria-hidden="true"><i class="fa-solid fa-cash-register"></i> Purchases</span></MudNavLink>
             <MudNavLink Href="/purchasing/packages/manage"><span aria-hidden="true"><i class="fa-solid fa-basket-shopping"></i> Packages</span></MudNavLink>
         }
-        @if (!isRecruiter)
+        @if (isAuthenticated && !isRecruiter)
         {
             <MudNavLink Href="/recruiters"><span aria-hidden="true"><i class="fa-solid fa-users-viewfinder"></i> Recruiters</span></MudNavLink>
             <MudNavLink Href="/recruiters/accept"><span aria-hidden="true"><i class="fa-solid fa-hat-wizard"></i> Accept Recruiter</span></MudNavLink>
@@ -22,17 +21,17 @@
             <MudNavLink Href="/recruiters/impersonate"><span aria-hidden="true"><i class="fa-solid fa-user-ninja"></i> Impersonate</span></MudNavLink>
             <MudNavLink Href="/recruits"><span aria-hidden="true"><i class="fa-solid fa-users-between-lines"></i> Recruits</span></MudNavLink>
         }
-        <MudNavLink Href="/purchasing/packages"><span aria-hidden="true"><i class="fa-solid fa-shop"></i> Buy</span></MudNavLink>
-        <MudNavLink Href="/purchasing"><span aria-hidden="true"></span><i class="fa-solid fa-cart-shopping"></i> My Purchases</MudNavLink>
-        <MudNavLink Href="/resume/builder"><span aria-hidden="true"><i class="fa-solid fa-book"></i> Build Resume</span></MudNavLink>
-        <MudNavLink Href="/resume/postings"><span aria-hidden="true"><i class="fa-regular fa-clipboard"></i> Postings</span></MudNavLink>
-        <MudNavLink Href="/resume/profile"><span aria-hidden="true"><i class="fa-solid fa-user-pen"></i> Profile</span></MudNavLink>
-        <MudNavLink Href="/resume/positions"><span aria-hidden="true"><i class="fa-solid fa-cubes"></i> Positions</span></MudNavLink>
-        <MudNavLink Href="/resume/education"><span aria-hidden="true"><i class="fa-solid fa-school"></i> Education</span></MudNavLink>
-        <MudNavLink Href="/resume/recommendations"><span aria-hidden="true"><i class="fa-solid fa-award"></i> Recommendations</span></MudNavLink>
-        <MudNavLink Href="/resume/certificates"><span aria-hidden="true"><i class="fa-solid fa-certificate"></i> Certificates</span></MudNavLink>
-        <MudNavLink Href="/resume/publications"><span aria-hidden="true"><i class="fa-solid fa-book-open"></i> Publications</span></MudNavLink>
-    }
+        <MudNavLink Disabled="!isAuthenticated" Href="/purchasing/packages"><span aria-hidden="true"><i class="fa-solid fa-shop"></i> Buy</span></MudNavLink>
+    <MudNavLink Disabled="!isAuthenticated" Href="/purchasing"><span aria-hidden="true"></span><i class="fa-solid fa-cart-shopping"></i> My Purchases</MudNavLink>
+    <MudNavLink Disabled="!isAuthenticated" Href="/resume/builder"><span aria-hidden="true"><i class="fa-solid fa-book"></i> Build Resume</span></MudNavLink>
+    <MudNavLink Disabled="!isAuthenticated" Href="/resume/postings"><span aria-hidden="true"><i class="fa-regular fa-clipboard"></i> Postings</span></MudNavLink>
+    <MudNavLink Disabled="!isAuthenticated" Href="/resume/profile"><span aria-hidden="true"><i class="fa-solid fa-user-pen"></i> Profile</span></MudNavLink>
+    <MudNavLink Disabled="!isAuthenticated" Href="/resume/positions"><span aria-hidden="true"><i class="fa-solid fa-cubes"></i> Positions</span></MudNavLink>
+    <MudNavLink Disabled="!isAuthenticated" Href="/resume/education"><span aria-hidden="true"><i class="fa-solid fa-school"></i> Education</span></MudNavLink>
+    <MudNavLink Disabled="!isAuthenticated" Href="/resume/recommendations"><span aria-hidden="true"><i class="fa-solid fa-award"></i> Recommendations</span></MudNavLink>
+    <MudNavLink Disabled="!isAuthenticated" Href="/resume/certificates"><span aria-hidden="true"><i class="fa-solid fa-certificate"></i> Certificates</span></MudNavLink>
+    <MudNavLink Disabled="!isAuthenticated" Href="/resume/publications"><span aria-hidden="true"><i class="fa-solid fa-book-open"></i> Publications</span></MudNavLink>
+
 </MudNavMenu>
 
 @code{
