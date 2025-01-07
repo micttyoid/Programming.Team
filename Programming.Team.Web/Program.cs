@@ -41,7 +41,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
                     .EnableTokenAcquisitionToCallDownstreamApi()
                         .AddSessionTokenCaches();
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration).EnableTokenAcquisitionToCallDownstreamApi();
+   .AddMicrosoftIdentityWebApp(options =>
+   {
+       builder.Configuration.Bind("AzureAd", options);
+
+       options.Events.OnRemoteFailure = context =>
+       {
+           if (context.Failure.Message.Contains("AADB2C90118"))
+           {
+               // Redirect to Password Reset policy
+               var resetPasswordUrl = "https://progteamgroundbreaker.b2clogin.com/tfp/progteamgroundbreaker.onmicrosoft.com/B2C_1_pswreset/oauth2/v2.0/authorize"
+                                    + $"?client_id={Uri.EscapeDataString(options.ClientId)}"
+                                    + $"&redirect_uri=https://{context.Request.Host}{Uri.EscapeDataString(options.CallbackPath)}"
+                                    + "&response_mode=query"
+                                    + "&response_type=code"
+                                    + "&scope=openid";
+               context.Response.Redirect(resetPasswordUrl);
+               context.HandleResponse();
+           }
+           return Task.CompletedTask;
+       };
+   }).EnableTokenAcquisitionToCallDownstreamApi();
 
 builder.Services.AddControllersWithViews()
     .AddMicrosoftIdentityUI();
@@ -53,7 +73,10 @@ builder.Services.AddTokenAcquisition();
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor()
+builder.Services.AddServerSideBlazor().AddCircuitOptions(options =>
+{
+    options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromHours(10); // Adjust as needed
+})
     .AddHubOptions(options =>
     {
         options.MaximumReceiveMessageSize = 1024 * 1024 * 10; // 10 MB
