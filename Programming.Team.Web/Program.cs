@@ -59,6 +59,11 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                context.Response.Redirect(resetPasswordUrl);
                context.HandleResponse();
            }
+           else if (context.Failure.Message.Contains("State"))
+           {
+               context.Response.Redirect("/");
+               context.HandleResponse();
+           }
            return Task.CompletedTask;
        };
    }).EnableTokenAcquisitionToCallDownstreamApi();
