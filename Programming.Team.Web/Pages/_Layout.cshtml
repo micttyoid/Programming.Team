@@ -8,10 +8,30 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="~/" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
-    <link href="Programming.Team.Web.styles.css" rel="stylesheet" />
+    <style>
+        @* override mudblazor default values *@
+        :root {
+            --mud-palette-primary: rgba(47, 166, 227, 1) !important;
+            --mud-palette-primary-rgb: 47, 166, 227 !important;
+            --mud-palette-primary-darken: rgba(28,99,136,1) !important;
+            --mud-palette-primary-lighten: rgba(130,201,238,1) !important;
+            --mud-typography-default-family: "Inter", serif !important;
+            --mud-default-borderradius: 8px !important;
+            --mud-typography-button-text-transform: initial !important;
+        }
+        @* Exntensions *@
+        .rounded-mxl {
+            border-radius: 16px;
+        }
+        .fw-semi-bold {
+            font-weight: 500;
+        }
+        .fw-bold {
+            font-weight: 600;
+        }
+    </style>
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 <body>
