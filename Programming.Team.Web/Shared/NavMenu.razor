@@ -4,17 +4,23 @@
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     @if (isAdmin)
     {
-        <MudNavLink Href="admin/roles"><span aria-hidden="true"><i class="fa-solid fa-circle-half-stroke"></i>Roles</span>
+        <MudNavLink Href="admin/roles"><span aria-hidden="true"><i class="fa-solid fa-circle-half-stroke"></i>&nbsp;Roles</span>
         </MudNavLink>
-        <MudNavLink Href="admin/users"><span aria-hidden="true"><i class="fa-solid fa-users"></i>Users</span></MudNavLink>
-        <MudNavLink Href="admin/documenttypes"><span aria-hidden="true"><i class="fa-solid fa-file-code"></i>Document
+        <MudNavLink Href="admin/users"><span aria-hidden="true"><i class="fa-solid fa-users"></i>&nbsp;Users</span></MudNavLink>
+        <MudNavLink Href="admin/documenttypes">
+            <span aria-hidden="true">
+                <i class="fa-solid fa-file-code"></i>&nbsp;Document
                 Types</span></MudNavLink>
-        <MudNavLink Href="admin/documenttemplates"><span aria-hidden="true"><i class="fa-solid fa-folder-open"></i>Document
+        <MudNavLink Href="admin/documenttemplates">
+            <span aria-hidden="true">
+                <i class="fa-solid fa-folder-open"></i>&nbsp;Document
                 Templates</span></MudNavLink>
-        <MudNavLink Href="purchasing/admin"><span aria-hidden="true"><i
-                    class="fa-solid fa-cash-register"></i>Purchases</span></MudNavLink>
-        <MudNavLink Href="purchasing/packages/manage"><span aria-hidden="true"><i
-                class="fa-solid fa-basket-shopping"></i>Packages</span></MudNavLink>
+        <MudNavLink Href="purchasing/admin"><span aria-hidden="true"><i class="fa-solid fa-cash-register"></i>&nbsp;Purchases
+            </span>
+        </MudNavLink>
+        <MudNavLink Href="purchasing/packages/manage"><span aria-hidden="true"><i class="fa-solid fa-basket-shopping"></i>&nbsp;Packages
+            </span>
+        </MudNavLink>
     }
     @if (isAuthenticated && !isRecruiter)
     {
