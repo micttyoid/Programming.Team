@@ -1,32 +1,43 @@
 ﻿@page "/"
 @attribute [AllowAnonymous]
 
-<MudCard>
-    <MudCardMedia Image="/images/logo.png" />
-    <MudCardContent>
-        <MudText Typo="Typo.h5">Programming.Team</MudText>
-        <MudText Typo="Typo.h6">The Resume Tailor</MudText>
-        <MudText Typo="Typo.body2">
-            <MudStack>
-            <MudText>This application offers a specialized resume-tailoring experience that aligns your skills and experiences with specific job descriptions. To achieve the best results, users should input their work histories and relevant skills in detail. The system will then generate a skills matrix highlighting those capabilities mentioned in the target job description, and produce a position-focused summary tailored for the role in question.</MudText>
-            <MudSpacer/>
-            <MudText>Key features include:</MudText>
-            <ul>
-                <li>Free Usage and Pricing: The first 15 tailored resume generations are free upon signup. After that, packages start at USD $7.99 for 25 additional resume generations.</li>
-                <li>PDF and LaTeX Editing: Programming.Team uses LaTeX for rendering resumes into PDF format. Users can adjust the underlying LaTeX code themselves and re-render new PDFs at no additional cost.</li>
-            </ul>
-            <MudSpacer/> 
-            <MudText>For recruiters, there is a dedicated platform that allows trusted recruiters to impersonate their candidates (with permission) to edit and generate resumes. This service comes at no extra charge.</MudText>
-            <MudSpacer/>
-            <MudText>If you’re interested in becoming a recruiter on the platform, please contact <a href="mailto:jason@groundbreaker.solutions">jason@groundbreaker.solutions</a>.</MudText>
-            </MudStack>
-        </MudText>
-    </MudCardContent>
-    <MudCardActions>
-        <MudStack Row="true">
-            <MudLink Href="https://programming.team/api/resumes/b5f0655c-275f-441d-83a2-019d5067fa99">Example Resume Output</MudLink>
-        </MudStack>  
-    </MudCardActions>
-</MudCard>
+<MudElement Class="d-flex flex-column flex-grow-1" Width="100%">
+    <MudImage ObjectFit="ObjectFit.Cover" Height="200" Src="images/logo.png" Alt="Logo of Programming.Team" Elevation="25"
+        Class="rounded-lg" />
+    <MudText Class="z-0 mt-4 display1" Typo="Typo.h4" GutterBottom="true">Programming.Team</MudText>
+    <MudText Class="mb-8" Typo="Typo.h6">The Resume Tailor</MudText>
 
+    <MudText Typo="Typo.body1">
+        This application offers a specialized resume-tailoring experience that aligns your skills and
+        experiences with specific job descriptions. To achieve the best results, users should input their
+        work histories and relevant skills in detail. The system will then generate a skills matrix
+        highlighting those capabilities mentioned in the target job description, and produce a
+        position-focused summary tailored for the role in question.
+        <br />
+        <h4 Class="mt-8">Key features include:</h4>
+        <ul Class="mb-8">
+            <li class="ml-4">Free Usage and Pricing: The first 15 tailored resume generations are free upon signup.
+                After
+                that, packages start at USD $7.99 for 25 additional resume generations.</li>
+            <li class="ml-4">PDF and <i>LaTeX</i> Editing: Programming.Team uses <i>LaTeX</i> for rendering resumes into PDF
+                format. Users
+                can adjust the underlying <i>LaTeX</i> code themselves and re-render new PDFs at no additional cost.
+            </li>
+        </ul>
+        <br />
 
+        <MudAlert Severity="Severity.Normal">
+            If you’re interested in becoming a recruiter on the platform, please contact
+            <MudLink Class="fw-bold" Href="mailto:jason@groundbreaker.solutions" Target="_blank" Typo="Typo.body2"
+                Color="Color.Primary">
+                jason@groundbreaker.solutions
+            </MudLink>
+        </MudAlert>
+    </MudText>
+
+    <br />
+    <MudAlert Severity="Severity.Normal">
+        <MudLink Href="https://programming.team/api/resumes/b5f0655c-275f-441d-83a2-019d5067fa99">Example Resume
+            Output</MudLink>
+    </MudAlert>
+</MudElement>

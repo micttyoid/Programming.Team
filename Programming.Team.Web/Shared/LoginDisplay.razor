@@ -1,22 +1,21 @@
 ﻿@inherits ReactiveInjectableComponentBase<UserBarLoaderViewModel>
 <AuthorizeView>
     <Authorized>
-        @if(ViewModel?.ViewModel != null)
+        @if (ViewModel?.ViewModel != null)
         {
-            
             <MudStack Row="true">
                 <MudSpacer />
                 <MudText> Hello, @ViewModel.ViewModel.EmailAddress! &nbsp;</MudText>
                 <MudLink Href="MicrosoftIdentity/Account/SignOut" Color="Color.Inherit">Log out</MudLink>
-                <MudSpacer/>
+                <MudSpacer />
                 <MudText>Resume Generations Left: @ViewModel.ViewModel.ResumeGenerationsLeft</MudText>
             </MudStack>
-            
+
         }
-        
     </Authorized>
     <NotAuthorized>
-        &nbsp;<MudLink Href="MicrosoftIdentity/Account/SignIn" Color="Color.Inherit"><i class="fa-solid fa-right-to-bracket"></i> Log in</MudLink>
+        <MudButton class="fw-bold" Href="MicrosoftIdentity/Account/SignIn" Variant="Variant.Filled"
+            Color="Color.Primary">Sign in</MudButton>
     </NotAuthorized>
 </AuthorizeView>
 @code {
@@ -27,4 +26,3 @@
         await base.OnInitializedAsync();
     }
 }
- 

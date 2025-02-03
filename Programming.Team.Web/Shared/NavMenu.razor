@@ -1,40 +1,91 @@
 ﻿@inject AuthenticationStateProvider AuthState
+
 <MudNavMenu>
-    <MudNavLink Href="/" Match="NavLinkMatch.All"><span aria-hidden="true"><i class="fa-duotone fa-solid fa-house"></i> Home</span></MudNavLink>
+    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+    @if (isAdmin)
+    {
+        <MudNavLink Href="admin/roles"><span aria-hidden="true"><i class="fa-solid fa-circle-half-stroke"></i>&nbsp;Roles</span>
+        </MudNavLink>
+        <MudNavLink Href="admin/users"><span aria-hidden="true"><i class="fa-solid fa-users"></i>&nbsp;Users</span></MudNavLink>
+        <MudNavLink Href="admin/documenttypes">
+            <span aria-hidden="true">
+                <i class="fa-solid fa-file-code"></i>&nbsp;Document
+                Types</span></MudNavLink>
+        <MudNavLink Href="admin/documenttemplates">
+            <span aria-hidden="true">
+                <i class="fa-solid fa-folder-open"></i>&nbsp;Document
+                Templates</span></MudNavLink>
+        <MudNavLink Href="purchasing/admin"><span aria-hidden="true"><i class="fa-solid fa-cash-register"></i>&nbsp;Purchases
+            </span>
+        </MudNavLink>
+        <MudNavLink Href="purchasing/packages/manage"><span aria-hidden="true"><i class="fa-solid fa-basket-shopping"></i>&nbsp;Packages
+            </span>
+        </MudNavLink>
+    }
+    @if (isAuthenticated && !isRecruiter)
+    {
 
-        @if (isAdmin)
-        {
-            <MudNavLink Href="/admin/roles"><span aria-hidden="true"><i class="fa-solid fa-circle-half-stroke"></i> Roles</span></MudNavLink>
-            <MudNavLink Href="/admin/users"><span aria-hidden="true"><i class="fa-solid fa-users"></i> Users</span></MudNavLink>
-            <MudNavLink Href="/admin/documenttypes"><span aria-hidden="true"><i class="fa-solid fa-file-code"></i> Document Types</span></MudNavLink>
-            <MudNavLink Href="/admin/documenttemplates"><span aria-hidden="true"><i class="fa-solid fa-folder-open"></i> Document Templates</span></MudNavLink>
-            <MudNavLink Href="/purchasing/admin"><span aria-hidden="true"><i class="fa-solid fa-cash-register"></i> Purchases</span></MudNavLink>
-            <MudNavLink Href="/purchasing/packages/manage"><span aria-hidden="true"><i class="fa-solid fa-basket-shopping"></i> Packages</span></MudNavLink>
-        }
-        @if (isAuthenticated && !isRecruiter)
-        {
-            <MudNavLink Href="/recruiters"><span aria-hidden="true"><i class="fa-solid fa-users-viewfinder"></i> Recruiters</span></MudNavLink>
-            <MudNavLink Href="/recruiters/accept"><span aria-hidden="true"><i class="fa-solid fa-hat-wizard"></i> Accept Recruiter</span></MudNavLink>
-        }
-        @if (isRecruiter)
-        {
-            <MudNavLink Href="/recruiters/impersonate"><span aria-hidden="true"><i class="fa-solid fa-user-ninja"></i> Impersonate</span></MudNavLink>
-            <MudNavLink Href="/recruits"><span aria-hidden="true"><i class="fa-solid fa-users-between-lines"></i> Recruits</span></MudNavLink>
-        }
-        <MudNavLink Disabled="!isAuthenticated" Href="/purchasing/packages"><span aria-hidden="true"><i class="fa-solid fa-shop"></i> Buy</span></MudNavLink>
-    <MudNavLink Disabled="!isAuthenticated" Href="/purchasing"><span aria-hidden="true"></span><i class="fa-solid fa-cart-shopping"></i> My Purchases</MudNavLink>
-    <MudNavLink Disabled="!isAuthenticated" Href="/resume/builder"><span aria-hidden="true"><i class="fa-solid fa-book"></i> Build Resume</span></MudNavLink>
-    <MudNavLink Disabled="!isAuthenticated" Href="/resume/postings"><span aria-hidden="true"><i class="fa-regular fa-clipboard"></i> Postings</span></MudNavLink>
-    <MudNavLink Disabled="!isAuthenticated" Href="/resume/profile"><span aria-hidden="true"><i class="fa-solid fa-user-pen"></i> Profile</span></MudNavLink>
-    <MudNavLink Disabled="!isAuthenticated" Href="/resume/positions"><span aria-hidden="true"><i class="fa-solid fa-cubes"></i> Positions</span></MudNavLink>
-    <MudNavLink Disabled="!isAuthenticated" Href="/resume/education"><span aria-hidden="true"><i class="fa-solid fa-school"></i> Education</span></MudNavLink>
-    <MudNavLink Disabled="!isAuthenticated" Href="/resume/recommendations"><span aria-hidden="true"><i class="fa-solid fa-award"></i> Recommendations</span></MudNavLink>
-    <MudNavLink Disabled="!isAuthenticated" Href="/resume/certificates"><span aria-hidden="true"><i class="fa-solid fa-certificate"></i> Certificates</span></MudNavLink>
-    <MudNavLink Disabled="!isAuthenticated" Href="/resume/publications"><span aria-hidden="true"><i class="fa-solid fa-book-open"></i> Publications</span></MudNavLink>
+        <MudNavLink Href="recruiters" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.SupervisorAccount">Recruiters
+        </MudNavLink>
+        <MudNavLink Disabled="!isAuthenticated" Href="recruiters/accept" Match="NavLinkMatch.Prefix"
+            Icon="@Icons.Material.Filled.Handshake">Accept
+            Recruiters</MudNavLink>
+    }
+    @if (isRecruiter)
+    {
+        <MudNavLink Href="recruiters/impersonate"><span aria-hidden="true"><i
+                    class="fa-solid fa-user-ninja"></i>Impersonate</span></MudNavLink>
+        <MudNavLink Href="recruits"><span aria-hidden="true"><i class="fa-solid fa-users-between-lines"></i>Recruits</span>
+    </MudNavLink>
+    }
 
+    <MudNavLink Disabled="!isAuthenticated" Href="purchasing" Match="NavLinkMatch.Prefix"
+        Icon="@Icons.Material.Filled.Store">Buy
+    </MudNavLink>
+
+    <MudNavLink Disabled="!isAuthenticated" Href="purchasing/packages" Match="NavLinkMatch.Prefix"
+        Icon="@Icons.Material.Filled.Receipt">My
+        Purchases</MudNavLink>
+
+    <MudNavLink Disabled="!isAuthenticated" Href="resume/builder" Match="NavLinkMatch.Prefix"
+        Icon="@Icons.Material.Filled.PhotoFilter">Build
+        Resume
+    </MudNavLink>
+
+    <MudNavLink Disabled="!isAuthenticated" Href="resume/postings" Match="NavLinkMatch.Prefix"
+        Icon="@Icons.Material.Filled.PostAdd">Postings
+    </MudNavLink>
+
+    <MudNavLink Disabled="!isAuthenticated" Href="resume/profile" Match="NavLinkMatch.Prefix"
+        Icon="@Icons.Material.Filled.AccountBox">Profile
+    </MudNavLink>
+
+    <MudNavLink Disabled="!isAuthenticated" Href="resume/positions" Match="NavLinkMatch.Prefix"
+        Icon="@Icons.Material.Filled.WorkHistory">Positions
+    </MudNavLink>
+
+    <MudNavLink Disabled="!isAuthenticated" Href="resume/education" Match="NavLinkMatch.Prefix"
+        Icon="@Icons.Material.Filled.School">Education
+    </MudNavLink>
+
+    <MudNavLink Disabled="!isAuthenticated" Href="resume/recommendations" Match="NavLinkMatch.Prefix"
+        Icon="@Icons.Material.Filled.Recommend">
+        Recommendations
+    </MudNavLink>
+
+    <MudNavLink Disabled="!isAuthenticated" Href="resume/certificates" Match="NavLinkMatch.Prefix"
+        Icon="@Icons.Material.Filled.Verified">
+        Certificates
+    </MudNavLink>
+
+    <MudNavLink Disabled="!isAuthenticated" Href="resume/publications" Match="NavLinkMatch.Prefix"
+        Icon="@Icons.Material.Filled.LocalLibrary">
+        Publications
+    </MudNavLink>
 </MudNavMenu>
 
-@code{
+
+@code {
     private bool isAdmin = false;
     private bool isRecruiter = false;
     private bool isAuthenticated = false;
