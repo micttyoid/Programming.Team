@@ -24,6 +24,7 @@ namespace Programming.Team.ViewModels.Recruiter
     {
         public ReactiveCommand<Guid, Unit> Impersonate { get; }
         public ReactiveCommand<Unit, Unit> EndImpersonation { get; }
+        public ReactiveCommand<Unit, Guid?> Load { get; }
         protected IContextFactory ContextFactory { get; }
         protected NavigationManager NavMan { get; }
         private User? impersonatedUser;
@@ -38,6 +39,7 @@ namespace Programming.Team.ViewModels.Recruiter
             NavMan = manage;
             Impersonate = ReactiveCommand.CreateFromTask<Guid>(DoImpersonate);
             EndImpersonation = ReactiveCommand.CreateFromTask(DoEndImpersonation);
+            Load = ReactiveCommand.CreateFromTask<Guid?>(DoLoadImpersonation);
         }
         protected override async Task<Expression<Func<User, bool>>?> GetBaseFilterCondition()
         {
@@ -48,9 +50,7 @@ namespace Programming.Team.ViewModels.Recruiter
         }
         protected override async Task<RepositoryResultSet<Guid, User>?> DoFetch(DataGridRequest<Guid, User> request, CancellationToken token)
         {
-            var impersonated = await ContextFactory.GetImpersonatedUser();
-            if (impersonated != null)
-                ImpersonatedUser = await Facade.GetByID(impersonated.Value, token: token);
+            var impersonated = await DoLoadImpersonation(token);
             var fetch = await base.DoFetch(request, token);
             if(fetch == null)
                 return null;
@@ -58,10 +58,18 @@ namespace Programming.Team.ViewModels.Recruiter
             return fetch;
 
         }
+        protected async Task<Guid?> DoLoadImpersonation(CancellationToken token)
+        {
+            var impersonated = await ContextFactory.GetImpersonatedUser();
+            if (impersonated != null)
+                ImpersonatedUser = await Facade.GetByID(impersonated.Value, token: token);
+            return impersonated;
+        }
         protected async Task DoImpersonate(Guid id, CancellationToken token)
         {
             await ContextFactory.SetImpersonatedUser(id);
             NavMan.NavigateTo("/resume/profile");
+            NavMan.Refresh(true);
         }
         protected async Task DoEndImpersonation(CancellationToken token)
         {

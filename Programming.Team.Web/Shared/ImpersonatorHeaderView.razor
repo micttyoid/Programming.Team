@@ -1,0 +1,19 @@
+﻿@inherits ReactiveInjectableComponentBase<ImpersonatorViewModel>
+@if(ViewModel != null && ViewModel.ImpersonatedUser != null)
+{
+    <MudStack Row="true">
+        <MudSpacer />
+        <MudText> Impersonating: @ViewModel.ImpersonatedUser.EmailAddress! &nbsp;</MudText>
+        <MudButton class="fw-bold" OnClick="ViewModel.EndImpersonation.BindCommand<MouseEventArgs>()" Variant="Variant.Filled"
+        Color="Color.Primary">End Impersonation</MudButton>
+        <MudSpacer />
+    </MudStack>
+}
+@code {
+    override protected async Task OnInitializedAsync()
+    {
+        if (ViewModel != null)
+            await ViewModel.Load.Execute().GetAwaiter();
+        await base.OnInitializedAsync();
+    }
+}
