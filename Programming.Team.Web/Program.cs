@@ -44,7 +44,11 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
    .AddMicrosoftIdentityWebApp(options =>
    {
        builder.Configuration.Bind("AzureAd", options);
-
+       options.Events.OnSignedOutCallbackRedirect = context =>
+       {
+           context.HttpContext.Session.Clear();
+           return Task.CompletedTask;
+       };
        options.Events.OnRemoteFailure = context =>
        {
            if (context.Failure.Message.Contains("AADB2C90118"))
