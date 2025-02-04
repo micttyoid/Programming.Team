@@ -101,6 +101,7 @@ namespace Programming.Team.ViewModels.Resume
                 var dts = await DocumentTemplateFacade.Get(orderBy: o => o.OrderBy(e => e.Name), token: token);
                 DocumentTemplates.AddRange(dts.Entities);
                 SelectedTemplate = DocumentTemplates.First();
+                Configuration.Load(null);
             }
             catch(Exception ex)
             {
