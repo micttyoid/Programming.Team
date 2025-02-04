@@ -285,6 +285,14 @@ FakesAssemblies/
 .ntvs_analysis.dat
 node_modules/
 
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
 # Visual Studio 6 build log
 *.plg
 
@@ -361,3 +369,21 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Other editors: Emacs and Vim
+*~
+\#*\#
+.\#*
+*.swp
+*.swo
+
+# OS-specific: OSX and FreeBSD
+.DS_Store
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+*.core
