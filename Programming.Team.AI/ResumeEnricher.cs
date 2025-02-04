@@ -60,7 +60,7 @@ namespace Programming.Team.AI
                 if (!string.IsNullOrWhiteSpace(resume.User.Bio))
                 {
                     progress?.Report("Tailoring Bio");
-                    resume.User.Bio = await ChatGPT.GetRepsonse($"Output a LaTex snippet that will be added to an existing latex document - do not generate opening or closing article, document or sections. The user message is a biography: tailor/summarize it highlighting how it pertains the following job description, write three paragraphs and 6 bullet points - stick to what you know, don't make things up:  {JsonSerializer.Serialize(posting.Details)}", JsonSerializer.Serialize(resume.User.Bio), token: token);
+                    resume.User.Bio = await ChatGPT.GetRepsonse($"Output a LaTex snippet that will be added to an existing latex document - do not generate opening or closing article, document or sections. Do not use LaTeX special charachter escaping. The user message is a biography: tailor/summarize it highlighting how it pertains the following job description, write three paragraphs and 6 bullet points - stick to what you know, don't make things up:  {JsonSerializer.Serialize(posting.Details)}", JsonSerializer.Serialize(resume.User.Bio), token: token);
                     resume.User.Bio = resume.User.Bio?.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
                 }
                 foreach (var skill in resume.Skills.Select(p => p.Skill).Union(resume.Positions.SelectMany(p => p.PositionSkills.Select(p => p.Skill))))
@@ -83,6 +83,7 @@ namespace Programming.Team.AI
                 }
                 int count = resume.Positions.Count;
                 int numberProcessed = 0;
+                List<Position> toRemove = new List<Position>();
                 await Parallel.ForEachAsync(resume.Positions, token, async (position, t) =>
                 {
                     if (!string.IsNullOrWhiteSpace(position.Description))
@@ -91,22 +92,28 @@ namespace Programming.Team.AI
                         if (match != null)
                         {
                             double mtch = double.Parse(match.Replace("%", "")) / 100;
-                            if (mtch >= (config.MatchThreshold ?? 0.45))
+                            if (mtch >= (config.MatchThreshold ?? 0.4))
                             {
-                                double length = mtch * 10 * (config.TargetLengthPer10Percent ?? 200);
-                                double bullets = (Math.Ceiling((mtch / 0.2) * (config.BulletsPer20Percent ?? 0.45)));
+                                double length = mtch * 10 * (config.TargetLengthPer10Percent ?? 75);
+                                double bullets = (Math.Ceiling((mtch / 0.2) * (config.BulletsPer20Percent ?? 0.75)));
                                 if(bullets < 2)
                                     bullets = 2;
-                                position.Description = await ChatGPT.GetRepsonse($"Output a LaTex snippet, with proper escaping, that will be added to an existing latex document - do not generate opening or closing article, document sections or headers. Tailor user message - which is a description of a job experience, resulting in a total text length of no more than {length} characters, to the following job requirement sticking to the facts included in the user message, do not be creative IF A TECHNOLOGY IS NOT MENTIONED IN THE USER MESSAGE DO NOT INCLUDE IT IN THE SUMMARY!!!! include a short paragraph and {Math.Round(bullets)} bullet points: {JsonSerializer.Serialize(posting.Details)}", JsonSerializer.Serialize(position.Description), token: t);
+                                position.Description = await ChatGPT.GetRepsonse($"Output a LaTex snippet, without special charachter escaping and the bullets properly itemized, that will be added to an existing latex document - do not generate opening or closing article, document sections or headers. Tailor user message - which is a description of a job experience, resulting in a total text length of no more than {length} characters, to the following job requirement sticking to the facts included in the user message, do not be creative IF A TECHNOLOGY IS NOT MENTIONED IN THE USER MESSAGE DO NOT INCLUDE IT IN THE SUMMARY!!!! include a short paragraph and {Math.Round(bullets)} bullet points: {JsonSerializer.Serialize(posting.Details)}", JsonSerializer.Serialize(position.Description), token: t);
                                 position.Description = position.Description?.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
                             }
-                            else
+                            else if(!config.HidePositionsNotInJD)
                                 position.Description = "";
+                            else
+                                toRemove.Add(position);
                         }
                     }
                     int currentCount = Interlocked.Increment(ref numberProcessed);
                     progress?.Report($"{currentCount}/{count} Positions Processed");
                 });
+                foreach (var position in toRemove)
+                {
+                    resume.Positions.Remove(position);
+                }
             }
             catch (Exception ex)
             {

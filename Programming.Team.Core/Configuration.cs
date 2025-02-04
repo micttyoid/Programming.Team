@@ -12,6 +12,7 @@ namespace Programming.Team.Core
         int? TargetLengthPer10Percent { get; set; }
         bool HideSkillsNotInJD { get; set; }
         double? BulletsPer20Percent { get; set; }
+        bool HidePositionsNotInJD { get; set; }
     }
     public class ResumeConfiguration : IResumeConfiguration
     {
@@ -19,5 +20,6 @@ namespace Programming.Team.Core
         public int? TargetLengthPer10Percent { get; set; }
         public bool HideSkillsNotInJD { get; set; } = true;
         public double? BulletsPer20Percent { get; set; }
+        public bool HidePositionsNotInJD { get; set; } = false;
     }
 }
