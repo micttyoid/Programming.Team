@@ -1,4 +1,5 @@
 ﻿@inherits ReactiveComponentBase<ResumeConfigurationViewModel>
+@using MudBlazor.Utilities
 @if(ViewModel != null)
 {
     <MudStack>
@@ -7,8 +8,46 @@
         <MudNumericField @bind-Value="ViewModel.BulletsPer20Percent" Label="Bullets Per 20%" Variant="Variant.Outlined"/>
         <MudCheckBox @bind-Value="ViewModel.HideSkillsNotInJD" Label="Hide Skills not in JD"/>
         <MudCheckBox @bind-Value="ViewModel.HidePositionsNotInJD" Label="Hide Positions not in JD" />
+        <MudDropContainer T="ResumePartViewModel" Items="ViewModel.ResumeParts" @ref="_container" ItemsSelector="@((item,dropzone) => item.Selected.ToString() == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
+            <ChildContent>
+                <MudPaper Class="ma-4 flex-grow-1">
+                    <MudList T="string" Class="d-flex flex-column mud-height-full">
+                        <MudListSubheader>Include in Resume Render</MudListSubheader>
+                        <MudDropZone T="ResumePartViewModel" Identifier="True" Class="flex-grow-1" AllowReorder="true" />
+                    </MudList>
+                </MudPaper>
+                <MudPaper Class="ma-4 flex-grow-1">
+                    <MudList T="string" Class="d-flex flex-column mud-height-full">
+                        <MudListSubheader>Exclude</MudListSubheader>
+                        <MudDropZone T="ResumePartViewModel" Identifier="False" Class="flex-grow-1" AllowReorder="true" />
+                    </MudList>
+                </MudPaper>
+            </ChildContent>
+            <ItemRenderer>
+                <MudListItem T="string" Text="@($"{Enum.GetName(typeof(ResumePart), context.Part)}")" />
+            </ItemRenderer>
+        </MudDropContainer>
     </MudStack>
 }
 @code {
-
+    protected override void OnInitialized()
+    {
+        if(ViewModel != null)
+            ViewModel.ResumeParts.CollectionChanged += (sender, args) => 
+            { 
+                StateHasChanged(); _container.Refresh(); 
+            };
+        base.OnInitialized();
+    }
+    private MudDropContainer<ResumePartViewModel> _container = null!;
+    private void ItemUpdated(MudItemDropInfo<ResumePartViewModel> dropItem)
+    {
+        dropItem.Item.Selected = bool.Parse(dropItem.DropzoneIdentifier);
+        var indexOffset = dropItem.DropzoneIdentifier switch
+        {
+            "False" => ViewModel.ResumeParts.Count(x => x.Selected),
+            _ => 0
+        };
+        ViewModel.ResumeParts.UpdateOrder(dropItem, item => item.Order, indexOffset);
+    }
 }

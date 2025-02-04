@@ -157,7 +157,8 @@ namespace Programming.Team.Business
                 var docTemplate = await DocumentTemplateFacade.GetByID(posting.DocumentTemplateId, token: token);
                 if (docTemplate == null)
                     throw new InvalidDataException();
-
+                if (config != null)
+                    resume.Parts = config.Parts;
                 if (enrich && await UserFacade.UtilizeResumeGeneration(
                     await UserFacade.GetCurrentUserId(fetchTrueUserId: true, token: token) ?? throw new InvalidOperationException(), token: token))
                     await Enricher.EnrichResume(resume, posting, progress, token);

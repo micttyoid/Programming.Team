@@ -15,6 +15,7 @@ namespace Programming.Team.Core
         public List<Certificate> Certificates { get; set; } = new List<Certificate>();
         public List<SkillRollup> Skills { get; set; } = new List<SkillRollup>();
         public List<Publication> Publications { get; set; } = new List<Publication>();
+        public ResumePart[] Parts { get; set; } = [ResumePart.Bio, ResumePart.Reccomendations, ResumePart.Skills, ResumePart.Positions, ResumePart.Education, ResumePart.Certifications, ResumePart.Publications];
     }
     public class SkillRollup
     {

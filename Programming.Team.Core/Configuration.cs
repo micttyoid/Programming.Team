@@ -2,10 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Programming.Team.Core
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum ResumePart
+    {
+        Bio,
+        Reccomendations,
+        Positions,
+        Skills,
+        Education,
+        Certifications,
+        Publications
+    }
     public interface IResumeConfiguration
     {
         double? MatchThreshold { get; set; }
@@ -13,6 +25,7 @@ namespace Programming.Team.Core
         bool HideSkillsNotInJD { get; set; }
         double? BulletsPer20Percent { get; set; }
         bool HidePositionsNotInJD { get; set; }
+        ResumePart[] Parts { get; set; }
     }
     public class ResumeConfiguration : IResumeConfiguration
     {
@@ -21,5 +34,6 @@ namespace Programming.Team.Core
         public bool HideSkillsNotInJD { get; set; } = true;
         public double? BulletsPer20Percent { get; set; }
         public bool HidePositionsNotInJD { get; set; } = false;
+        public ResumePart[] Parts { get; set; } = [ResumePart.Bio, ResumePart.Reccomendations, ResumePart.Skills, ResumePart.Positions, ResumePart.Education, ResumePart.Certifications, ResumePart.Publications];
     }
 }

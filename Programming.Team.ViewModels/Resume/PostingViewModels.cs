@@ -245,6 +245,31 @@ namespace Programming.Team.ViewModels.Resume
             return Task.CompletedTask;
         }
     }
+    public class ResumePartViewModel : ReactiveObject
+    {
+        public ResumePartViewModel(ResumePart part, int order, bool selected)
+        {
+            Part = part;
+            Selected = selected;
+            Order = order;
+        }
+        private int order;
+        public int Order
+        {
+            get => order;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref order, value);
+            }
+        }
+        private bool selected;
+        public bool Selected
+        {
+            get => selected;
+            set => this.RaiseAndSetIfChanged(ref selected, value);
+        }
+        public ResumePart Part{ get; }
+    }
     public class ResumeConfigurationViewModel : ReactiveObject, IResumeConfiguration
     {
         public void Load(string? configuration)
@@ -255,17 +280,31 @@ namespace Programming.Team.ViewModels.Resume
             HideSkillsNotInJD = config.HideSkillsNotInJD;
             BulletsPer20Percent = config.BulletsPer20Percent;
             HidePositionsNotInJD = config.HidePositionsNotInJD;
+            Parts = config.Parts;
+            ResumeParts.Clear();
+            List<ResumePartViewModel> parts = [];
+            foreach (var part in Enum.GetValues<ResumePart>())
+            {
+                var pv = new ResumePartViewModel(part, Parts.Contains(part) ? Array.IndexOf(Parts, part) : int.MaxValue, Parts.Contains(part));
+                parts.Add(pv);
+            }
+            foreach(var pv in parts.OrderBy(p => p.Order))
+            {
+                ResumeParts.Add(pv);
+            }
         }
         public ResumeConfiguration GetConfiguration()
         {
-            return new ResumeConfiguration()
+            var config = new ResumeConfiguration()
             {
                 MatchThreshold = MatchThreshold,
                 TargetLengthPer10Percent = TargetLengthPer10Percent,
                 HideSkillsNotInJD = HideSkillsNotInJD,
                 BulletsPer20Percent = BulletsPer20Percent,
-                HidePositionsNotInJD = HidePositionsNotInJD
+                HidePositionsNotInJD = HidePositionsNotInJD,
+                Parts = ResumeParts.Where(p => p.Selected).OrderBy(p => p.Order).Select(p => p.Part).ToArray()
             };
+            return config;
         }
         public string GetSerializedConfiguration()
         {
@@ -303,5 +342,7 @@ namespace Programming.Team.ViewModels.Resume
             get => hidePositionsNotInJD; 
             set => this.RaiseAndSetIfChanged(ref hidePositionsNotInJD, value);
         }
+        public ObservableCollection<ResumePartViewModel> ResumeParts { get; } = new ObservableCollection<ResumePartViewModel>();
+        public ResumePart[] Parts { get; set; } = [ResumePart.Bio, ResumePart.Reccomendations, ResumePart.Skills, ResumePart.Positions, ResumePart.Education, ResumePart.Certifications, ResumePart.Publications];
     }
 }
