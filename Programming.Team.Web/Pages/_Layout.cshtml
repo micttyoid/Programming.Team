@@ -22,15 +22,43 @@
             --mud-default-borderradius: 8px !important;
             --mud-typography-button-text-transform: initial !important;
         }
-        @* Exntensions *@
-        .rounded-mxl {
-            border-radius: 16px;
+        @* Bootstrap-like exntension *@
+        .text-nowrap {
+            text-wrap: nowrap;
         }
         .fw-semi-bold {
             font-weight: 500;
         }
         .fw-bold {
             font-weight: 600;
+        }
+        .rounded-mxl {
+            border-radius: 16px;
+        }
+        @* Corresponds to .mud-typography-xxx, but only font-size *@
+        .fs-h1 {
+           font-size: 6rem;
+        }
+        .fs-h2 {
+            font-size: 3.75rem;
+        }
+        .fs-h3 {
+            font-size: 3rem;
+        }
+        .fs-h4 {
+            font-size: 2.125rem;
+        }
+        .fs-h5 {
+            font-size: 1.5rem;
+        }
+        .fs-h6 {
+            font-size: 1.25rem;
+        }
+        .fs-body1 {
+            font-size: 1rem;
+        }
+        .fs-body2 {
+            font-size: .875rem;
         }
     </style>
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
