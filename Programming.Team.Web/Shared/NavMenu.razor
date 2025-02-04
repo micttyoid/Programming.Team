@@ -4,39 +4,48 @@
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     @if (isAdmin)
     {
-        <MudNavLink Href="admin/roles"><span aria-hidden="true"><i class="fa-solid fa-circle-half-stroke"></i>&nbsp;Roles</span>
-        </MudNavLink>
-        <MudNavLink Href="admin/users"><span aria-hidden="true"><i class="fa-solid fa-users"></i>&nbsp;Users</span></MudNavLink>
-        <MudNavLink Href="admin/documenttypes">
-            <span aria-hidden="true">
-                <i class="fa-solid fa-file-code"></i>&nbsp;Document
-                Types</span></MudNavLink>
-        <MudNavLink Href="admin/documenttemplates">
-            <span aria-hidden="true">
-                <i class="fa-solid fa-folder-open"></i>&nbsp;Document
-                Templates</span></MudNavLink>
-        <MudNavLink Href="purchasing/admin"><span aria-hidden="true"><i class="fa-solid fa-cash-register"></i>&nbsp;Purchases
-            </span>
-        </MudNavLink>
-        <MudNavLink Href="purchasing/packages/manage"><span aria-hidden="true"><i class="fa-solid fa-basket-shopping"></i>&nbsp;Packages
-            </span>
-        </MudNavLink>
+        <MudNavGroup Title="Admin" Icon="@Icons.Material.Filled.ManageAccounts" Expanded="false">
+            <MudNavLink Href="admin/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.SupervisorAccount">Users
+            </MudNavLink>
+            <MudNavLink Href="admin/roles"><span aria-hidden="true"><i
+                        class="fa-solid fa-circle-half-stroke"></i>Roles</span>
+            </MudNavLink>
+
+            <MudNavLink Href="admin/documenttypes"><span aria-hidden="true"><i class="fa-solid fa-file-code"></i>Document
+                    Types</span></MudNavLink>
+            <MudNavLink Href="admin/documenttemplates"><span aria-hidden="true"><i
+                        class="fa-solid fa-folder-open"></i>Document
+                    Templates</span></MudNavLink>
+            <MudNavLink Href="purchasing/admin"><span aria-hidden="true"><i
+                        class="fa-solid fa-cash-register"></i>Purchases</span></MudNavLink>
+            <MudNavLink Href="purchasing/packages/manage"><span aria-hidden="true"><i
+                        class="fa-solid fa-basket-shopping"></i>Packages</span></MudNavLink>
+        </MudNavGroup>
     }
     @if (isAuthenticated && !isRecruiter)
     {
+        <MudNavGroup Href="recruiters" Match="NavLinkMatch.Prefix" Title="Recruiters"
+            Icon="@Icons.Material.Filled.SupervisorAccount" Expanded="false">
 
-        <MudNavLink Href="recruiters" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.SupervisorAccount">Recruiters
-        </MudNavLink>
-        <MudNavLink Disabled="!isAuthenticated" Href="recruiters/accept" Match="NavLinkMatch.Prefix"
-            Icon="@Icons.Material.Filled.Handshake">Accept
-            Recruiters</MudNavLink>
+            <MudNavLink Href="recruiters" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.SupervisorAccount">
+                Recruiters
+            </MudNavLink>
+
+            <MudNavLink Disabled="!isAuthenticated" Href="recruiters/accept" Match="NavLinkMatch.Prefix"
+                Icon="@Icons.Material.Filled.Handshake">Accept
+                Recruiters</MudNavLink>
+        </MudNavGroup>
     }
     @if (isRecruiter)
     {
-        <MudNavLink Href="recruiters/impersonate"><span aria-hidden="true"><i
-                    class="fa-solid fa-user-ninja"></i>Impersonate</span></MudNavLink>
-        <MudNavLink Href="recruits"><span aria-hidden="true"><i class="fa-solid fa-users-between-lines"></i>Recruits</span>
-    </MudNavLink>
+        <MudNavGroup Href="recruiters" Match="NavLinkMatch.Prefix" Title="Recruit"
+            Icon="@Icons.Material.Filled.PersonSearch" Expanded="false">
+            <MudNavLink Href="recruiters/impersonate" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.CoPresent">
+                Impersonate</MudNavLink>
+
+            <MudNavLink Disabled="!isAuthenticated" Href="recruits" Match="NavLinkMatch.Prefix"
+                Icon="@Icons.Material.Filled.Handshake">Recruits</MudNavLink>
+        </MudNavGroup>
     }
 
     <MudNavLink Disabled="!isAuthenticated" Href="purchasing/packages" Match="NavLinkMatch.Prefix"
