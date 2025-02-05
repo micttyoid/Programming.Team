@@ -3,26 +3,23 @@
     <Authorized>
         @if (ViewModel?.ViewModel != null)
         {
-            <MudBreakpointProvider>
-                @* Laptop, Desktop *@
-                <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-                    <MudElement Class="d-flex align-content-center justify-end flex-grow-1 gap-2 mr-4">
-                        <MudText>Hello, @ViewModel.ViewModel.EmailAddress!</MudText>
-                        <ImpersonatorHeaderView />
-                        <MudText>Resume Generations Left: @ViewModel.ViewModel.ResumeGenerationsLeft</MudText>
-                    </MudElement>
-                </MudHidden>
+            @* Laptop, Desktop *@
+            <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+            <MudElement Class="d-flex align-content-center justify-end flex-grow-1 gap-2 mr-4">
+                <MudText>Hello, @ViewModel.ViewModel.EmailAddress!</MudText>
+                <ImpersonatorHeaderView />
+                <MudText>Resume Generations Left: @ViewModel.ViewModel.ResumeGenerationsLeft</MudText>
+            </MudElement>
+        </MudHidden>
 
-                @* Smaller devices *@        
-                <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
-                    <MudElement Class="d-flex flex-column justify-center flex-grow-1">
-                        <MudText Class="fs-body2 fw-bold">@ViewModel.ViewModel.EmailAddress</MudText>
-                        <ImpersonatorHeaderView />
-                        <MudText Class="fs-body2">Resume Left: @ViewModel.ViewModel.ResumeGenerationsLeft</MudText>
-                    </MudElement>
-                </MudHidden>
-
-            </MudBreakpointProvider>
+            @* Smaller devices *@        
+            <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+            <MudElement Class="d-flex flex-column justify-center flex-grow-1">
+                <MudText Class="fs-body2 fw-bold">@ViewModel.ViewModel.EmailAddress</MudText>
+                <ImpersonatorHeaderView />
+                <MudText Class="fs-body2">Resume Left: @ViewModel.ViewModel.ResumeGenerationsLeft</MudText>
+            </MudElement>
+        </MudHidden>
 
             <MudButton Class="fw-bold" Href="MicrosoftIdentity/Account/SignOut" Variant="Variant.Filled"
             Color="Color.Primary">

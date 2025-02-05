@@ -23,5 +23,6 @@ namespace Programming.Team.Data.Core
     public interface ISectionTemplateRepository : IRepository<SectionTemplate, Guid>
     {
         Task<SectionTemplate[]> GetBySection(ResumePart sectionId, IUnitOfWork? work = null, CancellationToken token = default);
+        Task<SectionTemplate?> GetDefaultSection(ResumePart sectionId, IUnitOfWork? work = null, string defaultName = "Default", CancellationToken token = default);
     }
 }

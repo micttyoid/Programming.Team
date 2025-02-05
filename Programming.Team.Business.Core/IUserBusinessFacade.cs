@@ -25,5 +25,6 @@ namespace Programming.Team.Business.Core
     public interface ISectionTemplateBusinessFacade : IBusinessRepositoryFacade<SectionTemplate, Guid>
     {
         Task<SectionTemplate[]> GetBySection(ResumePart sectionId, IUnitOfWork? work = null, CancellationToken token = default);
+        Task<SectionTemplate?> GetDefaultSection(ResumePart sectionId, IUnitOfWork? work = null, string defaultName = "Default", CancellationToken token = default);
     }
 }
