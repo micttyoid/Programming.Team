@@ -16,7 +16,7 @@ namespace Programming.Team.ViewModels.Resume
 {
     public class UserBarLoaderViewModel : UserProfileLoaderViewModel
     {
-        public UserBarLoaderViewModel(IUserBusinessFacade facade, ILogger<UserProfileLoaderViewModel> logger) : base(facade, logger)
+        public UserBarLoaderViewModel(IUserBusinessFacade facade, ISectionTemplateBusinessFacade sectionFacade, ILogger<UserProfileLoaderViewModel> logger) : base(facade, logger, sectionFacade)
         {
         }
         protected async override Task DoLoad(CancellationToken token)
@@ -29,7 +29,7 @@ namespace Programming.Team.ViewModels.Resume
                     var user = await Facade.GetByID(userId.Value, token: token);
                     if (user != null)
                     {
-                        ViewModel = new UserProfileViewModel(Logger, Facade, user);
+                        ViewModel = new UserProfileViewModel(Logger, new ResumeConfigurationViewModel(SectionFacade), Facade, user);
                         await ViewModel.Load.Execute().GetAwaiter();
                     }
                 }
@@ -48,6 +48,7 @@ namespace Programming.Team.ViewModels.Resume
         public Interaction<string, bool> Alert { get; } = new Interaction<string, bool>();
         public ReactiveCommand<Unit, Unit> Load { get; }
         protected IUserBusinessFacade Facade { get; }
+        protected ISectionTemplateBusinessFacade SectionFacade { get; }
         protected ILogger Logger { get; }
         private UserProfileViewModel? viewModel;
         public UserProfileViewModel? ViewModel
@@ -55,11 +56,12 @@ namespace Programming.Team.ViewModels.Resume
             get => viewModel;
             set => this.RaiseAndSetIfChanged(ref viewModel, value);
         }
-        public UserProfileLoaderViewModel(IUserBusinessFacade facade, ILogger<UserProfileLoaderViewModel> logger) 
+        public UserProfileLoaderViewModel(IUserBusinessFacade facade, ILogger<UserProfileLoaderViewModel> logger, ISectionTemplateBusinessFacade sectionFacade) 
         { 
             Facade = facade;
             Logger = logger;
             Load = ReactiveCommand.CreateFromTask(DoLoad);
+            SectionFacade = sectionFacade;
         }
         protected virtual async Task DoLoad(CancellationToken token)
         {
@@ -71,7 +73,7 @@ namespace Programming.Team.ViewModels.Resume
                     var user = await Facade.GetByID(userId.Value, token: token);
                     if (user != null)
                     {
-                        ViewModel = new UserProfileViewModel(Logger, Facade, user);
+                        ViewModel = new UserProfileViewModel(Logger, new ResumeConfigurationViewModel(SectionFacade), Facade, user);
                         await ViewModel.Load.Execute().GetAwaiter();
                     }
                 }
@@ -87,13 +89,15 @@ namespace Programming.Team.ViewModels.Resume
     }
     public class UserProfileViewModel : EntityViewModel<Guid, User>, IUser
     {
-        public ResumeConfigurationViewModel DefaultResumeConfigurationViewModel { get; } = new ResumeConfigurationViewModel();
-        public UserProfileViewModel(ILogger logger, IBusinessRepositoryFacade<User, Guid> facade, Guid id) : base(logger, facade, id)
+        public ResumeConfigurationViewModel DefaultResumeConfigurationViewModel { get; }
+        public UserProfileViewModel(ILogger logger, ResumeConfigurationViewModel config, IBusinessRepositoryFacade<User, Guid> facade, Guid id) : base(logger, facade, id)
         {
+            DefaultResumeConfigurationViewModel = config;
         }
 
-        public UserProfileViewModel(ILogger logger, IBusinessRepositoryFacade<User, Guid> facade, User entity) : base(logger, facade, entity)
+        public UserProfileViewModel(ILogger logger, ResumeConfigurationViewModel config, IBusinessRepositoryFacade<User, Guid> facade, User entity) : base(logger, facade, entity)
         {
+            DefaultResumeConfigurationViewModel = config;
         }
 
         private string objectId = string.Empty;
@@ -222,7 +226,7 @@ namespace Programming.Team.ViewModels.Resume
             });
         }
 
-        protected override Task Read(User entity)
+        protected async override Task Read(User entity)
         {
             Id = entity.Id;
             ObjectId = entity.ObjectId;
@@ -240,8 +244,7 @@ namespace Programming.Team.ViewModels.Resume
             Country = entity.Country;
             ResumeGenerationsLeft = entity.ResumeGenerationsLeft;
             DefaultResumeConfiguration = entity.DefaultResumeConfiguration;
-            DefaultResumeConfigurationViewModel.Load(entity.DefaultResumeConfiguration);
-            return Task.CompletedTask;
+            await DefaultResumeConfigurationViewModel.Load(entity.DefaultResumeConfiguration);
         }
     }
 }

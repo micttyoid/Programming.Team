@@ -180,7 +180,9 @@ namespace Programming.Team.Business
             try
             {
                 if (posting.RenderedLaTex != null)
+                {
                     await ResumeBlob.UploadResume(posting.Id, await Templator.RenderLatex(posting.RenderedLaTex, token), token);
+                }
             }
             catch(Exception ex)
             {

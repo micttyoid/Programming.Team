@@ -20,4 +20,8 @@ namespace Programming.Team.Data.Core
         Task<Guid[]> GetUserIds(Guid roleId, IUnitOfWork? work = null, CancellationToken token = default);
         Task SetSelectedUsersToRole(Guid roleId, Guid[] userIds, IUnitOfWork? work = null, CancellationToken token = default);
     }
+    public interface ISectionTemplateRepository : IRepository<SectionTemplate, Guid>
+    {
+        Task<SectionTemplate[]> GetBySection(ResumePart sectionId, IUnitOfWork? work = null, CancellationToken token = default);
+    }
 }

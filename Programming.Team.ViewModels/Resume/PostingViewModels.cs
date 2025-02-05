@@ -39,8 +39,10 @@ namespace Programming.Team.ViewModels.Resume
     {
         protected IBusinessRepositoryFacade<DocumentTemplate, Guid> DocumentTemplateFacade { get; }
         protected IResumeBuilder Builder { get; }
-        public PostingLoaderViewModel(IResumeBuilder builder, IBusinessRepositoryFacade<DocumentTemplate, Guid> documentTemplateFacade, IBusinessRepositoryFacade<Posting, Guid> facade, ILogger<EntityLoaderViewModel<Guid, Posting, PostingViewModel, IBusinessRepositoryFacade<Posting, Guid>>> logger) : base(facade, logger)
+        protected ISectionTemplateBusinessFacade SectionFacade { get; }
+        public PostingLoaderViewModel(IResumeBuilder builder, ISectionTemplateBusinessFacade sectionFacade, IBusinessRepositoryFacade<DocumentTemplate, Guid> documentTemplateFacade, IBusinessRepositoryFacade<Posting, Guid> facade, ILogger<EntityLoaderViewModel<Guid, Posting, PostingViewModel, IBusinessRepositoryFacade<Posting, Guid>>> logger) : base(facade, logger)
         {
+            SectionFacade = sectionFacade;
             DocumentTemplateFacade = documentTemplateFacade;
             Builder = builder;
         }
@@ -54,13 +56,13 @@ namespace Programming.Team.ViewModels.Resume
         }
         protected override PostingViewModel Construct(Posting entity)
         {
-            return new PostingViewModel(Builder, DocumentTemplateFacade, Logger, Facade, entity);
+            return new PostingViewModel(Builder, new ResumeConfigurationViewModel(SectionFacade), DocumentTemplateFacade, Logger, Facade, entity);
         }
     }
     public class PostingViewModel : EntityViewModel<Guid, Posting>, IPosting
     {
         protected readonly CompositeDisposable disposables = new CompositeDisposable();
-        public ResumeConfigurationViewModel ConfigurationViewModel { get; } = new ResumeConfigurationViewModel();
+        public ResumeConfigurationViewModel ConfigurationViewModel { get; }
         public ObservableCollection<DocumentTemplate> DocumentTemplates { get; } = new ObservableCollection<DocumentTemplate>();
         protected IBusinessRepositoryFacade<DocumentTemplate, Guid> DocumentTemplateFacade { get; }
         protected IResumeBuilder Builder { get; }
@@ -70,8 +72,9 @@ namespace Programming.Team.ViewModels.Resume
         {
             disposables.Dispose();
         }
-        public PostingViewModel(IResumeBuilder builder, IBusinessRepositoryFacade<DocumentTemplate, Guid>  documentTemplateFacade, ILogger logger, IBusinessRepositoryFacade<Posting, Guid> facade, Guid id) : base(logger, facade, id)
+        public PostingViewModel(IResumeBuilder builder, ResumeConfigurationViewModel config, IBusinessRepositoryFacade<DocumentTemplate, Guid>  documentTemplateFacade, ILogger logger, IBusinessRepositoryFacade<Posting, Guid> facade, Guid id) : base(logger, facade, id)
         {
+            ConfigurationViewModel = config;
             DocumentTemplateFacade = documentTemplateFacade;
             Builder = builder;
             Rebuild = ReactiveCommand.CreateFromTask(DoRebuild);
@@ -79,8 +82,9 @@ namespace Programming.Team.ViewModels.Resume
             WireUpEvents();
         }
 
-        public PostingViewModel(IResumeBuilder builder, IBusinessRepositoryFacade<DocumentTemplate, Guid> documentTemplateFacade, ILogger logger, IBusinessRepositoryFacade<Posting, Guid> facade, Posting entity) : base(logger, facade, entity)
+        public PostingViewModel(IResumeBuilder builder, ResumeConfigurationViewModel config, IBusinessRepositoryFacade<DocumentTemplate, Guid> documentTemplateFacade, ILogger logger, IBusinessRepositoryFacade<Posting, Guid> facade, Posting entity) : base(logger, facade, entity)
         {
+            ConfigurationViewModel = config;
             DocumentTemplateFacade = documentTemplateFacade;
             Builder = builder;
             Rebuild = ReactiveCommand.CreateFromTask(DoRebuild);
@@ -130,9 +134,9 @@ namespace Programming.Team.ViewModels.Resume
                 if (p.Sender.SelectedTemplate != null)
                     p.Sender.DocumentTemplateId = p.Sender.SelectedTemplate.Id;
             }).DisposeWith(disposables);
-            this.WhenPropertyChanged(p => p.Configuration).Subscribe(p =>
+            this.WhenPropertyChanged(p => p.Configuration).Subscribe(async p =>
             {
-                ConfigurationViewModel.Load(p.Sender.Configuration);
+                await ConfigurationViewModel.Load(p.Sender.Configuration);
             }).DisposeWith(disposables);
         }
         private bool enrich = true;
@@ -247,11 +251,22 @@ namespace Programming.Team.ViewModels.Resume
     }
     public class ResumePartViewModel : ReactiveObject
     {
-        public ResumePartViewModel(ResumePart part, int order, bool selected)
+        public ObservableCollection<SectionTemplate> SectionTemplates { get; } = new ObservableCollection<SectionTemplate>();
+        private SectionTemplate? selectedTemplate;
+        public SectionTemplate? SelectedTemplate
+        {
+            get => selectedTemplate;
+            set => this.RaiseAndSetIfChanged(ref selectedTemplate, value);
+        }
+        private Guid? InitalSelectedTemplateId { get; }
+        public ResumePartViewModel(ResumePart part, int order, bool selected, SectionTemplate[] templates, Guid? selectedTemplateId)
         {
             Part = part;
             Selected = selected;
             Order = order;
+            InitalSelectedTemplateId = selectedTemplateId;
+            SectionTemplates.AddRange(templates);
+            SelectedTemplate = templates.SingleOrDefault(p => p.Id == selectedTemplateId);
         }
         private int order;
         public int Order
@@ -272,7 +287,12 @@ namespace Programming.Team.ViewModels.Resume
     }
     public class ResumeConfigurationViewModel : ReactiveObject, IResumeConfiguration
     {
-        public void Load(string? configuration)
+        protected ISectionTemplateBusinessFacade Facade { get; }
+        public ResumeConfigurationViewModel(ISectionTemplateBusinessFacade facade)
+        {
+            Facade = facade;
+        }
+        public async Task Load(string? configuration)
         {
             var config = configuration != null ? JsonSerializer.Deserialize<ResumeConfiguration>(configuration) ?? new ResumeConfiguration() : new ResumeConfiguration();
             MatchThreshold = config.MatchThreshold;
@@ -281,11 +301,15 @@ namespace Programming.Team.ViewModels.Resume
             BulletsPer20Percent = config.BulletsPer20Percent;
             HidePositionsNotInJD = config.HidePositionsNotInJD;
             Parts = config.Parts;
+            SectionTemplates = config.SectionTemplates;
             ResumeParts.Clear();
             List<ResumePartViewModel> parts = [];
             foreach (var part in Enum.GetValues<ResumePart>())
             {
-                var pv = new ResumePartViewModel(part, Parts.Contains(part) ? Array.IndexOf(Parts, part) : int.MaxValue, Parts.Contains(part));
+                SectionTemplates.TryGetValue(part, out var selectedId);
+                var pv = new ResumePartViewModel(part, 
+                    Parts.Contains(part) ? Array.IndexOf(Parts, part) : int.MaxValue, Parts.Contains(part),
+                    await Facade.GetBySection(part), selectedId);
                 parts.Add(pv);
             }
             foreach(var pv in parts.OrderBy(p => p.Order))
@@ -302,7 +326,8 @@ namespace Programming.Team.ViewModels.Resume
                 HideSkillsNotInJD = HideSkillsNotInJD,
                 BulletsPer20Percent = BulletsPer20Percent,
                 HidePositionsNotInJD = HidePositionsNotInJD,
-                Parts = ResumeParts.Where(p => p.Selected).OrderBy(p => p.Order).Select(p => p.Part).ToArray()
+                Parts = ResumeParts.Where(p => p.Selected).OrderBy(p => p.Order).Select(p => p.Part).ToArray(),
+                SectionTemplates = ResumeParts.Where(p => p.Selected).ToDictionary(p => p.Part, p => p.SelectedTemplate?.Id)
             };
             return config;
         }
@@ -344,5 +369,6 @@ namespace Programming.Team.ViewModels.Resume
         }
         public ObservableCollection<ResumePartViewModel> ResumeParts { get; } = new ObservableCollection<ResumePartViewModel>();
         public ResumePart[] Parts { get; set; } = [ResumePart.Bio, ResumePart.Reccomendations, ResumePart.Skills, ResumePart.Positions, ResumePart.Education, ResumePart.Certifications, ResumePart.Publications];
+        public Dictionary<ResumePart, Guid?> SectionTemplates { get; set; } = [];
     }
 }
