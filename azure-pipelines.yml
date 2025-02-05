@@ -12,37 +12,49 @@ variables:
   publishDir: '$(Build.ArtifactStagingDirectory)/publish'
   webAppName: 'programming-team-nix'
 
-steps:
-  - task: UseDotNet@2
-    displayName: 'Install .NET SDK'
-    inputs:
-      packageType: 'sdk'
-      version: '8.x'  # Update if using a different .NET version
+stages:
+  - stage: Build
+    jobs:
+      - job: Build
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Install .NET SDK'
+            inputs:
+              packageType: 'sdk'
+              version: '8.x'  # Update if using a different .NET version
 
-  - script: dotnet restore
-    displayName: 'Restore Dependencies'
+          - script: dotnet restore
+            displayName: 'Restore Dependencies'
 
-  - script: dotnet build $(projectPath) --configuration $(buildConfiguration) --no-restore
-    displayName: 'Build Solution'
+          - script: dotnet build $(projectPath) --configuration $(buildConfiguration) --no-restore
+            displayName: 'Build Solution'
 
-  - script: dotnet test --configuration $(buildConfiguration) --no-restore --verbosity normal
-    displayName: 'Run Unit Tests'
+          - script: dotnet test --configuration $(buildConfiguration) --no-restore --verbosity normal
+            displayName: 'Run Unit Tests'
 
-  - script: dotnet publish $(projectPath) --configuration $(buildConfiguration) --output $(publishDir) --no-restore
-    displayName: 'Publish Application'
+          - script: dotnet publish $(projectPath) --configuration $(buildConfiguration) --output $(publishDir) --no-restore
+            displayName: 'Publish Application'
 
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Build Artifacts'
-    inputs:
-      pathToPublish: '$(publishDir)'
-      artifactName: 'drop'
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Build Artifacts'
+            inputs:
+              pathToPublish: '$(publishDir)'
+              artifactName: 'drop'
 
-  # Deploy to Azure App Service
-  - task: AzureWebApp@1
-    displayName: 'Deploy to Azure App Service'
-    inputs:
-      azureSubscription: 'AzureServiceConnection'
-      appName: '$(webAppName)'
-      appType: webAppLinux
-      package: '$(publishDir)'
-      runtimeStack: 'DOTNETCORE|8.0'
+  - stage: Deploy
+    jobs:
+      - deployment: DeployApp
+        displayName: 'Deploy to Azure App Service'
+        environment: 'production'
+        strategy:
+          runOnce: # Ensures only one deployment at a time
+            deploy:
+              steps:
+                - task: AzureWebApp@1
+                  displayName: 'Deploy to Azure App Service'
+                  inputs:
+                    azureSubscription: 'AzureServiceConnection'
+                    appName: '$(webAppName)'
+                    appType: webAppLinux
+                    package: '$(publishDir)'
+                    runtimeStack: 'DOTNETCORE|8.0'
