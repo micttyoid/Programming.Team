@@ -389,4 +389,5 @@ FodyWeavers.xsd
 *.core
 
 # Security
+appsettings.json
 appsettings.*.json

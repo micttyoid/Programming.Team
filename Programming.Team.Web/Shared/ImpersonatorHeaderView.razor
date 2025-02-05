@@ -1,14 +1,30 @@
 ﻿@inherits ReactiveInjectableComponentBase<ImpersonatorViewModel>
-@if(ViewModel != null && ViewModel.ImpersonatedUser != null)
-{
-    <MudStack Row="true">
-        <MudSpacer />
-        <MudText> Impersonating: @ViewModel.ImpersonatedUser.EmailAddress! &nbsp;</MudText>
-        <MudButton class="fw-bold" OnClick="ViewModel.EndImpersonation.BindCommand<MouseEventArgs>()" Variant="Variant.Filled"
-        Color="Color.Primary">End Impersonation</MudButton>
-        <MudSpacer />
-    </MudStack>
-}
+
+<MudPopover Open="@(ViewModel != null && ViewModel.ImpersonatedUser != null)" Fixed="true"
+    AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopLeft" Paper="true"
+    Class="d-flex mud-toolbar-gutters mud-toolbar gap-2 mt-8"
+    Style="@(ViewModel != null && ViewModel.ImpersonatedUser != null ? "opacity: 0.7;": null)">
+
+    @* Laptop, Desktop *@
+    <MudHidden Breakpoint=" Breakpoint.MdAndUp" Invert="true">
+        <MudElement Class="d-flex align-content-center justify-end flex-grow-1 gap-2 mr-4">
+            <MudText Class="text-nowrap">Impersonating: @ViewModel.ImpersonatedUser.EmailAddress</MudText>
+        </MudElement>
+    </MudHidden>
+
+    @* Smaller devices *@
+    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+        <MudElement Class="d-flex flex-column justify-center flex-grow-1">
+            <MudText Class="fs-body2 fw-bold" Style="font-size: 0.65rem;">@ViewModel.ImpersonatedUser.EmailAddress
+            </MudText>
+        </MudElement>
+    </MudHidden>
+
+    <MudButton OnClick="ViewModel.EndImpersonation.BindCommand<MouseEventArgs>()" Class="fw-bold fs-body2 text-nowrap"
+        Variant="Variant.Filled" Color="Color.Primary">
+        End</MudButton>
+</MudPopover>
+
 @code {
     override protected async Task OnInitializedAsync()
     {
