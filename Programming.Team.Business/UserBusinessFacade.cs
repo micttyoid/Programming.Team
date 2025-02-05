@@ -83,4 +83,15 @@ namespace Programming.Team.Business
             return pack;
         }
     }
+    public class SectionTemplateBusinessFacade : BusinessRepositoryFacade<SectionTemplate, Guid, ISectionTemplateRepository>, ISectionTemplateBusinessFacade
+    {
+        public SectionTemplateBusinessFacade(ISectionTemplateRepository repository, ILogger<SectionTemplate> logger) : base(repository, logger)
+        {
+        }
+
+        public Task<SectionTemplate[]> GetBySection(ResumePart sectionId, IUnitOfWork? work = null, CancellationToken token = default)
+        {
+            return Repository.GetBySection(sectionId, work, token);
+        }
+    }
 }

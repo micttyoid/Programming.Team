@@ -22,4 +22,8 @@ namespace Programming.Team.Business.Core
         Task<Guid[]> GetUserIds(Guid roleId, IUnitOfWork? work = null, CancellationToken token = default);
         Task SetSelectedUsersToRole(Guid roleId, Guid[] userIds, IUnitOfWork? work = null, CancellationToken token = default);
     }
+    public interface ISectionTemplateBusinessFacade : IBusinessRepositoryFacade<SectionTemplate, Guid>
+    {
+        Task<SectionTemplate[]> GetBySection(ResumePart sectionId, IUnitOfWork? work = null, CancellationToken token = default);
+    }
 }
