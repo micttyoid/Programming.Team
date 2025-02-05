@@ -107,4 +107,19 @@ namespace Programming.Team.Data
             }, work, token, true);
         }
     }
+    public class SectionTemplateRepository : Repository<SectionTemplate, Guid>, ISectionTemplateRepository
+    {
+        public SectionTemplateRepository(IContextFactory contextFactory, IMemoryCache cache) : base(contextFactory, cache)
+        {
+        }
+        public async Task<SectionTemplate[]> GetBySection(ResumePart sectionId, IUnitOfWork? work = null, CancellationToken token = default)
+        {
+            SectionTemplate[] templates = [];
+            await Use(async (w, t) =>
+            {
+                templates = await w.ResumesContext.SectionTemplates.Where(s => s.SectionId == sectionId).ToArrayAsync(token);
+            }, work, token);
+            return templates;
+        }
+    }
 }

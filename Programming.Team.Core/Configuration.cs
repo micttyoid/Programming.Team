@@ -26,6 +26,7 @@ namespace Programming.Team.Core
         double? BulletsPer20Percent { get; set; }
         bool HidePositionsNotInJD { get; set; }
         ResumePart[] Parts { get; set; }
+        Dictionary<ResumePart, Guid?> SectionTemplates { get; set; }
     }
     public class ResumeConfiguration : IResumeConfiguration
     {
@@ -35,5 +36,7 @@ namespace Programming.Team.Core
         public double? BulletsPer20Percent { get; set; }
         public bool HidePositionsNotInJD { get; set; } = false;
         public ResumePart[] Parts { get; set; } = [ResumePart.Bio, ResumePart.Reccomendations, ResumePart.Skills, ResumePart.Positions, ResumePart.Education, ResumePart.Certifications, ResumePart.Publications];
+        public Dictionary<ResumePart, Guid?> SectionTemplates { get; set; } = [];
+
     }
 }

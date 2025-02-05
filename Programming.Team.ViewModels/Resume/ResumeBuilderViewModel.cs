@@ -19,7 +19,7 @@ namespace Programming.Team.ViewModels.Resume
 {
     public class ResumeBuilderViewModel : ReactiveObject
     {
-        public ResumeConfigurationViewModel Configuration { get; } = new ResumeConfigurationViewModel();
+        public ResumeConfigurationViewModel Configuration { get; }
         public Interaction<string, bool> Alert { get; } = new Interaction<string, bool>();
         protected ILogger Logger { get; }
         protected IResumeBuilder Builder { get; }
@@ -29,8 +29,9 @@ namespace Programming.Team.ViewModels.Resume
         protected IUserBusinessFacade UserFacade { get; }
         public ObservableCollection<DocumentTemplate> DocumentTemplates { get; } = new ObservableCollection<DocumentTemplate>();
         protected NavigationManager NavMan { get; } 
-        public ResumeBuilderViewModel(NavigationManager navMan, IUserBusinessFacade userFacade, IBusinessRepositoryFacade<DocumentTemplate, Guid>  documentTemplateFacade, ILogger<ResumeBuilderViewModel> logger, IResumeBuilder builder)
+        public ResumeBuilderViewModel(NavigationManager navMan, ResumeConfigurationViewModel config, IUserBusinessFacade userFacade, IBusinessRepositoryFacade<DocumentTemplate, Guid>  documentTemplateFacade, ILogger<ResumeBuilderViewModel> logger, IResumeBuilder builder)
         {
+            Configuration = config;
             Logger = logger;
             UserFacade = userFacade;
             DocumentTemplateFacade = documentTemplateFacade;
@@ -106,7 +107,7 @@ namespace Programming.Team.ViewModels.Resume
                 var dts = await DocumentTemplateFacade.Get(orderBy: o => o.OrderBy(e => e.Name), token: token);
                 DocumentTemplates.AddRange(dts.Entities);
                 SelectedTemplate = DocumentTemplates.First();
-                Configuration.Load(user?.DefaultResumeConfiguration);
+                await Configuration.Load(user?.DefaultResumeConfiguration);
             }
             catch(Exception ex)
             {
