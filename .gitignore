@@ -387,7 +387,3 @@ FodyWeavers.xsd
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
 *.core
-
-# Security
-appsettings.json
-appsettings.*.json
