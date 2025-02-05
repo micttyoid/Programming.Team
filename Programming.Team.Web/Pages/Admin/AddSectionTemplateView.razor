@@ -1,0 +1,31 @@
+﻿@inherits ReactiveComponentBase<AddSectionTemplateViewModel>
+@if (ViewModel != null)
+{
+    <MudPopover Open="ViewModel.IsOpen" Fixed="true" Class="px-4 pt-4">
+        <div class="d-flex flex-column">
+            <MudStack>
+                <MudTextField @bind-Value="ViewModel.Name" Label="Name" Variant="Variant.Outlined" />
+                <MudSelect Label="Section" T="ResumePart" @bind-Value="ViewModel.SectionId">
+                    @foreach (var part in ViewModel.ResumeParts)
+                    {
+                        <MudSelectItem T="ResumePart" Value="part">@part.ToString()</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudTextField Lines="10" @bind-Value="ViewModel.Template" Label="Template" Variant="Variant.Outlined" />
+                <MudStack Row="true">
+                    <MudButton OnClick="ViewModel.Add.BindCommand<MouseEventArgs>()">Add Section Template</MudButton>
+                    <MudButton OnClick="ViewModel.Cancel.BindCommand<MouseEventArgs>()">Cancel</MudButton>
+                </MudStack>
+            </MudStack>
+
+        </div>
+    </MudPopover>
+}
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && ViewModel != null)
+            await ViewModel.Init.Execute().GetAwaiter();
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}
