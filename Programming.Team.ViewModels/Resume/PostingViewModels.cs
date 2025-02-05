@@ -47,7 +47,8 @@ namespace Programming.Team.ViewModels.Resume
             Builder = builder;
         }
         protected override async Task DoLoad(Guid key, CancellationToken token)
-        {
+        { 
+
             var posting = await Facade.GetByID(key, token:token);
             var userID = await Facade.GetCurrentUserId();
             if (posting?.UserId != userID)
@@ -133,10 +134,6 @@ namespace Programming.Team.ViewModels.Resume
             {
                 if (p.Sender.SelectedTemplate != null)
                     p.Sender.DocumentTemplateId = p.Sender.SelectedTemplate.Id;
-            }).DisposeWith(disposables);
-            this.WhenPropertyChanged(p => p.Configuration).Subscribe(async p =>
-            {
-                await ConfigurationViewModel.Load(p.Sender.Configuration);
             }).DisposeWith(disposables);
         }
         private bool enrich = true;
@@ -237,7 +234,7 @@ namespace Programming.Team.ViewModels.Resume
             });
         }
 
-        protected override Task Read(Posting entity)
+        protected override async Task Read(Posting entity)
         {
             Id = entity.Id;
             Name = entity.Name;
@@ -246,7 +243,7 @@ namespace Programming.Team.ViewModels.Resume
             RenderedLaTex = entity.RenderedLaTex;
             SelectedTemplate = DocumentTemplates.SingleOrDefault(d => d.Id == entity.DocumentTemplateId);
             UserId = entity.UserId;
-            return Task.CompletedTask;
+            await ConfigurationViewModel.Load(entity.Configuration);
         }
     }
     public class ResumePartViewModel : ReactiveObject
@@ -287,6 +284,12 @@ namespace Programming.Team.ViewModels.Resume
     }
     public class ResumeConfigurationViewModel : ReactiveObject, IResumeConfiguration
     {
+        private bool isLoaded = false;
+        public bool IsLoaded
+        {
+            get => isLoaded;
+            set => this.RaiseAndSetIfChanged(ref isLoaded, value);
+        }
         protected ISectionTemplateBusinessFacade Facade { get; }
         public ResumeConfigurationViewModel(ISectionTemplateBusinessFacade facade)
         {
@@ -294,6 +297,7 @@ namespace Programming.Team.ViewModels.Resume
         }
         public async Task Load(string? configuration)
         {
+            IsLoaded = false;
             var config = configuration != null ? JsonSerializer.Deserialize<ResumeConfiguration>(configuration) ?? new ResumeConfiguration() : new ResumeConfiguration();
             MatchThreshold = config.MatchThreshold;
             TargetLengthPer10Percent = config.TargetLengthPer10Percent;
@@ -316,6 +320,7 @@ namespace Programming.Team.ViewModels.Resume
             {
                 ResumeParts.Add(pv);
             }
+            IsLoaded = true;
         }
         public ResumeConfiguration GetConfiguration()
         {

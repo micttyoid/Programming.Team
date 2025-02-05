@@ -117,9 +117,19 @@ namespace Programming.Team.Data
             SectionTemplate[] templates = [];
             await Use(async (w, t) =>
             {
-                templates = await w.ResumesContext.SectionTemplates.Where(s => s.SectionId == sectionId).ToArrayAsync(token);
+                templates = await w.ResumesContext.SectionTemplates.Where(s => s.SectionId == sectionId).OrderBy(s => s.Name).ToArrayAsync(token);
             }, work, token);
             return templates;
+        }
+
+        public async Task<SectionTemplate?> GetDefaultSection(ResumePart sectionId, IUnitOfWork? work = null, string defaultName = "Default", CancellationToken token = default)
+        {
+            SectionTemplate? template = null;
+            await Use(async (w, t) =>
+            {
+                template = await w.ResumesContext.SectionTemplates.FirstOrDefaultAsync(s => s.SectionId == sectionId && s.Name == defaultName);
+            }, work, token);
+            return template;
         }
     }
 }
