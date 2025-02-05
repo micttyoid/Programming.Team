@@ -93,5 +93,10 @@ namespace Programming.Team.Business
         {
             return Repository.GetBySection(sectionId, work, token);
         }
+
+        public Task<SectionTemplate?> GetDefaultSection(ResumePart sectionId, IUnitOfWork? work = null, string defaultName = "Default", CancellationToken token = default)
+        {
+            return Repository.GetDefaultSection(sectionId, work, defaultName, token);
+        }
     }
 }
