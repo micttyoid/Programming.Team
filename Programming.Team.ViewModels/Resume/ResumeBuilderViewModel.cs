@@ -26,11 +26,13 @@ namespace Programming.Team.ViewModels.Resume
         public ReactiveCommand<Unit, Unit> Build { get; }
         public ReactiveCommand<Unit, Unit> Load { get; }
         protected IBusinessRepositoryFacade<DocumentTemplate, Guid> DocumentTemplateFacade { get; }
+        protected IUserBusinessFacade UserFacade { get; }
         public ObservableCollection<DocumentTemplate> DocumentTemplates { get; } = new ObservableCollection<DocumentTemplate>();
         protected NavigationManager NavMan { get; } 
-        public ResumeBuilderViewModel(NavigationManager navMan, IBusinessRepositoryFacade<DocumentTemplate, Guid>  documentTemplateFacade, ILogger<ResumeBuilderViewModel> logger, IResumeBuilder builder)
+        public ResumeBuilderViewModel(NavigationManager navMan, IUserBusinessFacade userFacade, IBusinessRepositoryFacade<DocumentTemplate, Guid>  documentTemplateFacade, ILogger<ResumeBuilderViewModel> logger, IResumeBuilder builder)
         {
             Logger = logger;
+            UserFacade = userFacade;
             DocumentTemplateFacade = documentTemplateFacade;
             Builder = builder;
             Build = ReactiveCommand.CreateFromTask(DoBuild);
@@ -97,11 +99,14 @@ namespace Programming.Team.ViewModels.Resume
         {
             try
             {
+                var userId = await UserFacade.GetCurrentUserId(fetchTrueUserId: true, token: token);
+                var user = await UserFacade.GetByID(userId.Value, token: token);
+
                 DocumentTemplates.Clear();
                 var dts = await DocumentTemplateFacade.Get(orderBy: o => o.OrderBy(e => e.Name), token: token);
                 DocumentTemplates.AddRange(dts.Entities);
                 SelectedTemplate = DocumentTemplates.First();
-                Configuration.Load(null);
+                Configuration.Load(user?.DefaultResumeConfiguration);
             }
             catch(Exception ex)
             {

@@ -87,6 +87,7 @@ namespace Programming.Team.ViewModels.Resume
     }
     public class UserProfileViewModel : EntityViewModel<Guid, User>, IUser
     {
+        public ResumeConfigurationViewModel DefaultResumeConfigurationViewModel { get; } = new ResumeConfigurationViewModel();
         public UserProfileViewModel(ILogger logger, IBusinessRepositoryFacade<User, Guid> facade, Guid id) : base(logger, facade, id)
         {
         }
@@ -191,6 +192,13 @@ namespace Programming.Team.ViewModels.Resume
             get => resumeGenerationsLeft;
             set => this.RaiseAndSetIfChanged(ref resumeGenerationsLeft, value);
         }
+        private string? defaultResumeConfiguration;
+        public string? DefaultResumeConfiguration 
+        {
+            get => defaultResumeConfiguration;
+            set => this.RaiseAndSetIfChanged(ref defaultResumeConfiguration, value);
+        }
+
         protected override Task<User> Populate()
         {
             return Task.FromResult(new User()
@@ -209,7 +217,8 @@ namespace Programming.Team.ViewModels.Resume
                 City = City,
                 State = State,
                 Country = Country,
-                ResumeGenerationsLeft = ResumeGenerationsLeft
+                ResumeGenerationsLeft = ResumeGenerationsLeft,
+                DefaultResumeConfiguration = DefaultResumeConfigurationViewModel.GetSerializedConfiguration()
             });
         }
 
@@ -230,6 +239,8 @@ namespace Programming.Team.ViewModels.Resume
             State = entity.State;
             Country = entity.Country;
             ResumeGenerationsLeft = entity.ResumeGenerationsLeft;
+            DefaultResumeConfiguration = entity.DefaultResumeConfiguration;
+            DefaultResumeConfigurationViewModel.Load(entity.DefaultResumeConfiguration);
             return Task.CompletedTask;
         }
     }

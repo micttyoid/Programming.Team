@@ -29,6 +29,7 @@ public interface IUser : IEntity<Guid>
 
     string? Country { get; set; }
     int ResumeGenerationsLeft { get; set; }
+    string? DefaultResumeConfiguration { get; set; }
 }
 public partial class User : Entity<Guid>, IUser
 {
@@ -141,4 +142,5 @@ public partial class User : Entity<Guid>, IUser
     public virtual ICollection<Purchase> PurchaseUpdatedByUsers { get; set; } = new List<Purchase>();
 
     public virtual ICollection<Purchase> PurchaseUsers { get; set; } = new List<Purchase>();
+    public string? DefaultResumeConfiguration { get; set; }
 }

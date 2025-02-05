@@ -23,6 +23,7 @@
         <MudTextField @bind-Value="ViewModel.PortfolioUrl" Label="Portfolio Url" Variant="Variant.Outlined"/>
         <MudTextField @bind-Value="ViewModel.LinkedInUrl" Label="LinkedIn Url" Variant="Variant.Outlined"/>
         <MudTextField @bind-Value="ViewModel.GitHubUrl" Label="Github Url" Variant="Variant.Outlined" />
+        <ResumeConfigurationView ViewModel="ViewModel.DefaultResumeConfigurationViewModel" />
         <MudStack Row="true">
             <MudButton OnClick="ViewModel.Update.BindCommand<MouseEventArgs>()">Update</MudButton>
         </MudStack>

@@ -2,6 +2,7 @@
 using Programming.Team.Business.Core;
 using Programming.Team.Core;
 using Programming.Team.Data.Core;
+using Programming.Team.ViewModels.Resume;
 using ReactiveUI;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
@@ -41,6 +42,7 @@ namespace Programming.Team.ViewModels.Admin
     }
     public class UserViewModel : EntityViewModel<Guid, User, IUserBusinessFacade>, IUser
     {
+        public ResumeConfigurationViewModel Configuration { get; } = new ResumeConfigurationViewModel();
         public UserViewModel(ILogger logger, IUserBusinessFacade facade, Guid id) : base(logger, facade, id)
         {
         }
@@ -144,6 +146,13 @@ namespace Programming.Team.ViewModels.Admin
             get => resumeGenerationsLeft;
             set => this.RaiseAndSetIfChanged(ref resumeGenerationsLeft, value);
         }
+        private string? defaultResumeConfiguration;
+        public string? DefaultResumeConfiguration
+        {
+            get => defaultResumeConfiguration;
+            set => this.RaiseAndSetIfChanged(ref defaultResumeConfiguration, value);
+        }
+
         protected override Task<User> Populate()
         {
             User user = new User();
@@ -162,6 +171,7 @@ namespace Programming.Team.ViewModels.Admin
             user.State = State;
             user.Country = Country;
             user.ResumeGenerationsLeft = ResumeGenerationsLeft;
+            user.DefaultResumeConfiguration = Configuration.GetSerializedConfiguration();
             return Task.FromResult(user);
         }
         
@@ -182,6 +192,8 @@ namespace Programming.Team.ViewModels.Admin
             State = entity.State;
             Country = entity.Country;
             ResumeGenerationsLeft = entity.ResumeGenerationsLeft;
+            DefaultResumeConfiguration = entity.DefaultResumeConfiguration;
+            Configuration.Load(DefaultResumeConfiguration);
             return Task.CompletedTask;
         }
     }
