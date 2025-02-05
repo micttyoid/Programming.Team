@@ -45,6 +45,7 @@ public partial class ResumesContext : DbContext
     public virtual DbSet<Publication> Publications { get; set; }
 
     public virtual DbSet<Reccomendation> Reccomendations { get; set; }
+    public virtual DbSet<SectionTemplate> SectionTemplates { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=Resumes");
 
@@ -562,6 +563,23 @@ public partial class ResumesContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Purchases_Users");
             entity.HasQueryFilter(d => !d.IsDeleted);
+        });
+        modelBuilder.Entity<SectionTemplate>(entity =>
+        {
+            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.SectionId).HasConversion<int>();
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.SectionTemplateCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SectionTemplates_Users");
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.SectionTemplateUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SectionTemplates_Users1");
+            entity.HasQueryFilter(d => !d.IsDeleted);
+
         });
         OnModelCreatingPartial(modelBuilder);
     }

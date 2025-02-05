@@ -1,14 +1,14 @@
-﻿@page "/admin/templates/document"
-@inherits ReactiveInjectableComponentBase<DocumentTemplatesViewModel>
+﻿@page "/admin/templates/section"
+@inherits ReactiveInjectableComponentBase<SectionTemplatesViewModel>
 @attribute [Authorize(Roles = "Admin")]
 @if (ViewModel != null)
 {
     <AlertView Alert="ViewModel.Alert" />
-    <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()">Add Document Template</MudButton>
-    <AddDocumentTemplateView ViewModel="ViewModel.AddViewModel" />
+    <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()">Add Section Template</MudButton>
+    <AddSectionTemplateView ViewModel="ViewModel.AddViewModel" />
     @foreach (var position in ViewModel.Entities)
     {
-        <DocumentTemplateView ViewModel="position" />
+        <SectionTemplateView ViewModel="position" />
     }
 }
 

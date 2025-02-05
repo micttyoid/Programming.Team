@@ -124,6 +124,7 @@ builder.Services.AddScoped<IRepository<CertificateIssuer, Guid>, Repository<Cert
 builder.Services.AddScoped<IRepository<Publication, Guid>, Repository<Publication, Guid>>();
 builder.Services.AddScoped<IRepository<Package, Guid>, Repository<Package, Guid>>();
 builder.Services.AddScoped<IRepository<Purchase, Guid>, Repository<Purchase, Guid>>();
+builder.Services.AddScoped<IRepository<SectionTemplate, Guid>, Repository<SectionTemplate, Guid>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Role, Guid>, BusinessRepositoryFacade<Role, Guid, IRepository<Role, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Company, Guid>, BusinessRepositoryFacade<Company, Guid, IRepository<Company, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Position, Guid>, BusinessRepositoryFacade<Position, Guid, IRepository<Position, Guid>>>();
@@ -143,6 +144,7 @@ builder.Services.AddScoped<IBusinessRepositoryFacade<DocumentType, int>, Busines
 builder.Services.AddScoped<IBusinessRepositoryFacade<Posting, Guid>, BusinessRepositoryFacade<Posting, Guid, IRepository<Posting, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Purchase, Guid>, BusinessRepositoryFacade<Purchase, Guid, IRepository<Purchase, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Package, Guid>, PackageBusinessFacade>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<SectionTemplate, Guid>, BusinessRepositoryFacade<SectionTemplate, Guid, IRepository<SectionTemplate, Guid>>>();
 builder.Services.AddScoped<IPurchaseManager, PurhcaseManager>();
 builder.Services.AddScoped<IChatGPT, ChatGPT>();
 builder.Services.AddScoped<IResumeEnricher, ResumeEnricher>();
@@ -192,6 +194,8 @@ builder.Services.AddTransient<PurchaseHistoryViewModel>();
 builder.Services.AddTransient<GlobalPurchaseHistoryViewModel>();
 builder.Services.AddTransient<AddPackageViewModel>();
 builder.Services.AddTransient<PackagesViewModel>();
+builder.Services.AddTransient<AddSectionTemplateViewModel>();
+builder.Services.AddTransient<SectionTemplatesViewModel>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
 {
