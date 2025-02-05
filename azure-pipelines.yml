@@ -1,0 +1,48 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  projectPath: 'Programming.Team.Web/Programming.Team.Web.csproj'
+  publishDir: '$(Build.ArtifactStagingDirectory)/publish'
+  webAppName: 'programming-team-nix'
+
+steps:
+  - task: UseDotNet@2
+    displayName: 'Install .NET SDK'
+    inputs:
+      packageType: 'sdk'
+      version: '8.x'  # Update if using a different .NET version
+
+  - script: dotnet restore
+    displayName: 'Restore Dependencies'
+
+  - script: dotnet build $(projectPath) --configuration $(buildConfiguration) --no-restore
+    displayName: 'Build Solution'
+
+  - script: dotnet test --configuration $(buildConfiguration) --no-restore --verbosity normal
+    displayName: 'Run Unit Tests'
+
+  - script: dotnet publish $(projectPath) --configuration $(buildConfiguration) --output $(publishDir) --no-restore
+    displayName: 'Publish Application'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Build Artifacts'
+    inputs:
+      pathToPublish: '$(publishDir)'
+      artifactName: 'drop'
+
+  # Deploy to Azure App Service
+  - task: AzureWebApp@1
+    displayName: 'Deploy to Azure App Service'
+    inputs:
+      azureSubscription: 'AzureServiceConnection'
+      appName: '$(webAppName)'
+      appType: webAppLinux
+      package: '$(publishDir)'
+      runtimeStack: 'DOTNETCORE|8.0'
