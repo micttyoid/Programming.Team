@@ -26,6 +26,7 @@ namespace Programming.Team.Business
         protected IBusinessRepositoryFacade<Certificate, Guid> CertificateFacade { get; }
         protected IBusinessRepositoryFacade<DocumentTemplate, Guid> DocumentTemplateFacade { get; }
         protected IBusinessRepositoryFacade<Posting, Guid> PostingFacade { get; }
+        protected ISectionTemplateBusinessFacade SectionFacade { get; }
         protected IDocumentTemplator Templator { get; }
         protected IResumeEnricher Enricher { get; }
         protected ILogger Logger { get; }
@@ -40,7 +41,8 @@ namespace Programming.Team.Business
             IBusinessRepositoryFacade<Posting, Guid> postingFacade,
             IDocumentTemplator templator,
             IResumeEnricher enricher,
-            IResumeBlob resumeBlob
+            IResumeBlob resumeBlob,
+            ISectionTemplateBusinessFacade sectionFacade
             )
         {
             Logger = logger;
@@ -54,6 +56,7 @@ namespace Programming.Team.Business
             DocumentTemplateFacade = documentTemplateFacade;
             PostingFacade = postingFacade;
             ResumeBlob = resumeBlob;
+            SectionFacade = sectionFacade;
         }
         public async Task<Resume> BuildResume(Guid userId, IProgress<string>? progress = null, CancellationToken token = default)
         {
@@ -157,11 +160,19 @@ namespace Programming.Team.Business
                 var docTemplate = await DocumentTemplateFacade.GetByID(posting.DocumentTemplateId, token: token);
                 if (docTemplate == null)
                     throw new InvalidDataException();
-                if (config != null)
-                    resume.Parts = config.Parts;
+                config ??= new ResumeConfiguration();
+                resume.Parts = config.Parts;
                 if (enrich && await UserFacade.UtilizeResumeGeneration(
                     await UserFacade.GetCurrentUserId(fetchTrueUserId: true, token: token) ?? throw new InvalidOperationException(), token: token))
                     await Enricher.EnrichResume(resume, posting, progress, token);
+                progress?.Report("Preparing Resume Style");
+                foreach(var part in (ResumePart[])Enum.GetValues(typeof(ResumePart)))
+                {
+                    config.SectionTemplates.TryGetValue(part, out var sectionTemplateId);
+                    var section = sectionTemplateId != null ? await SectionFacade.GetByID(sectionTemplateId.Value, token: token) : await SectionFacade.GetDefaultSection(part, token: token);
+                    if (section == null) continue;
+                    docTemplate.Template = docTemplate.Template.Replace($"%==={Enum.GetName(typeof(ResumePart), part)}===", section.Template);
+                }
                 posting.RenderedLaTex = await Templator.ApplyTemplate(docTemplate.Template, resume, token);
                 posting = await PostingFacade.Update(posting, token: token);
                 if (posting.RenderedLaTex != null && renderPDF)
