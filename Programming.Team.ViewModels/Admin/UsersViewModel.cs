@@ -18,37 +18,43 @@ namespace Programming.Team.ViewModels.Admin
     }
     public class SelectUsersViewModel : SelectEntitiesViewModel<Guid, User, UserViewModel, IUserBusinessFacade>
     {
-        public SelectUsersViewModel(IUserBusinessFacade facade, ILogger<SelectEntitiesViewModel<Guid, User, UserViewModel, IUserBusinessFacade>> logger) : base(facade, logger)
+        protected ResumeConfigurationViewModel config;
+        public SelectUsersViewModel(IUserBusinessFacade facade, ResumeConfigurationViewModel config, ILogger<SelectEntitiesViewModel<Guid, User, UserViewModel, IUserBusinessFacade>> logger) : base(facade, logger)
         {
+            this.config = config;
         }
 
         protected override async Task<UserViewModel> ConstructViewModel(User entity)
         {
-            var vm = new UserViewModel(Logger, Facade, entity.Id);
+            var vm = new UserViewModel(Logger, Facade, entity.Id, config);
             await vm.Load.Execute().GetAwaiter();
             return vm;
         }
     }
     public class UserLoaderViewModel : EntityLoaderViewModel<Guid, User, UserViewModel, IUserBusinessFacade>
     {
-        public UserLoaderViewModel(IUserBusinessFacade facade, ILogger<EntityLoaderViewModel<Guid, User, UserViewModel, IUserBusinessFacade>> logger) : base(facade, logger)
+        protected ResumeConfigurationViewModel Config { get; }
+        public UserLoaderViewModel(IUserBusinessFacade facade, ResumeConfigurationViewModel config, ILogger<EntityLoaderViewModel<Guid, User, UserViewModel, IUserBusinessFacade>> logger) : base(facade, logger)
         {
+            Config = config;
         }
 
         protected override UserViewModel Construct(User entity)
         {
-            return new UserViewModel(Logger, Facade, entity.Id);
+            return new UserViewModel(Logger, Facade, entity.Id, Config);
         }
     }
     public class UserViewModel : EntityViewModel<Guid, User, IUserBusinessFacade>, IUser
     {
-        public ResumeConfigurationViewModel Configuration { get; } = new ResumeConfigurationViewModel();
-        public UserViewModel(ILogger logger, IUserBusinessFacade facade, Guid id) : base(logger, facade, id)
+        public ResumeConfigurationViewModel Configuration { get; }
+        public UserViewModel(ILogger logger, IUserBusinessFacade facade, Guid id, ResumeConfigurationViewModel config) : base(logger, facade, id)
         {
+            Configuration = config;
         }
 
-        public UserViewModel(ILogger logger, IUserBusinessFacade facade, User entity) : base(logger, facade, entity)
+        public UserViewModel(ILogger logger, IUserBusinessFacade facade, User entity, ResumeConfigurationViewModel config) : base(logger, facade, entity)
         {
+            Configuration = config;
         }
 
         private string objectId = null!;
@@ -175,7 +181,7 @@ namespace Programming.Team.ViewModels.Admin
             return Task.FromResult(user);
         }
         
-        protected override Task Read(User entity)
+        protected override async Task Read(User entity)
         {
             Id = entity.Id;
             ObjectId = entity.ObjectId;
@@ -193,8 +199,7 @@ namespace Programming.Team.ViewModels.Admin
             Country = entity.Country;
             ResumeGenerationsLeft = entity.ResumeGenerationsLeft;
             DefaultResumeConfiguration = entity.DefaultResumeConfiguration;
-            Configuration.Load(DefaultResumeConfiguration);
-            return Task.CompletedTask;
+            await Configuration.Load(DefaultResumeConfiguration);
         }
     }
 }
