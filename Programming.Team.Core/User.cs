@@ -142,5 +142,7 @@ public partial class User : Entity<Guid>, IUser
     public virtual ICollection<Purchase> PurchaseUpdatedByUsers { get; set; } = new List<Purchase>();
 
     public virtual ICollection<Purchase> PurchaseUsers { get; set; } = new List<Purchase>();
+    public virtual ICollection<SectionTemplate> SectionTemplateCreatedByUsers { get; set; } = new List<SectionTemplate>();
+    public virtual ICollection<SectionTemplate> SectionTemplateUpdatedByUsers { get; set; } = new List<SectionTemplate>();
     public string? DefaultResumeConfiguration { get; set; }
 }
