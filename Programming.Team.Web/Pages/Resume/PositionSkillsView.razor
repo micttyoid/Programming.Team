@@ -1,14 +1,15 @@
 ﻿@inherits ReactiveComponentBase<PositionSkillsViewModel>
 @attribute [Authorize]
-@if(ViewModel != null)
+@if (ViewModel != null)
 {
     <AlertView Alert="ViewModel.Alert" />
-    <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()">Add Skill</MudButton>
-    <AddPositionSkillView ViewModel="ViewModel.AddViewModel"/>
+    <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()" Class="fw-bold" Variant="Variant.Filled"
+        Color="Color.Primary">Add Skill</MudButton>
+    <AddPositionSkillView ViewModel="ViewModel.AddViewModel" />
     <MudStack Row="true" Wrap="Wrap.Wrap">
-        @foreach(var e in ViewModel.Entities)
+        @foreach (var e in ViewModel.Entities)
         {
-            <PositionSkillView ViewModel="e"/>
+            <PositionSkillView ViewModel="e" />
         }
     </MudStack>
 }

@@ -5,7 +5,8 @@
 @if (ViewModel != null)
 {
     <AlertView Alert="ViewModel.Alert" />
-    <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()">Add Education</MudButton>
+    <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()" Class="fw-bold" Variant="Variant.Filled"
+        Color="Color.Primary">Add Education</MudButton>
     <AddEducationView ViewModel="ViewModel.AddViewModel" />
     @foreach (var position in ViewModel.Entities)
     {

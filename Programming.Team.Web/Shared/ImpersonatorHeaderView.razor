@@ -3,7 +3,7 @@
 <MudPopover Open="@(ViewModel != null && ViewModel.ImpersonatedUser != null)" Fixed="true"
     AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopLeft" Paper="true"
     Class="d-flex mud-toolbar-gutters mud-toolbar gap-2 mt-8"
-    Style="@(ViewModel != null && ViewModel.ImpersonatedUser != null ? "opacity: 0.7;": null)">
+    Style="@(ViewModel != null && ViewModel.ImpersonatedUser != null ? "opacity: 0.7;" : null)">
 
     @* Laptop, Desktop *@
     <MudHidden Breakpoint=" Breakpoint.MdAndUp" Invert="true">
@@ -19,7 +19,6 @@
             </MudText>
         </MudElement>
     </MudHidden>
-
     <MudButton OnClick="ViewModel.EndImpersonation.BindCommand<MouseEventArgs>()" Class="fw-bold fs-body2 text-nowrap"
         Variant="Variant.Filled" Color="Color.Primary">
         End</MudButton>

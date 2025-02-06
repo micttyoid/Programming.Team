@@ -13,8 +13,12 @@
                 <MudTextField Lines="10" @bind-Value="ViewModel.Body" Label="Body" Variant="Variant.Outlined" />
                 <MudTextField @bind-Value="ViewModel.SortOrder" Label="Sort Order" Variant="Variant.Outlined" />
                 <MudStack Row="true">
-                    <MudButton OnClick="ViewModel.Add.BindCommand<MouseEventArgs>()">Add Reccomendation</MudButton>
-                    <MudButton OnClick="ViewModel.Cancel.BindCommand<MouseEventArgs>()">Cancel</MudButton>
+                    <MudButton OnClick="ViewModel.Add.BindCommand<MouseEventArgs>()" Class="fw-bold"
+                        Variant="Variant.Filled" Color="Color.Primary">
+                        Add Reccomendation</MudButton>
+                    <MudButton OnClick="ViewModel.Cancel.BindCommand<MouseEventArgs>()" Class="fw-bold"
+                        Variant="Variant.Filled" Color="Color.Primary">
+                        Cancel</MudButton>
                 </MudStack>
             </MudStack>
 

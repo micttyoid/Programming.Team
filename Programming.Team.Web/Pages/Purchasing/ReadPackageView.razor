@@ -1,13 +1,14 @@
 ﻿@inherits ReactiveComponentBase<PackageViewModel>
-@if(ViewModel != null)
+@if (ViewModel != null)
 {
     <MudStack Row="true">
         <MudText>
             @ViewModel.ResumeGenerations resume generations for $@ViewModel.Price
         </MudText>
-        <MudButton OnClick="ViewModel.Purchase.BindCommand<MouseEventArgs>()">Purchase</MudButton>
+        <MudButton OnClick="ViewModel.Purchase.BindCommand<MouseEventArgs>()" Class="fw-bold" Variant="Variant.Filled"
+            Color="Color.Primary">Purchase</MudButton>
     </MudStack>
-    
+
 }
 @code {
 
