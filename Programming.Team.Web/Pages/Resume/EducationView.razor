@@ -11,8 +11,10 @@
         <MudDatePicker @bind-Date="ViewModel.EndDateTime" Label="End Date" MinDate="new DateTime(1950, 1, 1)" />
         <MudTextField Lines="10" @bind-Value="ViewModel.Description" Label="Description" Variant="Variant.Outlined" />
         <MudStack Row="true">
-            <MudButton OnClick="ViewModel.Update.BindCommand<MouseEventArgs>()">Update</MudButton>
-            <MudButton OnClick="ViewModel.Delete.BindCommand<MouseEventArgs>()">Delete</MudButton>
+            <MudButton OnClick="ViewModel.Update.BindCommand<MouseEventArgs>()" Class="fw-bold" Variant="Variant.Filled"
+                Color="Color.Primary">Update</MudButton>
+            <MudButton OnClick="ViewModel.Delete.BindCommand<MouseEventArgs>()" Class="fw-bold" Variant="Variant.Filled"
+                Color="Color.Primary">Delete</MudButton>
         </MudStack>
     </MudStack>
 }

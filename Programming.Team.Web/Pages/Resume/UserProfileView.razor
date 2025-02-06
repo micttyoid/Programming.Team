@@ -1,7 +1,7 @@
 ﻿@inherits ReactiveComponentBase<UserProfileViewModel>
 @attribute [Authorize]
 
-@if(ViewModel != null)
+@if (ViewModel != null)
 {
     <AlertView Alert="ViewModel.Alert" />
     <MudStack>
@@ -10,25 +10,26 @@
             <MudTextField @bind-Value="ViewModel.LastName" Label="Last Name" Variant="Variant.Outlined" />
         </MudStack>
         <MudStack Row="true">
-            <MudTextField @bind-Value="ViewModel.EmailAddress" Label="Email" Variant="Variant.Outlined"/>
-            <MudTextField @bind-Value="ViewModel.PhoneNumber" Label="Phone" Variant="Variant.Outlined"/>
+            <MudTextField @bind-Value="ViewModel.EmailAddress" Label="Email" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="ViewModel.PhoneNumber" Label="Phone" Variant="Variant.Outlined" />
         </MudStack>
-        <MudTextField @bind-Value="ViewModel.Title" Label="Title" Variant="Variant.Outlined"/>
-        <MudTextField @bind-Value="ViewModel.Bio" Label="Bio" Variant="Variant.Outlined" Lines="20"/>
+        <MudTextField @bind-Value="ViewModel.Title" Label="Title" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="ViewModel.Bio" Label="Bio" Variant="Variant.Outlined" Lines="20" />
         <MudStack Row="true">
-            <MudTextField @bind-Value="ViewModel.City" Label="City" Variant="Variant.Outlined"/>
-            <MudTextField @bind-Value="ViewModel.State" Label="State" Variant="Variant.Outlined"/>
-            <MudTextField @bind-Value="ViewModel.Country" Label="Country" Variant="Variant.Outlined"/>
+            <MudTextField @bind-Value="ViewModel.City" Label="City" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="ViewModel.State" Label="State" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="ViewModel.Country" Label="Country" Variant="Variant.Outlined" />
         </MudStack>
-        <MudTextField @bind-Value="ViewModel.PortfolioUrl" Label="Portfolio Url" Variant="Variant.Outlined"/>
-        <MudTextField @bind-Value="ViewModel.LinkedInUrl" Label="LinkedIn Url" Variant="Variant.Outlined"/>
+        <MudTextField @bind-Value="ViewModel.PortfolioUrl" Label="Portfolio Url" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="ViewModel.LinkedInUrl" Label="LinkedIn Url" Variant="Variant.Outlined" />
         <MudTextField @bind-Value="ViewModel.GitHubUrl" Label="Github Url" Variant="Variant.Outlined" />
         <ResumeConfigurationView ViewModel="ViewModel.DefaultResumeConfigurationViewModel" />
         <MudStack Row="true">
-            <MudButton OnClick="ViewModel.Update.BindCommand<MouseEventArgs>()">Update</MudButton>
+            <MudButton OnClick="ViewModel.Update.BindCommand<MouseEventArgs>()" Class="fw-bold" Variant="Variant.Filled"
+                Color="Color.Primary">Update</MudButton>
         </MudStack>
     </MudStack>
-    
+
 }
 
 @code {
