@@ -1,18 +1,19 @@
 ﻿@inherits ReactiveComponentBase<SearchSelectCompanyViewModel>
 
-@if(ViewModel != null)
+@if (ViewModel != null)
 {
-    <AlertView Alert="ViewModel.Alert"/>
+    <AlertView Alert="ViewModel.Alert" />
     <MudStack>
-        <MudAutocomplete T="Company" CoerceText="true" Label="Company" ToStringFunc="c => c.Name" 
+        <MudAutocomplete T="Company" CoerceText="true" Label="Company" ToStringFunc="c => c.Name"
             @bind-Value="ViewModel.Selected" DebounceInterval="250" SearchFunc="ViewModel.Search.BindCommand()" />
-        @if(ViewModel.CanAdd)
+        @if (ViewModel.CanAdd)
         {
-            <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()">Add Company</MudButton>
-            <AddCompanyView ViewModel="ViewModel.AddViewModel"/>
+            <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()" Class="fw-bold" Variant="Variant.Filled"
+                Color="Color.Primary">Add Company</MudButton>
+            <AddCompanyView ViewModel="ViewModel.AddViewModel" />
         }
     </MudStack>
-    
+
 }
 
 @code {

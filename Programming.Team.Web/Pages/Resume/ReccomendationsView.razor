@@ -2,14 +2,15 @@
 @attribute [Authorize]
 @inherits ReactiveInjectableComponentBase<ReccomendationsViewModel>
 
-@if(ViewModel != null)
+@if (ViewModel != null)
 {
-    <AlertView Alert="ViewModel.Alert"/>
-    <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()">Add Reccomendation</MudButton>
-    <AddReccomendationView ViewModel="ViewModel.AddViewModel"/>
-    @foreach(var position in ViewModel.Entities)
+    <AlertView Alert="ViewModel.Alert" />
+    <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()" Class="fw-bold" Variant="Variant.Filled"
+        Color="Color.Primary">Add Reccomendation</MudButton>
+    <AddReccomendationView ViewModel="ViewModel.AddViewModel" />
+    @foreach (var position in ViewModel.Entities)
     {
-        <ReccomendationView ViewModel="position"/>
+        <ReccomendationView ViewModel="position" />
     }
 }
 
@@ -17,9 +18,9 @@
     protected override void OnInitialized()
     {
         if (ViewModel != null)
-            ViewModel.Entities.CollectionChanged += (s, e) => 
+            ViewModel.Entities.CollectionChanged += (s, e) =>
             {
-                InvokeAsync(StateHasChanged); 
+                InvokeAsync(StateHasChanged);
             };
         base.OnInitialized();
     }
@@ -28,7 +29,7 @@
         if (ViewModel != null && firstRender)
         {
             await ViewModel.Load.Execute().GetAwaiter();
-            
+
         }
         await base.OnAfterRenderAsync(firstRender);
     }
