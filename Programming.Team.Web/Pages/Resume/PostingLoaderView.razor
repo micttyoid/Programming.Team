@@ -2,17 +2,17 @@
 @attribute [Authorize]
 
 @inherits ReactiveInjectableComponentBase<PostingLoaderViewModel>
-@if(ViewModel != null && ViewModel.Id != null)
+@if (ViewModel != null && ViewModel.Id != null)
 {
     <AlertView Alert="ViewModel.Alert" />
-    <PostingView ViewModel="ViewModel.ViewModel"/>
+    <PostingView ViewModel="ViewModel.ViewModel" />
 }
 @code {
     [Parameter] public Guid PostingId { get; set; }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (ViewModel != null && firstRender)
-            await ViewModel.Load.Execute(PostingId).GetAwaiter(); 
+            await ViewModel.Load.Execute(PostingId).GetAwaiter();
         await base.OnAfterRenderAsync(firstRender);
     }
 }

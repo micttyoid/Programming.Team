@@ -5,9 +5,8 @@
 {
     <AlertView Alert="ViewModel.Alert" />
     <h3>Associated Recruits</h3>
-    <MudDataGrid T="User" ServerData="ViewModel.Fetch.BindServerDataCommand()" RowsPerPage="10"
-                 Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu"
-                 SortMode="SortMode.Multiple">
+    <MudDataGrid T="User" ServerData="ViewModel.Fetch.BindServerDataCommand()" RowsPerPage="10" Filterable="true"
+        FilterMode="DataGridFilterMode.ColumnFilterMenu" SortMode="SortMode.Multiple">
         <Columns>
             <PropertyColumn Property="x => x.FirstName" Title="First Name" />
             <PropertyColumn Property="x => x.LastName" Title="Last Name" />
@@ -15,7 +14,9 @@
             <TemplateColumn Title="Remove">
                 <CellTemplate>
                     @{
-                        <MudButton OnClick="ViewModel.RemoveRecruit.BindCommand<MouseEventArgs>(context.Item.Id)">Remove</MudButton>
+                        <MudButton OnClick="ViewModel.RemoveRecruit.BindCommand<MouseEventArgs>(context.Item.Id)"
+                            Class="fw-bold" Variant="Variant.Filled" Color="Color.Primary">
+                            Remove</MudButton>
                     }
 
                 </CellTemplate>

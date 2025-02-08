@@ -1,22 +1,27 @@
 ﻿@inherits ReactiveComponentBase<AddPositionSkillViewModel>
 
-@if(ViewModel != null)
+@if (ViewModel != null)
 {
-    <AlertView Alert="ViewModel.Alert"/>
+    <AlertView Alert="ViewModel.Alert" />
     <MudPopover Open="ViewModel.IsOpen" Fixed="true" Class="px-4 pt-4">
         <div class="d-flex flex-column">
             <MudStack>
                 <SearchSelectSkillView ViewModel="ViewModel.SkillSelectorViewModel" />
-                <MudTextField Lines="10" @bind-Value="ViewModel.Description" Label="Description" Variant="Variant.Outlined" />
+                <MudTextField Lines="10" @bind-Value="ViewModel.Description" Label="Description"
+                    Variant="Variant.Outlined" />
                 <MudStack Row="true">
-                    <MudButton OnClick="ViewModel.Add.BindCommand<MouseEventArgs>()">Add Skill</MudButton>
-                    <MudButton OnClick="ViewModel.Cancel.BindCommand<MouseEventArgs>()">Cancel</MudButton>
+                    <MudButton OnClick="ViewModel.Add.BindCommand<MouseEventArgs>()" Class="fw-bold"
+                        Variant="Variant.Filled" Color="Color.Primary">
+                        Add Skill</MudButton>
+                    <MudButton OnClick="ViewModel.Cancel.BindCommand<MouseEventArgs>()" Class="fw-bold"
+                        Variant="Variant.Filled" Color="Color.Primary">
+                        Cancel</MudButton>
                 </MudStack>
             </MudStack>
         </div>
     </MudPopover>
-    
-    
+
+
 
 }
 
