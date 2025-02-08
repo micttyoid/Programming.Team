@@ -7,26 +7,26 @@
         <MudNavGroup Title="Admin" Icon="@Icons.Material.Filled.ManageAccounts" Expanded="false">
             <MudNavLink Href="admin/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.SupervisorAccount">Users
             </MudNavLink>
-            <MudNavLink Href="admin/roles"><span aria-hidden="true"><i
-                        class="fa-solid fa-circle-half-stroke"></i>Roles</span>
+            <MudNavLink Href="admin/roles" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Badge">
+                Roles
             </MudNavLink>
-
-            <MudNavLink Href="admin/documenttypes"><span aria-hidden="true"><i class="fa-solid fa-file-code"></i>Document
-                    Types</span></MudNavLink>
-            <MudNavLink Href="admin/templates/section">
-                <span aria-hidden="true">
-                    <i class="fa-solid fa-section"></i>Section
-                    Templates</span></MudNavLink>
-            <MudNavLink Href="admin/templates/document">
-                <span aria-hidden="true">
-                    <i class="fa-solid fa-folder-open"></i>Document
-                    Templates
-                </span>
+            <MudNavLink Href="admin/documenttypes" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.AccountTree">
+                Document Types
             </MudNavLink>
-            <MudNavLink Href="purchasing/admin"><span aria-hidden="true"><i
-                        class="fa-solid fa-cash-register"></i>Purchases</span></MudNavLink>
-            <MudNavLink Href="purchasing/packages/manage"><span aria-hidden="true"><i
-                        class="fa-solid fa-basket-shopping"></i>Packages</span></MudNavLink>
+            <MudNavLink Href="admin/templates/section" Match="NavLinkMatch.Prefix"
+                Icon="@Icons.Material.Filled.SnippetFolder">
+                Section Templates
+            </MudNavLink>
+            <MudNavLink Href="admin/templates/document" Match="NavLinkMatch.Prefix"
+                Icon="@Icons.Material.Filled.LibraryBooks">
+                Document Templates
+            </MudNavLink>
+            <MudNavLink Href="purchasing/admin" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.PriceCheck">
+                Purchases
+            </MudNavLink>
+            <MudNavLink Href="purchasing/packages/manage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Redeem">
+                Packages
+            </MudNavLink>
         </MudNavGroup>
     }
     @if (isAuthenticated && !isRecruiter)
