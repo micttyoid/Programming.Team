@@ -2,7 +2,7 @@
 @inject ISnackbar Snackbar
 @if (ViewModel != null)
 {
-    <MudPopover Open="@ViewModel.IsOpen" Fixed="true" Class="px-4 pt-4">
+    <MudPopover Open="@ViewModel.IsOpen" Fixed="false" Class="px-4 pt-4" AnchorOrigin="Origin.CenterCenter">
         <div class="d-flex flex-column">
             <MudText>@ViewModel.Message</MudText>
             <MudButton OnClick="@ViewModel.ToggleOpen" Class="ml-auto mr-n3 mb-1" Color="@AlertSeverity">Close</MudButton>
