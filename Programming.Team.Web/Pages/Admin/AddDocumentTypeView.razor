@@ -6,7 +6,7 @@
     <MudStack Row="true">
         <MudTextField Label="Name" @bind-Value="ViewModel.Name" Variant="Variant.Outlined"></MudTextField>
         <MudIconButton OnClick="ViewModel.Add.BindCommand<MouseEventArgs>()" Icon="@Icons.Material.Filled.AddBox"
-            Color="Color.Primary" aria-label="add" />
+            Color="Color.Primary" Size="Size.Large" aria-label="add" />
     </MudStack>
 }
 @code {
