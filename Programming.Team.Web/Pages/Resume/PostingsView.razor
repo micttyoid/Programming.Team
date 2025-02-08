@@ -1,22 +1,23 @@
 ﻿@page "/resume/postings"
 @attribute [Authorize]
 @inherits ReactiveInjectableComponentBase<PostingsViewModel>
-@if(ViewModel != null)
+@if (ViewModel != null)
 {
-    <AlertView Alert="ViewModel.Alert"/>
+    <AlertView Alert="ViewModel.Alert" />
     <MudDataGrid @ref="grid" T="Posting" ServerData="ViewModel.Fetch.BindServerDataCommand()" RowsPerPage="10"
-        Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu"
-        SortMode="SortMode.Multiple">
+        Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterMenu" SortMode="SortMode.Multiple">
         <Columns>
-            <PropertyColumn Property="x => x.Name" Title="Name"/>
-            <PropertyColumn Property="x => x.DocumentTemplate.Name" Title="Document Template" Sortable="false" Filterable="false"/>
+            <PropertyColumn Property="x => x.Name" Title="Name" />
+            <PropertyColumn Property="x => x.DocumentTemplate.Name" Title="Document Template" Sortable="false"
+                Filterable="false" />
             <TemplateColumn Title="Edit Posting">
                 <CellTemplate>
                     @{
                         var strHref = $"/resume/postings/{context.Item.Id}";
-                        <MudLink Href="@strHref">(...)</MudLink>
+                        <MudIconButton Href="@strHref" Icon="@Icons.Material.Filled.Edit" Color="Color.Primary"
+                            aria-label="edit" />
                     }
-                    
+
                 </CellTemplate>
             </TemplateColumn>
 
@@ -24,7 +25,8 @@
                 <CellTemplate>
                     @{
                         var strHref = $"api/resumes/{context.Item.Id}";
-                        <MudLink Href="@strHref">(...)</MudLink>
+                        <MudIconButton Href="@strHref" Icon="@Icons.Material.Filled.Download" Color="Color.Primary"
+                            aria-label="download" />
                     }
 
                 </CellTemplate>
