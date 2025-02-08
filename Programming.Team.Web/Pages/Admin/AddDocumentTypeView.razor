@@ -5,8 +5,8 @@
     <h3>Add Document Type</h3>
     <MudStack Row="true">
         <MudTextField Label="Name" @bind-Value="ViewModel.Name" Variant="Variant.Outlined"></MudTextField>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                   OnClick="ViewModel.Add.BindCommand<MouseEventArgs>()"><i class="fa-solid fa-plus"></i></MudButton>
+        <MudIconButton OnClick="ViewModel.Add.BindCommand<MouseEventArgs>()" Icon="@Icons.Material.Filled.AddBox"
+            Color="Color.Primary" aria-label="add" />
     </MudStack>
 }
 @code {
