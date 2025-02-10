@@ -21,7 +21,7 @@
             --mud-default-borderradius: 8px !important;
             --mud-typography-button-text-transform: initial !important;
         }
-        @* Bootstrap-like exntension *@
+        @* Bootstrap-like extension *@
         .text-nowrap {
             text-wrap: nowrap;
         }
@@ -58,6 +58,11 @@
         }
         .fs-body2 {
             font-size: .875rem;
+        }
+        @* MudBlazor(8.2.0) Complement  *@
+        .mux-popover-fixed {
+            position: fixed !important;
+            top: unset !important;
         }
     </style>
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
