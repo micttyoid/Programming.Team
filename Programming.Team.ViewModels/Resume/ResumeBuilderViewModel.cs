@@ -87,8 +87,9 @@ namespace Programming.Team.ViewModels.Resume
                 var resume = await Builder.BuildResume(userId.Value, progressable, token);
                 var posting = await Builder.BuildPosting(userId.Value, SelectedTemplate!.Id, Name, PostingText, resume,progressable, Configuration.GetConfiguration(), token: token);
                 Progress = null;
-                await Alert.Handle("Resume Built").GetAwaiter();
                 NavMan.NavigateTo($"/resume/postings/{posting.Id}");
+                await Alert.Handle("Resume Built").GetAwaiter();
+
             }
             catch (Exception ex)
             {
