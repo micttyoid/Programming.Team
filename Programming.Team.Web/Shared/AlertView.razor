@@ -1,17 +1,14 @@
-﻿@inherits ReactiveInjectableComponentBase<AlertView.AlertViewModel>
+@inherits ReactiveInjectableComponentBase<AlertView.AlertViewModel>
 @inject ISnackbar Snackbar
 
-@if (ViewModel != null && ViewModel.IsOpen)
+@if (ViewModel != null)
 {
-    Snackbar.Add(@ViewModel.Message, @AlertSeverity, config =>
-    {
-        config.ShowTransitionDuration = 300;
-        config.OnClick = snackbar =>
-    {
-        ViewModel.Close();
-        return Task.CompletedTask;
-    };
-    });
+    <MudPopover Open="@ViewModel.IsOpen" Fixed="false" Class="px-4 pt-4" AnchorOrigin="Origin.CenterCenter">
+        <div class="d-flex flex-column">
+            <MudText>@ViewModel.Message</MudText>
+            <MudButton OnClick="@ViewModel.ToggleOpen" Class="ml-auto mr-n3 mb-1" Color="@AlertSeverity">Close</MudButton>
+        </div>
+    </MudPopover>
 }
 
 @code {
