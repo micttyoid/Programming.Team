@@ -3,7 +3,7 @@
 
 @if (ViewModel != null)
 {
-    <MudPopover Open="@ViewModel.IsOpen" Fixed="false" Class="px-4 pt-4" AnchorOrigin="Origin.CenterCenter">
+    <MudPopover Open="@ViewModel.IsOpen" Fixed="false" Class="mux-popover-fixed px-4 pt-4" AnchorOrigin="Origin.CenterCenter">
         <div class="d-flex flex-column">
             <MudText>@ViewModel.Message</MudText>
             <MudButton OnClick="@ViewModel.ToggleOpen" Class="ml-auto mr-n3 mb-1" Color="@AlertSeverity">Close</MudButton>
