@@ -1,19 +1,19 @@
 ﻿@inherits ReactiveInjectableComponentBase<ImpersonatorViewModel>
 
-<MudPopover Open="@(ViewModel != null && ViewModel.ImpersonatedUser != null)" Fixed="true"
-    AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopLeft" Paper="true"
-    Class="d-flex mud-toolbar-gutters mud-toolbar gap-2 mt-8"
-    Style="@(ViewModel != null && ViewModel.ImpersonatedUser != null ? "opacity: 0.7;": null)">
-
+<MudPopover @bind-Value="@minimize" @onmouseleave="@(() => minimize = Minimize.On)"
+    @onmouseenter="@(() => minimize = Minimize.Off)" Open="@(ViewModel != null && ViewModel.ImpersonatedUser != null)"
+    Fixed="true" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopLeft" Paper="true"
+    Class="@(@minimize == Minimize.Off ? "d-flex mud-toolbar-gutters mud-toolbar gap-2 mt-12 mux-popover-right-zero" : "d-flex mud-toolbar-gutters mud-toolbar gap-2 mt-12 mux-popover-left-unset mux-popover-right-zero")"
+    Style="@(ViewModel != null && ViewModel.ImpersonatedUser != null ? "opacity: 0.7;" : null)">
     @* Laptop, Desktop *@
-    <MudHidden Breakpoint=" Breakpoint.MdAndUp" Invert="true">
-        <MudElement Class="d-flex align-content-center justify-end flex-grow-1 gap-2 mr-4">
-            <MudText Class="text-nowrap">Impersonating: @ViewModel.ImpersonatedUser.EmailAddress</MudText>
+    <MudHidden Breakpoint="@(@minimize == Minimize.Off ? Breakpoint.MdAndUp : Breakpoint.None)" Invert="true">
+        <MudElement Class="d-flex align-content-center justify-right flex-grow-1 gap-2 mr-4">
+            <MudText Class="text-nowrap">Impersonating: @ViewModel.ImpersonatedUser.EmailAddress ...</MudText>
         </MudElement>
     </MudHidden>
 
     @* Smaller devices *@
-    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+    <MudHidden Breakpoint="@(@minimize == Minimize.Off ? Breakpoint.SmAndDown : Breakpoint.None)" Invert="true">
         <MudElement Class="d-flex flex-column justify-center flex-grow-1">
             <MudText Class="fs-body2 fw-bold" Style="font-size: 0.65rem;">@ViewModel.ImpersonatedUser.EmailAddress
             </MudText>
@@ -26,10 +26,25 @@
 </MudPopover>
 
 @code {
+    private enum Minimize
+    {
+        On,
+        Off,
+    }
+    private Minimize minimize = Minimize.Off;
+
     override protected async Task OnInitializedAsync()
     {
         if (ViewModel != null)
             await ViewModel.Load.Execute().GetAwaiter();
         await base.OnInitializedAsync();
+        await MinimizeLater();
+    }
+
+    // Give some delay before minimization to indicate what this is for to user
+    private async Task MinimizeLater()
+    {
+        await Task.Delay(1500);
+        minimize = Minimize.On;
     }
 }
