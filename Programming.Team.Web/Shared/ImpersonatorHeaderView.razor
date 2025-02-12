@@ -1,50 +1,30 @@
 ﻿@inherits ReactiveInjectableComponentBase<ImpersonatorViewModel>
 
-<MudPopover @bind-Value="@minimize" @onmouseleave="@(() => minimize = Minimize.On)"
-    @onmouseenter="@(() => minimize = Minimize.Off)" Open="@(ViewModel != null && ViewModel.ImpersonatedUser != null)"
-    Fixed="true" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopLeft" Paper="true"
-    Class="@(@minimize == Minimize.Off ? "d-flex mud-toolbar-gutters mud-toolbar gap-2 mt-12 mux-popover-right-zero" : "d-flex mud-toolbar-gutters mud-toolbar gap-2 mt-12 mux-popover-left-unset mux-popover-right-zero")"
-    Style="@(ViewModel != null && ViewModel.ImpersonatedUser != null ? "opacity: 0.7;" : null)">
+@if (ViewModel == null || ViewModel.ImpersonatedUser == null)
+{
+    @ChildContent
+}
+else
+{
     @* Laptop, Desktop *@
-    <MudHidden Breakpoint="@(@minimize == Minimize.Off ? Breakpoint.MdAndUp : Breakpoint.None)" Invert="true">
-        <MudElement Class="d-flex align-content-center justify-right flex-grow-1 gap-2 mr-4">
-            <MudText Class="text-nowrap">Impersonating: @ViewModel.ImpersonatedUser.EmailAddress ...</MudText>
-        </MudElement>
+    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+        <MudText Color="Color.Warning">Impersonating: @ViewModel.ImpersonatedUser.EmailAddress</MudText>
     </MudHidden>
 
-    @* Smaller devices *@
-    <MudHidden Breakpoint="@(@minimize == Minimize.Off ? Breakpoint.SmAndDown : Breakpoint.None)" Invert="true">
-        <MudElement Class="d-flex flex-column justify-center flex-grow-1">
-            <MudText Class="fs-body2 fw-bold" Style="font-size: 0.65rem;">@ViewModel.ImpersonatedUser.EmailAddress
-            </MudText>
-        </MudElement>
+    @* Smaller devices *@        
+    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+        <MudText Class="fs-body2 fw-bold" Color="Color.Warning">@ViewModel.ImpersonatedUser.EmailAddress</MudText>
     </MudHidden>
-
-    <MudButton OnClick="ViewModel.EndImpersonation.BindCommand<MouseEventArgs>()" Class="fw-bold fs-body2 text-nowrap"
-        Variant="Variant.Filled" Color="Color.Primary">
-        End</MudButton>
-</MudPopover>
+}
 
 @code {
-    private enum Minimize
-    {
-        On,
-        Off,
-    }
-    private Minimize minimize = Minimize.Off;
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
 
     override protected async Task OnInitializedAsync()
     {
         if (ViewModel != null)
             await ViewModel.Load.Execute().GetAwaiter();
         await base.OnInitializedAsync();
-        await MinimizeLater();
-    }
-
-    // Give some delay before minimization to indicate what this is for to user
-    private async Task MinimizeLater()
-    {
-        await Task.Delay(1500);
-        minimize = Minimize.On;
     }
 }
