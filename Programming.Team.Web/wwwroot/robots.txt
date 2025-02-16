@@ -1,4 +1,8 @@
-User-agent: *
-Allow: /
+user-agent: *
+Allow: /$
+Allow: /css
+Allow: /favicon.ico
+Allow: /images
+Disallow: /
 
 Sitemap: https://programming.team/sitemap.xml
