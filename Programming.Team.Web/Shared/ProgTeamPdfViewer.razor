@@ -1,0 +1,10 @@
+<PdfViewer Style="@Style" Class="mb-3" Url="@Url" />
+
+@code {
+    [Parameter]
+    public string Url { get; set; } =
+    "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf";
+
+    [Parameter]
+    public string Style { get; set; } = null;
+}

@@ -1,11 +1,13 @@
 ﻿@page "/"
 @inherits ReactiveInjectableComponentBase<IndexViewModel>
 @attribute [AllowAnonymous]
+
+
 @if (ViewModel != null)
 {
     <MudElement Class="d-flex flex-column flex-grow-1" Width="100%">
-        <MudImage ObjectFit="ObjectFit.Cover" Height="200" Src="images/logo.png" Alt="Logo of Programming.Team" Elevation="25"
-                  Class="rounded-lg" />
+        <MudImage ObjectFit="ObjectFit.Cover" Height="200" Src="images/logo.png" Alt="Logo of Programming.Team"
+            Elevation="25" Class="rounded-lg" />
         <MudText Class="z-0 mt-4 display1" Typo="Typo.h4" GutterBottom="true">Programming.Team</MudText>
         <MudText Class="mb-8" Typo="Typo.h6">The Resume Tailor</MudText>
 
@@ -30,28 +32,58 @@
                 </li>
             </ul>
             <br />
+        </MudText>
 
+        <MudSpacer />
+
+        @* TODO: mobile  *@
+        @* TODO: loading *@
+        <MudCarousel Class="mud-width-full" Style="height:650px;" ShowArrows="@arrows" ShowBullets="@bullets"
+            EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
+            @foreach (var posting in ViewModel.Postings)
+            {
+                var url = $"https://programming.team/api/resumes/{posting.Id}";
+                @* ~28 rem *@
+                <MudCarouselItem Transition="transition" Color="@Color.Primary" Class="d-flex">
+                    <MudPaper Class="pa-8 ma-2 ml-8 flex-1 " Elevation="3" Style="height: 86%; width: 45%;">
+                        <MudText>@Truncate(posting.Details, 600)</MudText>
+
+                    </MudPaper>
+                    <MudElement Class="d-flex">
+                        <MudIcon Class="align-self-center" Icon="@Icons.Material.Filled.DoubleArrow" />
+                    </MudElement>
+                    @* <MudSpacer /> *@
+                    <MudPaper Class="d-flex ma-2 mr-8 flex-1" Elevation="3" Style="height: 86%; width: 45%; overflow: scroll;">
+                        <ProgTeamPdfViewer />
+                        <MudLink Href="@url" Target="_bl">View</MudLink>
+                    </MudPaper>
+                </MudCarouselItem>
+            }
+        </MudCarousel>
+
+        <MudSpacer />
+
+        <MudText Typo="Typo.body1">
             <MudAlert Severity="Severity.Normal">
                 If you’re interested in becoming a recruiter on the platform, please contact
                 <MudLink Class="fw-bold" Href="mailto:jason@groundbreaker.solutions" Target="_blank" Typo="Typo.body2"
-                         Color="Color.Primary">
+                    Color="Color.Primary">
                     jason@groundbreaker.solutions
                 </MudLink>
             </MudAlert>
         </MudText>
-
-        <br />
-        @foreach (var posting in ViewModel.Postings)
-        {
-            var url = $"https://programming.team/api/resumes/{posting.Id}";
-            <MudAlert Severity="Severity.Normal">
-                <MudText>@posting.Details</MudText>
-                <MudLink Href="@url" Target="_bl">Tailored Resume</MudLink>
-            </MudAlert>
-        }
     </MudElement>
+
 }
 @code {
+    @* Carousel parmeters *@
+    private bool arrows = true;
+    private bool bullets = true;
+    private bool enableSwipeGesture = true;
+    @* private bool autocycle = true; *@
+    private bool autocycle = false;
+    private Transition transition = Transition.Slide;
+
     protected override void OnInitialized()
     {
         if (ViewModel != null)
@@ -61,13 +93,20 @@
             };
         base.OnInitialized();
     }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (ViewModel != null && firstRender)
         {
             await ViewModel.Load.Execute().GetAwaiter();
-
         }
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    public string Truncate(string s, int max)
+    {
+        if (s.Length > max)
+            return s.Substring(0, max) + "...";
+        return s;
     }
 }
