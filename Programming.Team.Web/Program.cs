@@ -32,6 +32,7 @@ using Stripe.Checkout;
 using Programming.Team.ViewModels.Purchase;
 using Programming.Team.PurchaseManager.Core;
 using Programming.Team.PurchaseManager;
+using Programming.Team.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -199,6 +200,7 @@ builder.Services.AddTransient<AddPackageViewModel>();
 builder.Services.AddTransient<PackagesViewModel>();
 builder.Services.AddTransient<AddSectionTemplateViewModel>();
 builder.Services.AddTransient<SectionTemplatesViewModel>();
+builder.Services.AddTransient<IndexViewModel>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
 {

@@ -1,44 +1,73 @@
 ﻿@page "/"
+@inherits ReactiveInjectableComponentBase<IndexViewModel>
 @attribute [AllowAnonymous]
+@if (ViewModel != null)
+{
+    <MudElement Class="d-flex flex-column flex-grow-1" Width="100%">
+        <MudImage ObjectFit="ObjectFit.Cover" Height="200" Src="images/logo.png" Alt="Logo of Programming.Team" Elevation="25"
+                  Class="rounded-lg" />
+        <MudText Class="z-0 mt-4 display1" Typo="Typo.h4" GutterBottom="true">Programming.Team</MudText>
+        <MudText Class="mb-8" Typo="Typo.h6">The Resume Tailor</MudText>
 
-<MudElement Class="d-flex flex-column flex-grow-1" Width="100%">
-    <MudImage ObjectFit="ObjectFit.Cover" Height="200" Src="images/logo.png" Alt="Logo of Programming.Team" Elevation="25"
-        Class="rounded-lg" />
-    <MudText Class="z-0 mt-4 display1" Typo="Typo.h4" GutterBottom="true">Programming.Team</MudText>
-    <MudText Class="mb-8" Typo="Typo.h6">The Resume Tailor</MudText>
+        <MudText Typo="Typo.body1">
+            This application offers a specialized resume-tailoring experience that aligns your skills and
+            experiences with specific job descriptions. To achieve the best results, users should input their
+            work histories and relevant skills in detail. The system will then generate a skills matrix
+            highlighting those capabilities mentioned in the target job description, and produce a
+            position-focused summary tailored for the role in question.
+            <br />
+            <h4 Class="mt-8">Key features include:</h4>
+            <ul Class="mb-8">
+                <li class="ml-4">
+                    Free Usage and Pricing: The first 15 tailored resume generations are free upon signup.
+                    After
+                    that, packages start at USD $7.99 for 25 additional resume generations.
+                </li>
+                <li class="ml-4">
+                    PDF and <i>LaTeX</i> Editing: Programming.Team uses <i>LaTeX</i> for rendering resumes into PDF
+                    format. Users
+                    can adjust the underlying <i>LaTeX</i> code themselves and re-render new PDFs at no additional cost.
+                </li>
+            </ul>
+            <br />
 
-    <MudText Typo="Typo.body1">
-        This application offers a specialized resume-tailoring experience that aligns your skills and
-        experiences with specific job descriptions. To achieve the best results, users should input their
-        work histories and relevant skills in detail. The system will then generate a skills matrix
-        highlighting those capabilities mentioned in the target job description, and produce a
-        position-focused summary tailored for the role in question.
+            <MudAlert Severity="Severity.Normal">
+                If you’re interested in becoming a recruiter on the platform, please contact
+                <MudLink Class="fw-bold" Href="mailto:jason@groundbreaker.solutions" Target="_blank" Typo="Typo.body2"
+                         Color="Color.Primary">
+                    jason@groundbreaker.solutions
+                </MudLink>
+            </MudAlert>
+        </MudText>
+
         <br />
-        <h4 Class="mt-8">Key features include:</h4>
-        <ul Class="mb-8">
-            <li class="ml-4">Free Usage and Pricing: The first 15 tailored resume generations are free upon signup.
-                After
-                that, packages start at USD $7.99 for 25 additional resume generations.</li>
-            <li class="ml-4">PDF and <i>LaTeX</i> Editing: Programming.Team uses <i>LaTeX</i> for rendering resumes into PDF
-                format. Users
-                can adjust the underlying <i>LaTeX</i> code themselves and re-render new PDFs at no additional cost.
-            </li>
-        </ul>
-        <br />
+        @foreach (var posting in ViewModel.Postings)
+        {
+            var url = $"https://programming.team/api/resumes/{posting.Id}";
+            <MudAlert Severity="Severity.Normal">
+                <MudText>@posting.Details</MudText>
+                <MudLink Href="@url" Target="_bl">Tailored Resume</MudLink>
+            </MudAlert>
+        }
+    </MudElement>
+}
+@code {
+    protected override void OnInitialized()
+    {
+        if (ViewModel != null)
+            ViewModel.Postings.CollectionChanged += (s, e) =>
+            {
+                InvokeAsync(StateHasChanged);
+            };
+        base.OnInitialized();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ViewModel != null && firstRender)
+        {
+            await ViewModel.Load.Execute().GetAwaiter();
 
-        <MudAlert Severity="Severity.Normal">
-            If you’re interested in becoming a recruiter on the platform, please contact
-            <MudLink Class="fw-bold" Href="mailto:jason@groundbreaker.solutions" Target="_blank" Typo="Typo.body2"
-                Color="Color.Primary">
-                jason@groundbreaker.solutions
-            </MudLink>
-        </MudAlert>
-    </MudText>
-
-    <br />
-    <MudAlert Severity="Severity.Normal">
-        <MudLink Href="https://programming.team/api/resumes/7c4b4616-d2d6-45b3-81cb-6f5b4b07c69e">
-            Example Resume
-            Output</MudLink>
-    </MudAlert>
-</MudElement>
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}
