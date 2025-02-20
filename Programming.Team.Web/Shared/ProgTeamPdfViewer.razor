@@ -1,0 +1,9 @@
+@* TODO: Currently this is only Bootstrap. If MudBlazor ever update its own
+   viewer. Move on from Bootstrap. *@
+
+<PdfViewer Class="mb-3" Url="@Url" />
+
+@code {
+    [Parameter]
+    public string Url { get; set; } = default;
+}

@@ -1,0 +1,86 @@
+@inherits ReactiveInjectableComponentBase<IndexViewModel>
+@attribute [AllowAnonymous]
+
+@inject NavigationManager Navigator
+
+@* TODO: mobile  *@
+@* TODO: loading *@
+@* TODO: US-letter ratio *@
+@if (ViewModel != null)
+{
+    <MudCarousel @ref="carPostings" Class="mud-width-full" Style="height:650px;" ShowArrows="@arrows" ShowBullets="@bullets"
+    EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
+        @foreach (var posting in ViewModel.Postings)
+        {
+            var url = $"https://programming.team/api/resumes/{posting.Id}";
+            var internal_url = $"{Navigator.BaseUri}api/resumes/{posting.Id}";
+
+            @* ~28 rem *@
+            <MudCarouselItem Transition="transition" Color="@Color.Primary" Class="d-flex">
+                <MudElement Class="flex-1 flex-column ma-1 ml-5" Style="height: 86%; width: 47%;">
+                    <MudElement Class="d-flex justify-center">
+                        <MudCard Class="pa-2">
+                            <MudText>Job Description</MudText>
+                        </MudCard>
+                    </MudElement>
+                    <MudPaper Elevation="3" Class="pa-3" Style="height: 100%; overflow: hidden;">
+                        <MudText class="fs-body2">@posting.Details</MudText>
+                    </MudPaper>
+                </MudElement>
+
+                <MudElement Class="d-flex">
+                    <MudIcon Class="align-self-center" Icon="@Icons.Material.Filled.DoubleArrow" />
+                </MudElement>
+
+                <MudElement Class="flex-1 flex-column ma-1 mr-5" Style="height: 86%; width: 47%;">
+                    <MudElement Class="d-flex justify-center">
+                        <MudCard Class="pa-2">
+                            <MudText>Result</MudText>
+                        </MudCard>
+                    </MudElement>
+                    <MudPaper Elevation="3" Class="home-pdfviewer-container" Style="height: 100%; overflow: scroll;">
+                        <ProgTeamPdfViewer Url="@internal_url" />
+                    </MudPaper>
+                    <MudElement Class="d-flex justify-end">
+                        <MudCard Class="pa-2">
+                            <MudLink Href="@url" Target="_bl">
+                                View
+                            </MudLink>
+                        </MudCard>
+                    </MudElement>
+
+                </MudElement>
+            </MudCarouselItem>
+        }
+    </MudCarousel>
+}
+
+@code {
+    @* Carousel parmeters *@
+    private bool arrows = true;
+    private bool bullets = true;
+    private bool enableSwipeGesture = true;
+    private bool autocycle = false;
+    private Transition transition = Transition.Slide;
+    private MudCarousel<object> carPostings = null!;
+
+    protected override void OnInitialized()
+    {
+        if (ViewModel != null)
+            ViewModel.Postings.CollectionChanged += (s, e) =>
+            {
+                carPostings.SelectedIndex = 0;
+                InvokeAsync(StateHasChanged);
+            };
+        base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ViewModel != null && firstRender)
+        {
+            await ViewModel.Load.Execute().GetAwaiter();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}
