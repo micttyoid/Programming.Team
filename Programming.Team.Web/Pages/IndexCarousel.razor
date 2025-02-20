@@ -8,8 +8,8 @@
 @* TODO: US-letter ratio *@
 @if (ViewModel != null)
 {
-    <MudCarousel Class="mud-width-full" Style="height:650px;" ShowArrows="@arrows" ShowBullets="@bullets"
-        EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
+    <MudCarousel @ref="carPostings" Class="mud-width-full" Style="height:650px;" ShowArrows="@arrows" ShowBullets="@bullets"
+    EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
         @foreach (var posting in ViewModel.Postings)
         {
             var url = $"https://programming.team/api/resumes/{posting.Id}";
@@ -60,15 +60,16 @@
     private bool arrows = true;
     private bool bullets = true;
     private bool enableSwipeGesture = true;
-    private bool autocycle = true;
+    private bool autocycle = false;
     private Transition transition = Transition.Slide;
-
+    private MudCarousel<object> carPostings = null!;
 
     protected override void OnInitialized()
     {
         if (ViewModel != null)
             ViewModel.Postings.CollectionChanged += (s, e) =>
             {
+                carPostings.SelectedIndex = 0;
                 InvokeAsync(StateHasChanged);
             };
         base.OnInitialized();
