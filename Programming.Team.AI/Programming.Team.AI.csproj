@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
     <PackageReference Include="NewtonSoft.Json" Version="13.0.3" />
+    <PackageReference Include="OpenNLP.NET" Version="1.9.4.1" />
   </ItemGroup>
 
   <ItemGroup>

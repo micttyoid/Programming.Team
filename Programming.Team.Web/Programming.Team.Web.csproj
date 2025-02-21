@@ -18,6 +18,7 @@
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="3.2.2" />
     <PackageReference Include="MudBlazor" Version="8.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="OpenNLP.NET" Version="1.9.4.1" />
     <PackageReference Include="ReactiveUI.Blazor" Version="20.1.63" />
     <PackageReference Include="Stripe.net" Version="47.1.0" />
   </ItemGroup>
@@ -39,6 +40,12 @@
 
   <ItemGroup>
     <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="en-sent.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
