@@ -154,7 +154,7 @@ builder.Services.AddScoped<IBusinessRepositoryFacade<CertificateIssuer, Guid>, B
 builder.Services.AddScoped<IBusinessRepositoryFacade<Publication, Guid>, BusinessRepositoryFacade<Publication, Guid, IRepository<Publication, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<DocumentTemplate, Guid>, BusinessRepositoryFacade<DocumentTemplate, Guid, IRepository<DocumentTemplate, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<DocumentType, int>, BusinessRepositoryFacade<DocumentType, int, IRepository<DocumentType, int>>>();
-builder.Services.AddScoped<IBusinessRepositoryFacade<Posting, Guid>, BusinessRepositoryFacade<Posting, Guid, IRepository<Posting, Guid>>>();
+builder.Services.AddScoped<IBusinessRepositoryFacade<Posting, Guid>, PostingBusinessFacade>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Purchase, Guid>, BusinessRepositoryFacade<Purchase, Guid, IRepository<Purchase, Guid>>>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<Package, Guid>, PackageBusinessFacade>();
 builder.Services.AddScoped<IBusinessRepositoryFacade<SectionTemplate, Guid>, SectionTemplateBusinessFacade>();

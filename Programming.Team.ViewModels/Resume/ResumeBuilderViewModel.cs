@@ -51,7 +51,7 @@ namespace Programming.Team.ViewModels.Resume
         public string PostingText
         {
             get => postingText;
-            set => this.RaiseAndSetIfChanged(ref postingText, Regex.Replace(value, "<.*?>", String.Empty));
+            set => this.RaiseAndSetIfChanged(ref postingText, value);
         }
         private string name = string.Empty;
         public string Name

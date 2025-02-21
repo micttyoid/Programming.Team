@@ -173,7 +173,7 @@ namespace Programming.Team.ViewModels.Resume
         public string Details
         {
             get => details;
-            set => this.RaiseAndSetIfChanged(ref details, Regex.Replace(value, "<.*?>", String.Empty));
+            set => this.RaiseAndSetIfChanged(ref details, value);
         }
 
         private string? renderedLaTex;

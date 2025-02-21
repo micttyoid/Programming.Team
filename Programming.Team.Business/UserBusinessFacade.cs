@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Programming.Team.Business
@@ -97,6 +98,22 @@ namespace Programming.Team.Business
         public Task<SectionTemplate?> GetDefaultSection(ResumePart sectionId, IUnitOfWork? work = null, string defaultName = "Default", CancellationToken token = default)
         {
             return Repository.GetDefaultSection(sectionId, work, defaultName, token);
+        }
+    }
+    public class PostingBusinessFacade : BusinessRepositoryFacade<Posting, Guid>
+    {
+        public PostingBusinessFacade(IRepository<Posting, Guid> repository, ILogger<Posting> logger) : base(repository, logger)
+        {
+        }
+        public override Task Add(Posting entity, IUnitOfWork? work = null, CancellationToken token = default)
+        {
+            entity.Details = Regex.Replace(entity.Details, "<.*?>", String.Empty);
+            return base.Add(entity, work, token);
+        }
+        public override Task<Posting> Update(Posting entity, IUnitOfWork? work = null, Func<IQueryable<Posting>, IQueryable<Posting>>? properites = null, CancellationToken token = default)
+        {
+            entity.Details = Regex.Replace(entity.Details, "<.*?>", String.Empty);
+            return base.Update(entity, work, properites, token);
         }
     }
 }
