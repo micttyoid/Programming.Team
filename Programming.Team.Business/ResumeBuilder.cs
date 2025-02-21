@@ -68,7 +68,7 @@ namespace Programming.Team.Business
                     progress?.Report("Building Resume");
                     resume.User = await UserFacade.GetByID(userId, work: uow, token: token) ?? throw new InvalidDataException();
                     var positions = await PositionFacade.Get(work: uow, properites: GetPositionProperties(), filter: q => q.UserId == userId, 
-                        orderBy: q => q.OrderBy(c => c.SortOrder).ThenByDescending(c => c.EndDate ?? DateOnly.MaxValue).ThenByDescending(c => c.StartDate),
+                        orderBy: e => e.OrderByDescending(c => c.EndDate ?? DateOnly.MaxValue).ThenByDescending(c => c.SortOrder).ThenByDescending(c => c.StartDate),
                         token: token);
                     resume.Positions.AddRange(positions.Entities);
                     var education = await EducationFacade.Get(work: uow, properites: GetEducationProperties(),
