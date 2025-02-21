@@ -15,6 +15,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Programming.Team.ViewModels.Resume
@@ -172,7 +173,7 @@ namespace Programming.Team.ViewModels.Resume
         public string Details
         {
             get => details;
-            set => this.RaiseAndSetIfChanged(ref details, value);
+            set => this.RaiseAndSetIfChanged(ref details, Regex.Replace(value, "<.*?>", String.Empty));
         }
 
         private string? renderedLaTex;

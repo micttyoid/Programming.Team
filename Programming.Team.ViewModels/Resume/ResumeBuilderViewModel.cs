@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Programming.Team.ViewModels.Resume
@@ -50,7 +51,7 @@ namespace Programming.Team.ViewModels.Resume
         public string PostingText
         {
             get => postingText;
-            set => this.RaiseAndSetIfChanged(ref postingText, value);
+            set => this.RaiseAndSetIfChanged(ref postingText, Regex.Replace(value, "<.*?>", String.Empty));
         }
         private string name = string.Empty;
         public string Name
