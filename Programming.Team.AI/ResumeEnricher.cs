@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using org.glassfish.jersey.server.@internal.routing;
 using Programming.Team.AI.Core;
 using Programming.Team.Core;
 using System;
@@ -30,31 +31,25 @@ namespace Programming.Team.AI
                 if (config.HideSkillsNotInJD)
                 {
                     progress?.Report("Filtering Skills");
-                    string? postingSkills = await ChatGPT.GetRepsonse("extract as many skill keywords as possible from user message in json dictionary format [{\"skill\":\"name\"}]",
-                        posting.Details, token: token);
-                    if (postingSkills != null)
+                    try
                     {
-                        postingSkills = postingSkills.Replace("```json", "").Replace("```", "").Trim().ReplaceLineEndings();
-                        try
+                        var skills = await ExtractSkills(posting.Details, token);
+                        if (skills != null)
                         {
-                            var skills = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(postingSkills);
-                            if (skills != null)
+                            HashSet<SkillRollup> globalSkills = new HashSet<SkillRollup>();
+                            foreach (var skill in skills)
                             {
-                                HashSet<SkillRollup> globalSkills = new HashSet<SkillRollup>();
-                                foreach (var skill in skills)
+                                foreach (var skillRollup in resume.Skills.Where(s => string.Equals(s.Skill.Name.Replace("\\", ""), skill, StringComparison.OrdinalIgnoreCase)))
                                 {
-                                    foreach (var skillRollup in resume.Skills.Where(s => string.Equals(s.Skill.Name.Replace("\\", ""), skill["skill"], StringComparison.OrdinalIgnoreCase)))
-                                    {
-                                        
-                                        globalSkills.Add(skillRollup);
-                                    }
 
+                                    globalSkills.Add(skillRollup);
                                 }
-                                resume.Skills = globalSkills.OrderByDescending(e => e.YearsOfExperience).ToList();
+
                             }
+                            resume.Skills = globalSkills.OrderByDescending(e => e.YearsOfExperience).ToList();
                         }
-                        catch { }
                     }
+                    catch { }
                 }
                 
                 if (!string.IsNullOrWhiteSpace(resume.User.Bio))
@@ -120,6 +115,27 @@ namespace Programming.Team.AI
                 Logger.LogError(ex, ex.Message);
                 throw;
             }
+        }
+
+        public async Task<string[]?> ExtractSkills(string text, CancellationToken token = default)
+        {
+            try
+            {
+                string? postingSkills = await ChatGPT.GetRepsonse("extract as many skill keywords as possible from user message in json dictionary format [{\"skill\":\"name\"}]",
+                        text, token: token);
+                if (postingSkills != null)
+                {
+                    postingSkills = postingSkills.Replace("```json", "").Replace("```", "").Trim().ReplaceLineEndings();
+                    var skills = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(postingSkills);
+                    return skills?.Select(r => r["skill"]).ToArray();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, ex.Message);
+                throw;
+            }
+            return null;
         }
     }
 }

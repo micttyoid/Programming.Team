@@ -9,6 +9,7 @@ namespace Programming.Team.AI.Core
 {
     public interface IResumeEnricher
     {
+        Task<string[]?> ExtractSkills(string text, CancellationToken token = default);
         Task EnrichResume(Resume resume, Posting posting, IProgress<string>? progress = null, CancellationToken token = default);
     }
     public interface IChatGPT
