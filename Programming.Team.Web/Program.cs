@@ -33,8 +33,6 @@ using Programming.Team.ViewModels.Purchase;
 using Programming.Team.PurchaseManager.Core;
 using Programming.Team.PurchaseManager;
 using Programming.Team.ViewModels;
-using opennlp.tools.sentdetect;
-using java.io;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -109,14 +107,6 @@ var connectionString = builder.Configuration.GetConnectionString("Resumes");
 builder.Services.AddDbContext<ResumesContext>(options =>
     options.UseSqlServer(connectionString), ServiceLifetime.Scoped);
 builder.Services.AddScoped<IContextFactory, ContextFactory>();
-builder.Services.AddSingleton(fac =>
-{
-    string modelPath = "en-sent.bin"; // Ensure this file is present
-    var modelStream = new FileInputStream(modelPath);
-    var model = new SentenceModel(modelStream);
-    var sentenceDetector = new SentenceDetectorME(model);
-    return sentenceDetector;
-});
 builder.Services.AddScoped<IResumeBlob, ResumeBlob>();
 builder.Services.AddScoped<INLP, NLP>();
 builder.Services.AddScoped<IRepository<Role, Guid>, Repository<Role, Guid>>();
