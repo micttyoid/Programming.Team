@@ -1,16 +1,16 @@
-﻿@page "/resume/positions"
+﻿@page "/resume/experiences"
 @attribute [Authorize]
-@inherits ReactiveInjectableComponentBase<PositionsViewModel>
+@inherits ReactiveInjectableComponentBase<ExpTurgidViewModel>
 
 @if (ViewModel != null)
 {
     <AlertView Alert="ViewModel.Alert" />
     <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()" Class="fw-bold" Variant="Variant.Filled"
-        Color="Color.Primary">Add Position</MudButton>
-    <AddPositionView ViewModel="ViewModel.AddViewModel" />
+        Color="Color.Primary">Add Experience</MudButton>
+    <AddExpView ViewModel="ViewModel.AddViewModel" />
     @foreach (var position in ViewModel.Entities)
     {
-        <PositionView ViewModel="position" />
+        <ExpView ViewModel="position" />
     }
 }
 

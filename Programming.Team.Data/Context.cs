@@ -33,7 +33,7 @@ public partial class ResumesContext : DbContext
     public virtual DbSet<Purchase> Purchases { get; set; }
     public virtual DbSet<Position> Positions { get; set; }
 
-    public virtual DbSet<PositionSkill> PositionSkills { get; set; }
+    public virtual DbSet<ExpSkill> ExpSkills { get; set; }
 
     public virtual DbSet<Posting> Postings { get; set; }
 
@@ -80,7 +80,7 @@ public partial class ResumesContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Certificates_Users");
-             entity.HasQueryFilter(d => !d.IsDeleted);
+            entity.HasQueryFilter(d => !d.IsDeleted);
             entity.ToTable("Certificates");
         });
 
@@ -103,7 +103,7 @@ public partial class ResumesContext : DbContext
             entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.CertificateIssuerUpdatedByUsers)
                 .HasForeignKey(d => d.UpdatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
-             entity.HasQueryFilter(d => !d.IsDeleted);
+            entity.HasQueryFilter(d => !d.IsDeleted);
             entity.ToTable("CertificateIssuers");
         });
 
@@ -134,7 +134,7 @@ public partial class ResumesContext : DbContext
             entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.CompanyUpdatedByUsers)
                 .HasForeignKey(d => d.UpdatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
-             entity.HasQueryFilter(d => !d.IsDeleted);
+            entity.HasQueryFilter(d => !d.IsDeleted);
         });
 
         modelBuilder.Entity<DocumentTemplate>(entity =>
@@ -160,7 +160,7 @@ public partial class ResumesContext : DbContext
             entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.DocumentTemplateUpdatedByUsers)
                 .HasForeignKey(d => d.UpdatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
-             entity.HasQueryFilter(d => !d.IsDeleted);
+            entity.HasQueryFilter(d => !d.IsDeleted);
         });
 
         modelBuilder.Entity<DocumentType>(entity =>
@@ -180,7 +180,7 @@ public partial class ResumesContext : DbContext
             entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.DocumentTypeUpdatedByUsers)
                 .HasForeignKey(d => d.UpdatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
-             entity.HasQueryFilter(d => !d.IsDeleted);
+            entity.HasQueryFilter(d => !d.IsDeleted);
         });
 
         modelBuilder.Entity<Education>(entity =>
@@ -215,7 +215,7 @@ public partial class ResumesContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Education_Users");
-             entity.HasQueryFilter(d => !d.IsDeleted);
+            entity.HasQueryFilter(d => !d.IsDeleted);
         });
 
         modelBuilder.Entity<Institution>(entity =>
@@ -240,7 +240,7 @@ public partial class ResumesContext : DbContext
             entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.InstitutionUpdatedByUsers)
                 .HasForeignKey(d => d.UpdatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
-             entity.HasQueryFilter(d => !d.IsDeleted);
+            entity.HasQueryFilter(d => !d.IsDeleted);
         });
 
         modelBuilder.Entity<Position>(entity =>
@@ -263,11 +263,11 @@ public partial class ResumesContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Positions_Companies");
 
-            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.PositionCreatedByUsers)
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.ExpCreatedByUsers)
                 .HasForeignKey(d => d.CreatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
-            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.PositionUpdatedByUsers)
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.ExpUpdatedByUsers)
                 .HasForeignKey(d => d.UpdatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
@@ -275,10 +275,10 @@ public partial class ResumesContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Positions_Users");
-             entity.HasQueryFilter(d => !d.IsDeleted);
+            entity.HasQueryFilter(d => !d.IsDeleted);
         });
 
-        modelBuilder.Entity<PositionSkill>(entity =>
+        modelBuilder.Entity<ExpSkill>(entity =>
         {
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
             entity.Property(e => e.CreateDate)
@@ -288,24 +288,24 @@ public partial class ResumesContext : DbContext
                 .HasDefaultValueSql("(getutcdate())")
                 .HasColumnType("datetime");
 
-            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.PositionSkillCreatedByUsers)
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.ExpSkillCreatedByUsers)
                 .HasForeignKey(d => d.CreatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
-            entity.HasOne(d => d.Position).WithMany(p => p.PositionSkills)
+            entity.HasOne(d => d.Position).WithMany(p => p.ExpSkillCollection)
                 .HasForeignKey(d => d.PositionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PositionSkills_Positions");
 
-            entity.HasOne(d => d.Skill).WithMany(p => p.PositionSkills)
+            entity.HasOne(d => d.Skill).WithMany(p => p.ExpSkillCollection)
                 .HasForeignKey(d => d.SkillId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PositionSkills_Skills");
 
-            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.PositionSkillUpdatedByUsers)
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.ExpSkillUpdatedByUsers)
                 .HasForeignKey(d => d.UpdatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
-             entity.HasQueryFilter(d => !d.IsDeleted);
+            entity.HasQueryFilter(d => !d.IsDeleted);
         });
 
         modelBuilder.Entity<Posting>(entity =>
@@ -359,13 +359,13 @@ public partial class ResumesContext : DbContext
             entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.SkillUpdatedByUsers)
                 .HasForeignKey(d => d.UpdatedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
-             entity.HasQueryFilter(d => !d.IsDeleted);
+            entity.HasQueryFilter(d => !d.IsDeleted);
         });
 
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasIndex(e => e.ObjectId, "IX_Users").IsUnique();
-            
+
             entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
             entity.Property(e => e.City).HasMaxLength(500);
             entity.Property(e => e.Country).HasMaxLength(500);

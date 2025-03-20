@@ -7,7 +7,7 @@ public interface IPosition : IEntity<Guid>, IUserPartionedEntity
 
     Guid CompanyId { get; set; }
 
-    DateOnly StartDate { get; set; } 
+    DateOnly StartDate { get; set; }
 
     DateOnly? EndDate { get; set; }
 
@@ -43,7 +43,7 @@ public partial class Position : Entity<Guid>, IPosition, INamedEntity
 
     public virtual Company Company { get; set; } = null!;
 
-    public virtual ICollection<PositionSkill> PositionSkills { get; set; } = new List<PositionSkill>();
+    public virtual ICollection<ExpSkill> ExpSkillCollection { get; set; } = new List<ExpSkill>();
 
     public virtual User User { get; set; } = null!;
     public virtual ICollection<Recommendation> Recommendations { get; set; } = new List<Recommendation>();

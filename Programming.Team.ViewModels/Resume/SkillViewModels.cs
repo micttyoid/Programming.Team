@@ -83,11 +83,11 @@ namespace Programming.Team.ViewModels.Resume
             return Task.CompletedTask;
         }
     }
-    public class AddPositionSkillViewModel : AddEntityViewModel<Guid, PositionSkill>, IPositionSkill
+    public class AddExpSkillViewModel : AddEntityViewModel<Guid, ExpSkill>, IExpSkill
     {
         public SearchSelectSkillViewModel SkillSelectorViewModel { get; }
         private readonly CompositeDisposable disposables = new CompositeDisposable();
-        public AddPositionSkillViewModel(SearchSelectSkillViewModel skillViewModel, IBusinessRepositoryFacade<PositionSkill, Guid> facade, ILogger<AddEntityViewModel<Guid, PositionSkill, IBusinessRepositoryFacade<PositionSkill, Guid>>> logger) : base(facade, logger)
+        public AddExpSkillViewModel(SearchSelectSkillViewModel skillViewModel, IBusinessRepositoryFacade<ExpSkill, Guid> facade, ILogger<AddEntityViewModel<Guid, ExpSkill, IBusinessRepositoryFacade<ExpSkill, Guid>>> logger) : base(facade, logger)
         {
             SkillSelectorViewModel = skillViewModel;
             skillViewModel.WhenPropertyChanged(p => p.Selected).Subscribe(p =>
@@ -133,9 +133,9 @@ namespace Programming.Team.ViewModels.Resume
             return Task.CompletedTask;
         }
 
-        protected override Task<PositionSkill> ConstructEntity()
+        protected override Task<ExpSkill> ConstructEntity()
         {
-            return Task.FromResult(new PositionSkill()
+            return Task.FromResult(new ExpSkill()
             {
                 Id = Id,
                 PositionId = PositionId,
@@ -143,12 +143,12 @@ namespace Programming.Team.ViewModels.Resume
                 Description = Description
             });
         }
-        ~AddPositionSkillViewModel()
+        ~AddExpSkillViewModel()
         {
             disposables.Dispose();
         }
     }
-    public class PositionSkillViewModel : EntityViewModel<Guid, PositionSkill>, IPositionSkill
+    public class ExpSkillViewModel : EntityViewModel<Guid, ExpSkill>, IExpSkill
     {
         private bool isOpen;
         public bool IsOpen
@@ -180,13 +180,13 @@ namespace Programming.Team.ViewModels.Resume
         public ReactiveCommand<Unit, Unit> Cancel { get; }
         public ReactiveCommand<Unit, Unit> Edit { get; }
 
-        public PositionSkillViewModel(ILogger logger, IBusinessRepositoryFacade<PositionSkill, Guid> facade, Guid id) : base(logger, facade, id)
+        public ExpSkillViewModel(ILogger logger, IBusinessRepositoryFacade<ExpSkill, Guid> facade, Guid id) : base(logger, facade, id)
         {
             Cancel = ReactiveCommand.CreateFromTask(DoCancel);
             Edit = ReactiveCommand.Create(() => { IsOpen = true; });
         }
 
-        public PositionSkillViewModel(ILogger logger, IBusinessRepositoryFacade<PositionSkill, Guid> facade, PositionSkill entity) : base(logger, facade, entity)
+        public ExpSkillViewModel(ILogger logger, IBusinessRepositoryFacade<ExpSkill, Guid> facade, ExpSkill entity) : base(logger, facade, entity)
         {
             Cancel = ReactiveCommand.CreateFromTask(DoCancel);
             Edit = ReactiveCommand.Create(() => { IsOpen = true; });
@@ -197,7 +197,7 @@ namespace Programming.Team.ViewModels.Resume
             await Load.Execute().GetAwaiter();
         }
 
-        protected override Func<IQueryable<PositionSkill>, IQueryable<PositionSkill>>? PropertiesToLoad()
+        protected override Func<IQueryable<ExpSkill>, IQueryable<ExpSkill>>? PropertiesToLoad()
         {
             return q => q.Include(e => e.Skill).Include(e => e.Position);
         }
@@ -208,9 +208,9 @@ namespace Programming.Team.ViewModels.Resume
             get => skill;
             set => this.RaiseAndSetIfChanged(ref skill, value);
         }
-        protected override Task<PositionSkill> Populate()
+        protected override Task<ExpSkill> Populate()
         {
-            return Task.FromResult(new PositionSkill()
+            return Task.FromResult(new ExpSkill()
             {
                 Id = Id,
                 PositionId = PositionId,
@@ -219,7 +219,7 @@ namespace Programming.Team.ViewModels.Resume
             });
         }
 
-        protected override Task Read(PositionSkill entity)
+        protected override Task Read(ExpSkill entity)
         {
             Id = entity.Id;
             PositionId = entity.PositionId;
@@ -237,14 +237,14 @@ namespace Programming.Team.ViewModels.Resume
         public ReactiveCommand<Unit, Unit> AddSelectedSkills { get; }
         public ObservableCollection<SkillViewModel> Skills { get; } = new ObservableCollection<SkillViewModel>();
         protected ISkillsBusinessFacade SkillFacade { get; }
-        protected IBusinessRepositoryFacade<PositionSkill, Guid> PositionSkillFacade { get; }
+        protected IBusinessRepositoryFacade<ExpSkill, Guid> ExpSkillFacade { get; }
         protected ILogger Logger { get; }
-        public SuggestAddSkillsForPositionViewModel(ISkillsBusinessFacade skillFacade, IBusinessRepositoryFacade<PositionSkill, Guid> positionSkillFacade, ILogger<SuggestAddSkillsForPositionViewModel> logger)
+        public SuggestAddSkillsForPositionViewModel(ISkillsBusinessFacade skillFacade, IBusinessRepositoryFacade<ExpSkill, Guid> expSkillFacade, ILogger<SuggestAddSkillsForPositionViewModel> logger)
         {
             SuggestSkills = ReactiveCommand.CreateFromTask(DoSuggestSkills);
             AddSelectedSkills = ReactiveCommand.CreateFromTask(DoAddSelectedSkills);
             SkillFacade = skillFacade;
-            PositionSkillFacade = positionSkillFacade;
+            ExpSkillFacade = expSkillFacade;
             Logger = logger;
         }
         protected async Task DoSuggestSkills(CancellationToken token)
@@ -252,14 +252,14 @@ namespace Programming.Team.ViewModels.Resume
             try
             {
                 Skills.Clear();
-                foreach(var skill in await SkillFacade.GetSkillsExcludingPosition(PositionId, token: token))
+                foreach (var skill in await SkillFacade.GetSkillsExcludingPosition(PositionId, token: token))
                 {
                     var vm = new SkillViewModel(Logger, SkillFacade, skill);
                     await vm.Load.Execute().GetAwaiter();
                     Skills.Add(vm);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.LogError(ex, ex.Message);
                 await Alert.Handle(ex.Message).GetAwaiter();
@@ -269,25 +269,25 @@ namespace Programming.Team.ViewModels.Resume
         {
             try
             {
-                foreach(var skill in Skills.Where(s => s.IsSelected).ToArray())
+                foreach (var skill in Skills.Where(s => s.IsSelected).ToArray())
                 {
-                    var ps = new PositionSkill()
+                    var ps = new ExpSkill()
                     {
                         PositionId = PositionId,
                         SkillId = skill.Id
                     };
-                    await PositionSkillFacade.Add(ps, token: token);
+                    await ExpSkillFacade.Add(ps, token: token);
                     Skills.Remove(skill);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.LogError(ex, ex.Message);
                 await Alert.Handle(ex.Message).GetAwaiter();
             }
         }
     }
-    public class PositionSkillsViewModel : EntitiesDefaultViewModel<Guid, PositionSkill, PositionSkillViewModel, AddPositionSkillViewModel>
+    public class ExpSkillTurgidViewModel : EntitiesDefaultViewModel<Guid, ExpSkill, ExpSkillViewModel, AddExpSkillViewModel>
     {
         public ReactiveCommand<Unit, Unit> ExtractSkills { get; }
         public ReactiveCommand<Unit, Unit> AssociateSkills { get; }
@@ -310,9 +310,9 @@ namespace Programming.Team.ViewModels.Resume
             set => this.RaiseAndSetIfChanged(ref description, value);
         }
         public SuggestAddSkillsForPositionViewModel SuggestAddSkillsVM { get; }
-        public PositionSkillsViewModel(AddPositionSkillViewModel addViewModel, SuggestAddSkillsForPositionViewModel suggestAddSkillsVM, 
-            IBusinessRepositoryFacade<PositionSkill, Guid> facade, IBusinessRepositoryFacade<Skill, Guid> skillFacade, 
-            ILogger<EntitiesViewModel<Guid, PositionSkill, PositionSkillViewModel, IBusinessRepositoryFacade<PositionSkill, Guid>>> logger, 
+        public ExpSkillTurgidViewModel(AddExpSkillViewModel addViewModel, SuggestAddSkillsForPositionViewModel suggestAddSkillsVM,
+            IBusinessRepositoryFacade<ExpSkill, Guid> facade, IBusinessRepositoryFacade<Skill, Guid> skillFacade,
+            ILogger<EntitiesViewModel<Guid, ExpSkill, ExpSkillViewModel, IBusinessRepositoryFacade<ExpSkill, Guid>>> logger,
             IResumeEnricher enricher) : base(addViewModel, facade, logger)
         {
             ExtractSkills = ReactiveCommand.CreateFromTask(DoExtractSkills);
@@ -320,7 +320,7 @@ namespace Programming.Team.ViewModels.Resume
             Enricher = enricher;
             SkillFacade = skillFacade;
             SuggestAddSkillsVM = suggestAddSkillsVM;
-           
+
 
         }
         private bool isOpen;
@@ -334,7 +334,7 @@ namespace Programming.Team.ViewModels.Resume
         {
             try
             {
-                foreach(var raw in RawSkills.Where(r => r.IsSelected).ToArray())
+                foreach (var raw in RawSkills.Where(r => r.IsSelected).ToArray())
                 {
                     var skillRes = await SkillFacade.Get(page: new Pager() { Page = 1, Size = 1 }, filter: q => q.Name == raw.Name, token: token);
                     var skill = skillRes.Entities.FirstOrDefault();
@@ -346,7 +346,7 @@ namespace Programming.Team.ViewModels.Resume
                         };
                         await SkillFacade.Add(skill, token: token);
                     }
-                    var ps = new PositionSkill()
+                    var ps = new ExpSkill()
                     {
                         PositionId = PositionId,
                         SkillId = skill.Id
@@ -375,27 +375,27 @@ namespace Programming.Team.ViewModels.Resume
                     RawSkills.AddRange(sks.Select(s => new RawSkillViewModel(Logger, PositionId, s)));
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.LogError(ex, ex.Message);
                 await Alert.Handle(ex.Message);
             }
         }
-        protected override async Task<PositionSkillViewModel> Construct(PositionSkill entity, CancellationToken token)
+        protected override async Task<ExpSkillViewModel> Construct(ExpSkill entity, CancellationToken token)
         {
-            var vm = new PositionSkillViewModel(Logger, Facade, entity);
-           
+            var vm = new ExpSkillViewModel(Logger, Facade, entity);
+
             return vm;
         }
-        protected override Func<IQueryable<PositionSkill>, IOrderedQueryable<PositionSkill>>? OrderBy()
+        protected override Func<IQueryable<ExpSkill>, IOrderedQueryable<ExpSkill>>? OrderBy()
         {
             return e => e.OrderBy(c => c.Skill.Name);
         }
-        protected override Func<IQueryable<PositionSkill>, IQueryable<PositionSkill>>? PropertiesToLoad()
+        protected override Func<IQueryable<ExpSkill>, IQueryable<ExpSkill>>? PropertiesToLoad()
         {
             return e => e.Include(x => x.Skill);
         }
-        protected override async Task<Expression<Func<PositionSkill, bool>>?> FilterCondition()
+        protected override async Task<Expression<Func<ExpSkill, bool>>?> FilterCondition()
         {
             return e => e.PositionId == PositionId;
         }
@@ -439,5 +439,5 @@ namespace Programming.Team.ViewModels.Resume
             return [];
         }
     }
-    
+
 }

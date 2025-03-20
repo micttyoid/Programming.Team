@@ -17,13 +17,13 @@ namespace Programming.Team.ViewModels.Resume
 {
     public class AddRecommendationViewModel : AddUserPartionedEntity<Guid, Recommendation>, IRecommendation
     {
-        public SearchSelectPositionViewModel SelectPosition { get; }
+        public SearchExpViewModel SelectPosition { get; }
         protected readonly CompositeDisposable disposable = new CompositeDisposable();
         ~AddRecommendationViewModel()
         {
             disposable.Dispose();
         }
-        public AddRecommendationViewModel(SearchSelectPositionViewModel selectPosition, IBusinessRepositoryFacade<Recommendation, Guid> facade, ILogger<AddEntityViewModel<Guid, Recommendation, IBusinessRepositoryFacade<Recommendation, Guid>>> logger) : base(facade, logger)
+        public AddRecommendationViewModel(SearchExpViewModel selectPosition, IBusinessRepositoryFacade<Recommendation, Guid> facade, ILogger<AddEntityViewModel<Guid, Recommendation, IBusinessRepositoryFacade<Recommendation, Guid>>> logger) : base(facade, logger)
         {
             SelectPosition = selectPosition;
             SelectPosition.WhenPropertyChanged(p => p.Selected).Subscribe(p =>
@@ -147,7 +147,7 @@ namespace Programming.Team.ViewModels.Resume
         public RecommendationViewModel(ILogger logger, IBusinessRepositoryFacade<Recommendation, Guid> facade, Recommendation entity) : base(logger, facade, entity)
         {
         }
-        
+
         protected override Func<IQueryable<Recommendation>, IQueryable<Recommendation>>? PropertiesToLoad()
         {
             return e => e.Include(x => x.Position).ThenInclude(x => x.Company);

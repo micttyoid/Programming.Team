@@ -95,13 +95,13 @@ public partial class User : Entity<Guid>, IUser
 
     public virtual ICollection<User> InverseUpdatedByUser { get; set; } = new List<User>();
 
-    public virtual ICollection<Position> PositionCreatedByUsers { get; set; } = new List<Position>();
+    public virtual ICollection<Position> ExpCreatedByUsers { get; set; } = new List<Position>();
 
-    public virtual ICollection<PositionSkill> PositionSkillCreatedByUsers { get; set; } = new List<PositionSkill>();
+    public virtual ICollection<ExpSkill> ExpSkillCreatedByUsers { get; set; } = new List<ExpSkill>();
 
-    public virtual ICollection<PositionSkill> PositionSkillUpdatedByUsers { get; set; } = new List<PositionSkill>();
+    public virtual ICollection<ExpSkill> ExpSkillUpdatedByUsers { get; set; } = new List<ExpSkill>();
 
-    public virtual ICollection<Position> PositionUpdatedByUsers { get; set; } = new List<Position>();
+    public virtual ICollection<Position> ExpUpdatedByUsers { get; set; } = new List<Position>();
 
     public virtual ICollection<Position> PositionUsers { get; set; } = new List<Position>();
 

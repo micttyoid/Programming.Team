@@ -31,7 +31,7 @@ namespace Programming.Team.Business
         protected IResumeEnricher Enricher { get; }
         protected ILogger Logger { get; }
         protected IResumeBlob ResumeBlob { get; }
-        public ResumeBuilder(ILogger<ResumeBuilder> logger, 
+        public ResumeBuilder(ILogger<ResumeBuilder> logger,
             IUserBusinessFacade userFacade,
             IBusinessRepositoryFacade<Position, Guid> positionFacade,
             IBusinessRepositoryFacade<Education, Guid> educationFacade,
@@ -68,7 +68,7 @@ namespace Programming.Team.Business
                 {
                     progress?.Report("Building Resume");
                     resume.User = await UserFacade.GetByID(userId, work: uow, token: token) ?? throw new InvalidDataException();
-                    var positions = await PositionFacade.Get(work: uow, properites: GetPositionProperties(), filter: q => q.UserId == userId, 
+                    var positions = await PositionFacade.Get(work: uow, properites: GetPositionProperties(), filter: q => q.UserId == userId,
                         orderBy: e => e.OrderByDescending(c => c.EndDate ?? DateOnly.MaxValue).ThenByDescending(c => c.SortOrder).ThenByDescending(c => c.StartDate),
                         token: token);
                     resume.Positions.AddRange(positions.Entities);
@@ -83,10 +83,10 @@ namespace Programming.Team.Business
                         filter: q => q.UserId == userId, token: token);
                     resume.Certificates.AddRange(certs.Entities);
                     resume.Recommendations = resume.Positions.SelectMany(e => e.Recommendations).OrderBy(c => c.SortOrder).ThenBy(c => c.Name).ToList();
-                    
-                    foreach(var position in resume.Positions)
+
+                    foreach (var position in resume.Positions)
                     {
-                        foreach(var posskill in position.PositionSkills)
+                        foreach (var posskill in position.ExpSkillCollection)
                         {
                             if (!rollups.TryGetValue(posskill.SkillId, out var skill))
                             {
@@ -107,13 +107,13 @@ namespace Programming.Team.Business
                     }
                     resume.Skills = rollups.Values.OrderByDescending(e => e.YearsOfExperience).ToList();
                 }
-                foreach(var position in resume.Positions)
+                foreach (var position in resume.Positions)
                 {
-                    position.PositionSkills = position.PositionSkills.OrderByDescending(e => rollups[e.SkillId].YearsOfExperience).ThenBy(e => e.Skill.Name).ToList();
+                    position.ExpSkillCollection = position.ExpSkillCollection.OrderByDescending(e => rollups[e.SkillId].YearsOfExperience).ThenBy(e => e.Skill.Name).ToList();
                 }
                 return resume;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.LogError(ex, ex.Message);
                 throw;
@@ -121,9 +121,9 @@ namespace Programming.Team.Business
         }
         protected Func<IQueryable<Position>, IQueryable<Position>> GetPositionProperties()
         {
-            return e => e.Include(x => x.PositionSkills).ThenInclude(x => x.Skill).Include(x => x.Company).Include(x => x.Recommendations);
+            return e => e.Include(x => x.ExpSkillCollection).ThenInclude(x => x.Skill).Include(x => x.Company).Include(x => x.Recommendations);
         }
-        protected Func<IQueryable<Education>, IQueryable<Education>> GetEducationProperties() 
+        protected Func<IQueryable<Education>, IQueryable<Education>> GetEducationProperties()
         {
             return e => e.Include(x => x.Institution);
         }
@@ -138,7 +138,7 @@ namespace Programming.Team.Business
                 var user = await UserFacade.GetByID(userId, token: token);
                 if (user == null)
                     throw new InvalidDataException();
-                
+
                 Posting posting = new Posting()
                 {
                     UserId = userId,
@@ -148,7 +148,7 @@ namespace Programming.Team.Business
                     Name = name
                 };
                 await PostingFacade.Add(posting, token: token);
-                posting = await RebuildPosting(posting, resume,progress: progress, config: config, token: token);
+                posting = await RebuildPosting(posting, resume, progress: progress, config: config, token: token);
                 return posting;
             }
             catch (Exception ex)
@@ -171,7 +171,7 @@ namespace Programming.Team.Business
                     await UserFacade.GetCurrentUserId(fetchTrueUserId: true, token: token) ?? throw new InvalidOperationException(), token: token))
                     await Enricher.EnrichResume(resume, posting, progress, token);
                 progress?.Report("Preparing Resume Style");
-                foreach(var part in (ResumePart[])Enum.GetValues(typeof(ResumePart)))
+                foreach (var part in (ResumePart[])Enum.GetValues(typeof(ResumePart)))
                 {
                     config.SectionTemplates.TryGetValue(part, out var sectionTemplateId);
                     var section = sectionTemplateId != null ? await SectionFacade.GetByID(sectionTemplateId.Value, token: token) : await SectionFacade.GetDefaultSection(part, token: token);
@@ -200,7 +200,7 @@ namespace Programming.Team.Business
                     await ResumeBlob.UploadResume(posting.Id, await Templator.RenderLatex(posting.RenderedLaTex, token), token);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.LogError(ex, ex.Message);
                 throw;

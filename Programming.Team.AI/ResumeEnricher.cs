@@ -58,11 +58,11 @@ namespace Programming.Team.AI
                     resume.User.Bio = await ChatGPT.GetRepsonse($"Output a LaTex snippet that will be added to an existing latex document - do not generate opening or closing article, document, sections, textbf or pargraph tags. Do not use LaTeX special charachter escaping. The user message is a biography: tailor/summarize it highlighting how it pertains the following job description, write three paragraphs and 6 bullet points (written with itemize, no dashes) - stick to what you know, don't make things up:  {JsonSerializer.Serialize(posting.Details)}", JsonSerializer.Serialize(resume.User.Bio), token: token);
                     resume.User.Bio = resume.User.Bio?.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
                 }
-                foreach (var skill in resume.Skills.Select(p => p.Skill).Union(resume.Positions.SelectMany(p => p.PositionSkills.Select(p => p.Skill))))
+                foreach (var skill in resume.Skills.Select(p => p.Skill).Union(resume.Positions.SelectMany(p => p.ExpSkillCollection.Select(p => p.Skill))))
                 {
                     skill.Name = skill.Name.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
                 }
-                foreach(var rec in resume.Recommendations)
+                foreach (var rec in resume.Recommendations)
                 {
                     rec.Body = rec.Body.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
                     rec.Name = rec.Name.Replace("#", "\\#").Replace("$", "\\$").Replace("&", "\\&").Replace("%", "\\%");
@@ -103,7 +103,7 @@ namespace Programming.Team.AI
                                 toRemove.Add(position);
                             if (config.SkillsPer20Percent != null)
                             {
-                                position.PositionSkills = position.PositionSkills.Take(Math.Max(Convert.ToInt32((mtch / 0.2) * config.SkillsPer20Percent.Value), 10)).ToList();
+                                position.ExpSkillCollection = position.ExpSkillCollection.Take(Math.Max(Convert.ToInt32((mtch / 0.2) * config.SkillsPer20Percent.Value), 10)).ToList();
                             }
                         }
                     }

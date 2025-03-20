@@ -145,10 +145,10 @@ namespace Programming.Team.Data
             {
                 var userId = await GetCurrentUserId(w, token: t);
                 DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
-                var query = w.ResumesContext.Skills.Where(s => 
-                    s.PositionSkills.Any(ps => ps.Position.UserId == userId && ps.PositionId != positionId)).Except(
-                        w.ResumesContext.Skills.Where(s => s.PositionSkills.Any(ps => ps.PositionId == positionId))).Distinct();
-                query = query.OrderByDescending(s => s.PositionSkills.Sum(
+                var query = w.ResumesContext.Skills.Where(s =>
+                    s.ExpSkillCollection.Any(ps => ps.Position.UserId == userId && ps.PositionId != positionId)).Except(
+                        w.ResumesContext.Skills.Where(s => s.ExpSkillCollection.Any(ps => ps.PositionId == positionId))).Distinct();
+                query = query.OrderByDescending(s => s.ExpSkillCollection.Sum(
                     ps => EF.Functions.DateDiffDay(ps.Position.StartDate, ps.Position.EndDate ?? today)));
                 skills = await query.ToArrayAsync(token);
             }, work, token);

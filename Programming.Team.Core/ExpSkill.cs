@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Programming.Team.Core;
 
-public interface IPositionSkill : IEntity<Guid>
+public interface IExpSkill : IEntity<Guid>
 {
     Guid PositionId { get; set; }
 
@@ -12,7 +12,7 @@ public interface IPositionSkill : IEntity<Guid>
     string? Description { get; set; }
 
 }
-public partial class PositionSkill : Entity<Guid>, IPositionSkill
+public partial class ExpSkill : Entity<Guid>, IExpSkill
 {
 
     public Guid PositionId { get; set; }
