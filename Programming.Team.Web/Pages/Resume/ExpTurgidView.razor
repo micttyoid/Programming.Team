@@ -1,20 +1,68 @@
 ﻿@page "/resume/experiences"
 @attribute [Authorize]
 @inherits ReactiveInjectableComponentBase<ExpTurgidViewModel>
+@* TODO: withour MudPaper in mobile *@
 
-@if (ViewModel != null)
-{
-    <AlertView Alert="ViewModel.Alert" />
-    <MudButton OnClick="ViewModel.StartAdd.BindCommand<MouseEventArgs>()" Class="fw-bold" Variant="Variant.Filled"
-        Color="Color.Primary">Add Experience</MudButton>
-    <AddExpView ViewModel="ViewModel.AddViewModel" />
-    @foreach (var position in ViewModel.Entities)
+<MudContainer
+    Class="d-flex flex-column align-center pt-6 color-under-paper">
+    @if (ViewModel != null)
     {
-        <ExpView ViewModel="position" />
+        <AlertView
+            Alert="ViewModel.Alert" />
+        <MudTooltip
+            Text="Add Experience">
+            @* TODO: backend redesign to avoid these UI-less anti-patterns *@
+            <MudIconButton
+                Icon="@Icons.Material.Filled.Add"
+                OnClick="async () => { await ViewModel.StartAdd.BindCommand<MouseEventArgs>().InvokeAsync(); await ToggleFiller(); }"
+                aria-label="add experience"
+                Class="fw-bold mb-4"
+                Variant="Variant.Filled"
+                Color="Color.Primary" />
+        </MudTooltip>
+        @* has more margin-bottom *@
+        <MudPaper
+            Class="@fillerStyle"
+            Style="width: 42rem;"></MudPaper>
+        <AddExpView
+            ViewModel="ViewModel.AddViewModel"
+        />
+        @foreach (var exp in ViewModel.Entities)
+        {
+            <MudPaper
+                Class="@paperStyle"
+                Style="width: 42rem;">
+                <ExpView
+                    ViewModel="exp" />
+            </MudPaper>
+        }
     }
-}
+    </MudContainer>
 
-@code {
+    @code {
+    private string fillerStyle = "pa-4 mb-18 half-us-letter d-none";
+    private string _fillerStyleOn = "pa-4 mb-18 half-us-letter";
+    private string _fillerStyleOff = "pa-4 mb-18 half-us-letter d-none";
+
+    private string paperStyle = "pa-4 mb-4 half-us-letter";
+    private string _paperStyleAnimate = "pa-4 mb-4 half-us-letter showable";
+    private string _paperStyleStatic = "pa-4 mb-4 half-us-letter";
+
+    public async Task ToggleFiller()
+    {
+        if (fillerStyle == _fillerStyleOn)
+        {
+            fillerStyle = _fillerStyleOff;
+            paperStyle =  _paperStyleStatic;
+        }
+        else
+        {
+            fillerStyle = _fillerStyleOn;
+            paperStyle =  _paperStyleAnimate;
+        }
+
+    }
+
     protected override void OnInitialized()
     {
         if (ViewModel != null)
