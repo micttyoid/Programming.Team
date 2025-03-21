@@ -33,7 +33,7 @@ public partial class ResumesContext : DbContext
     public virtual DbSet<Purchase> Purchases { get; set; }
     public virtual DbSet<Position> Positions { get; set; }
 
-    public virtual DbSet<ExpSkill> ExpSkills { get; set; }
+    public virtual DbSet<ExpSkill> PositionSkills { get; set; }
 
     public virtual DbSet<Posting> Postings { get; set; }
 
