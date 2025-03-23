@@ -3,6 +3,7 @@
 @inherits ReactiveInjectableComponentBase<ExpTurgidViewModel>
 @* TODO: withour MudPaper in mobile *@
 
+@* TODO: take the callback, save some state, close it somehow when mouse click outside  *@
 <MudContainer
     Class="d-flex flex-column align-center pt-6 color-under-paper">
     @if (ViewModel != null)
@@ -20,26 +21,29 @@
                 Variant="Variant.Filled"
                 Color="Color.Primary" />
         </MudTooltip>
-        @* has more margin-bottom *@
+        @* Has more margin-bottom *@
         <MudPaper
             Class="@fillerStyle"
-            Style="width: 42rem;"></MudPaper>
+            Style="width: 42rem;"
+        ></MudPaper>
         <AddExpView
             ViewModel="ViewModel.AddViewModel"
         />
-        @foreach (var exp in ViewModel.Entities)
+        @* Rename "Entities" to "VMCollection" *@
+        @foreach (var expvm in ViewModel.Entities)
         {
             <MudPaper
                 Class="@paperStyle"
                 Style="width: 42rem;">
                 <ExpView
-                    ViewModel="exp" />
+                    ViewModel="expvm" />
             </MudPaper>
         }
     }
     </MudContainer>
 
-    @code {
+@code {
+    // TODO: organize them
     private string fillerStyle = "pa-4 mb-18 half-us-letter d-none";
     private string _fillerStyleOn = "pa-4 mb-18 half-us-letter";
     private string _fillerStyleOff = "pa-4 mb-18 half-us-letter d-none";

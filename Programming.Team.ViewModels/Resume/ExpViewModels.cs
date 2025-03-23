@@ -253,6 +253,7 @@ public class ExpViewModel : EntityViewModel<Guid, Position>, IPosition
         set => this.RaiseAndSetIfChanged(ref userId, value);
     }
     protected readonly CompositeDisposable disposable = new CompositeDisposable();
+    // TODO: seriously? why?
     public ExpSkillTurgidViewModel SkillsViewModel { get; }
     public ExpViewModel(ILogger logger, IBusinessRepositoryFacade<Position, Guid> facade, ExpSkillTurgidViewModel skillsViewModel, Guid id) : base(logger, facade, id)
     {

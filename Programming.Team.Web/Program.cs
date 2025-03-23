@@ -54,6 +54,7 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
        {
            if (context.Failure.Message.Contains("AADB2C90118"))
            {
+               // TODO: unharden this
                // Redirect to Password Reset policy
                var resetPasswordUrl = "https://progteamgroundbreaker.b2clogin.com/tfp/progteamgroundbreaker.onmicrosoft.com/B2C_1_pswreset/oauth2/v2.0/authorize"
                                     + $"?client_id={Uri.EscapeDataString(options.ClientId)}"
