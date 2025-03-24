@@ -20,7 +20,7 @@ namespace Programming.Team.ViewModels.Resume;
 public class AddExpViewModel : AddUserPartionedEntity<Guid, Position>, IPosition
 {
     public SearchSelectCompanyViewModel CompanyViewModel { get; }
-    protected readonly CompositeDisposable disposable = new CompositeDisposable();
+    protected readonly CompositeDisposable disposable = new();
     public AddExpViewModel(IBusinessRepositoryFacade<Position, Guid> facade,
         ILogger<AddEntityViewModel<Guid, Position, IBusinessRepositoryFacade<Position, Guid>>> logger,
         SearchSelectCompanyViewModel companyViewModel) : base(facade, logger)
@@ -252,7 +252,7 @@ public class ExpViewModel : EntityViewModel<Guid, Position>, IPosition
         get => userId;
         set => this.RaiseAndSetIfChanged(ref userId, value);
     }
-    protected readonly CompositeDisposable disposable = new CompositeDisposable();
+    protected readonly CompositeDisposable disposable = new();
     // TODO: seriously? why?
     public ExpSkillTurgidViewModel SkillsViewModel { get; }
     public ExpViewModel(ILogger logger, IBusinessRepositoryFacade<Position, Guid> facade, ExpSkillTurgidViewModel skillsViewModel, Guid id) : base(logger, facade, id)
@@ -264,7 +264,6 @@ public class ExpViewModel : EntityViewModel<Guid, Position>, IPosition
     public ExpViewModel(ILogger logger, IBusinessRepositoryFacade<Position, Guid> facade, ExpSkillTurgidViewModel skillsViewModel, Position entity) : base(logger, facade, entity)
     {
         SkillsViewModel = skillsViewModel;
-
         WireupSkillsVM();
     }
     protected void WireupSkillsVM()

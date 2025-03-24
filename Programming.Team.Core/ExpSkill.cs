@@ -21,7 +21,7 @@ public partial class ExpSkill : Entity<Guid>, IExpSkill
 
     public string? Description { get; set; }
 
-
+    // Do we need to hold both id and entity that we can get the id from or vice versa?
     public virtual Position Position { get; set; } = null!;
 
     public virtual Skill Skill { get; set; } = null!;
