@@ -80,7 +80,13 @@ public partial class ResumesContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Certificates_Users");
+<<<<<<< HEAD
             entity.HasQueryFilter(d => !d.IsDeleted);
+=======
+             entity.HasQueryFilter(d => !d.IsDeleted);
+            entity.Ignore(p => p.ValidFromDateString);
+            entity.Ignore(p => p.ValidToDateString);
+>>>>>>> upstream/master
             entity.ToTable("Certificates");
         });
 
