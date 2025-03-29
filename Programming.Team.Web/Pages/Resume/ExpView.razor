@@ -2,7 +2,8 @@
 
 @if (ViewModel != null)
 {
-    <AlertView Alert="ViewModel.Alert" />
+    <AlertView
+        Alert="ViewModel.Alert" />
     <MudStack>
         <MudText>Company: @ViewModel.Company?.Name</MudText>
         <MudTextField
@@ -10,7 +11,8 @@
             Label="Role"
             Placeholder="@PlaceholderRole"
             Variant="Variant.Outlined" />
-        <MudElement Class="d-flex">
+        <MudElement
+            Class="d-flex">
             <MudDatePicker
                 @bind-Date="ViewModel.StartDateTime"
                 Label="Start Date" />
@@ -50,7 +52,7 @@
 }
 
 @code {
-    @* Please Let's use some customer-like example. Not some software position *@
+    @* Please, like this, use some customer-like example. Not some software position *@
     public string PlaceholderRole = "Brand Director";
     public string PlaceholderDescription = "As the Director of a women’s fashion brand, I led the creative vision and strategic direction, curating modern, trend-driven collections that resonated with diverse audiences. I managed design, production, and marketing teams to deliver high-quality, on-trend apparel, resulting in a 25% growth in customer engagement and sales. By fostering strong relationships with influencers and retailers, I amplified the brand’s presence in the competitive women’s fashion market.";
 }
